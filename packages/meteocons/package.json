@@ -10,7 +10,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/basmilius/meteocons-poc.git",
+        "url": "https://github.com/basmilius/meteocons.git",
         "directory": "packages/meteocons"
     },
     "type": "module",

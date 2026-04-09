@@ -1,0 +1,9 @@
+{
+    "targets": [
+        "sleet"
+    ],
+    "includes": [
+        "clouds",
+        "sleet"
+    ]
+}

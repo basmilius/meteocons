@@ -1,0 +1,12 @@
+{
+    "targets": [
+        "extreme-day-hail",
+        "overcast-day-hail"
+    ],
+    "includes": [
+        "sun",
+        "clouds",
+        "clouds-alt",
+        "hail"
+    ]
+}

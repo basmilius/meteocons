@@ -1,0 +1,15 @@
+{
+    "targets": [
+        "hurricane"
+    ],
+    "layers": {
+        "Line": {
+            "transform": "rotate",
+            "from": 0,
+            "to": -360,
+            "origin": "center",
+            "duration": "3s",
+            "easing": "linear"
+        }
+    }
+}

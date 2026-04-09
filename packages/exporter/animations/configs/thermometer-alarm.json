@@ -1,0 +1,53 @@
+{
+    "targets": [
+        "thermometer-alarm"
+    ],
+    "layers": {
+        "Value": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -2,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        },
+        "Alert": {
+            "property": "opacity",
+            "values": [
+                1,
+                1,
+                0,
+                0,
+                1
+            ],
+            "keyTimes": [
+                0,
+                0.294,
+                0.5,
+                0.794,
+                1
+            ],
+            "duration": "1s"
+        },
+        "Exclamation": {
+            "property": "opacity",
+            "values": [
+                1,
+                1,
+                0,
+                0,
+                1
+            ],
+            "keyTimes": [
+                0,
+                0.294,
+                0.5,
+                0.794,
+                1
+            ],
+            "duration": "1s"
+        }
+    }
+}

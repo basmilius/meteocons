@@ -1,0 +1,45 @@
+{
+    "targets": [
+        "raindrop-measure"
+    ],
+    "layers": {
+        "Water Level": {
+            "animations": [
+                {
+                    "property": "y",
+                    "values": [
+                        64,
+                        56,
+                        64
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out"
+                },
+                {
+                    "property": "height",
+                    "values": [
+                        30,
+                        38,
+                        30
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out"
+                }
+            ],
+            "expandMask": true
+        },
+        "Raindrop": {
+            "transform": "scale",
+            "values": [
+                1,
+                1,
+                1.1,
+                1.1,
+                1,
+                1
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

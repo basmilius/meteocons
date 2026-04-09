@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found">
+    <div class="not-found">
+        <img src="/icons/fill/thunderstorms-extreme.svg" alt="" width="128" height="128"/>
+        <h1>404</h1>
+        <p>This page doesn't exist.</p>
+        <a href="/" class="back-link">
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M15 10H5M9 14l-4-4 4-4"/>
+            </svg>
+            Back to home
+        </a>
+    </div>
+</BaseLayout>
+
+<style>
+    .not-found {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 60vh;
+        padding: 60px 28px;
+        gap: 12px;
+    }
+
+    .not-found h1 {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1;
+    }
+
+    .not-found p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        padding: 10px 20px;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--amber);
+        background: var(--amber-bg);
+        transition: all 0.15s;
+    }
+
+    .back-link:hover {
+        color: var(--amber);
+        background: var(--amber-glow);
+    }
+</style>

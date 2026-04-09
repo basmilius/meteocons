@@ -1,0 +1,43 @@
+{
+    "targets": [
+        "cloud-down",
+        "cloud-up",
+        "pressure-high",
+        "pressure-low"
+    ],
+    "layers": {
+        "Arrow 3": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Arrow 2": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0.3
+        },
+        "Arrow 1": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0.6
+        }
+    }
+}

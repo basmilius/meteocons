@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body: 'Outfit', system-ui, sans-serif;
+
+    --bg: #ffffff;
+    --bg-soft: #f8f9fb;
+    --bg-surface: #f1f3f6;
+    --bg-raised: #e8ebf0;
+    --bg-hover: #eceef3;
+
+    --amber: #e5850a;
+    --amber-light: #f59e0b;
+    --amber-dark: #c06e08;
+    --amber-glow: rgba(229, 133, 10, 0.12);
+    --amber-bg: rgba(229, 133, 10, 0.08);
+
+    --navy: #1a1a2e;
+    --navy-light: #222240;
+
+    --text: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+    --text-faint: #d1d5db;
+
+    --border: rgba(0, 0, 0, 0.06);
+    --border-light: rgba(0, 0, 0, 0.1);
+    --border-amber: rgba(229, 133, 10, 0.25);
+
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.12);
+    --shadow-amber: 0 8px 32px rgba(229, 133, 10, 0.15);
+
+    --content-width: 1200px;
+    --content-narrow: 800px;
+    --nav-height: 80px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-height) + 32px);
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+::selection {
+    background: var(--amber);
+    color: white;
+}
+
+a {
+    color: var(--amber);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--amber-light);
+}
+
+code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-size: 0.875em;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: #b45309;
+}
+
+pre {
+    background: #1a1e2e;
+    color: #c8cdd8;
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    line-height: 1.75;
+}
+
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: 0.875rem;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Stagger animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-up {
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }

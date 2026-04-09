@@ -1,0 +1,21 @@
+{
+    "name": "@meteocons/exporter",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "fetch": "bun --env-file=../../.env src/fetch.ts",
+        "fetch:force": "bun --env-file=../../.env src/fetch.ts --force",
+        "export": "bun src/export.ts",
+        "list": "bun --env-file=../../.env src/fetch.ts --list",
+        "validate": "bun src/validate.ts",
+        "publish-icons": "bun src/publish-icons.ts"
+    },
+    "dependencies": {
+        "@xmldom/xmldom": "^0.9.8",
+        "svg-pathdata": "^8.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.5.2",
+        "bun-types": "^1.3.11"
+    }
+}

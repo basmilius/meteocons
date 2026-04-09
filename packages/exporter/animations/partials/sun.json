@@ -1,0 +1,12 @@
+{
+    "layers": {
+        "Rays": {
+            "transform": "rotate",
+            "from": 0,
+            "to": 360,
+            "origin": "center",
+            "duration": "6s",
+            "easing": "linear"
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "name": "meteocons",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Animated weather icons for the modern web. 475+ icons in SVG and Lottie.",
+    "author": {
+        "email": "bas@mili.us",
+        "name": "Bas Milius",
+        "url": "https://bas.dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/basmilius/meteocons-poc.git",
+        "directory": "packages/meteocons"
+    },
+    "type": "module",
+    "main": "./index.js",
+    "types": "./index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "default": "./index.js"
+        },
+        "./svg/*": {
+            "default": "@meteocons/svg/*"
+        },
+        "./lottie/*": {
+            "default": "@meteocons/lottie/*"
+        }
+    },
+    "dependencies": {
+        "@meteocons/svg": "workspace:*",
+        "@meteocons/lottie": "workspace:*"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": [
+        "index.js",
+        "index.d.ts",
+        "LICENSE",
+        "README.md"
+    ]
+}

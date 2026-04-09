@@ -1,0 +1,14 @@
+{
+    "layers": {
+        "Secondary Cloud": {
+            "transform": "translateY",
+            "values": [
+                -3,
+                0,
+                -3
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

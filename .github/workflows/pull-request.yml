@@ -1,0 +1,43 @@
+name: Pull Request
+
+on:
+    pull_request:
+
+concurrency:
+    cancel-in-progress: true
+    group: ${{ format('ci-{0}', github.ref) }}
+
+permissions:
+    contents: read
+    deployments: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        name: 🚀 Build and preview
+        steps:
+            - name: 👀 Checkout
+              uses: actions/checkout@v4
+
+            - name: ⚙️ Setup Bun
+              uses: oven-sh/setup-bun@v2
+
+            - name: 📦️ Install dependencies
+              run: bun install --frozen-lockfile
+
+            - name: 🔨 Build docs
+              run: bun --filter @meteocons/docs build
+
+            - name: 🚀 Deploy Docs PR
+              id: deploy
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  accountId: 5e565cf9fa55b0eae1f8131903da2ca9
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  command: versions upload --tag pr-${{ github.event.pull_request.number }}
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  wranglerVersion: "4.69.0"
+
+            - name: ⭐️ Output
+              run: |
+                  echo "Deployed on ${{ steps.deploy.outputs.deployment-url }}"

@@ -1,0 +1,10 @@
+{
+    "targets": [
+        "drizzle",
+        "rain"
+    ],
+    "includes": [
+        "clouds",
+        "rain"
+    ]
+}

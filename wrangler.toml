@@ -1,0 +1,10 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "meteocons-docs"
+compatibility_date = "2026-04-02"
+
+[assets]
+directory = "./packages/docs/dist"
+not_found_handling = "404-page"
+
+[observability]
+enabled = true

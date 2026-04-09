@@ -1,0 +1,58 @@
+{
+    "layers": {
+        "Lightning Bolt": {
+            "property": "opacity",
+            "values": [
+                1,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                1
+            ],
+            "keyTimes": [
+                0,
+                0.25,
+                0.33,
+                0.42,
+                0.50,
+                0.57,
+                0.63,
+                0.67,
+                1
+            ],
+            "duration": "2s",
+            "delay": 0
+        },
+        "Lightning Bolt Small": {
+            "property": "opacity",
+            "values": [
+                1,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                1
+            ],
+            "keyTimes": [
+                0,
+                0.25,
+                0.33,
+                0.42,
+                0.50,
+                0.57,
+                0.63,
+                0.67,
+                1
+            ],
+            "duration": "2s",
+            "delay": 0.5
+        }
+    }
+}

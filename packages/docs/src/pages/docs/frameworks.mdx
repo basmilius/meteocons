@@ -1,0 +1,578 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Frameworks
+description: Use Meteocons with React, Vue, Svelte, Angular, and more.
+---
+import PmTabs from '../../components/PmTabs.astro';
+
+Guides for popular frameworks. All examples use the **fill** style — swap `fill` for `flat`, `line`, or `monochrome` to use a different style.
+
+## React
+
+### SVG as image
+
+The simplest approach — render the SVG as an `<img>` tag:
+
+```tsx
+interface WeatherIconProps {
+    slug: string;
+    style?: 'fill' | 'flat' | 'line' | 'monochrome';
+    size?: number;
+}
+
+function WeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
+    return (
+        <img
+            src={`/icons/${style}/${slug}.svg`}
+            alt={slug}
+            width={size}
+            height={size}
+        />
+    );
+}
+
+// Usage
+<WeatherIcon slug="rain" />
+<WeatherIcon slug="snow" style="line" size={48} />
+```
+
+### SVG inline
+
+For full CSS control, fetch and inject the SVG markup:
+
+```tsx
+import { useEffect, useRef } from 'react';
+
+function InlineSvgIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetch(`/icons/${style}/${slug}.svg`, { signal: controller.signal })
+            .then(res => res.text())
+            .then(svg => {
+                if (containerRef.current) {
+                    containerRef.current.innerHTML = svg;
+                }
+            });
+
+        return () => controller.abort();
+    }, [slug, style]);
+
+    return <div ref={containerRef} style={{ width: size, height: size }} />;
+}
+```
+
+### Lottie
+
+<PmTabs
+    id="react-lottie"
+    bun="bun add @meteocons/lottie lottie-react"
+    npm="npm install @meteocons/lottie lottie-react"
+    yarn="yarn add @meteocons/lottie lottie-react"
+    pnpm="pnpm add @meteocons/lottie lottie-react"
+/>
+
+**Static import** — the animation JSON is bundled at build time:
+
+```tsx
+import Lottie from 'lottie-react';
+import rainAnimation from '@meteocons/lottie/fill/rain.json';
+
+function RainIcon() {
+    return (
+        <Lottie
+            animationData={rainAnimation}
+            loop
+            autoplay
+            style={{ width: 64, height: 64 }}
+        />
+    );
+}
+```
+
+**Dynamic import** — load the animation at runtime, useful when the icon slug is a prop:
+
+```tsx
+import { useEffect, useState } from 'react';
+import Lottie from 'lottie-react';
+
+function DynamicWeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
+    const [animationData, setAnimationData] = useState(null);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetch(`/icons/${style}/${slug}.json`, { signal: controller.signal })
+            .then(res => res.json())
+            .then(setAnimationData);
+
+        return () => controller.abort();
+    }, [slug, style]);
+
+    if (!animationData) {
+        return <div style={{ width: size, height: size }} />;
+    }
+
+    return (
+        <Lottie
+            animationData={animationData}
+            loop
+            autoplay
+            style={{ width: size, height: size }}
+        />
+    );
+}
+```
+
+## Vue
+
+### SVG as image
+
+```vue
+<script setup lang="ts">
+defineProps<{
+    slug: string
+    style?: 'fill' | 'flat' | 'line' | 'monochrome'
+    size?: number
+}>();
+</script>
+
+<template>
+    <img
+        :src="`/icons/${style ?? 'fill'}/${slug}.svg`"
+        :alt="slug"
+        :width="size ?? 64"
+        :height="size ?? 64"
+    />
+</template>
+```
+
+### SVG inline
+
+```vue
+<script setup lang="ts">
+import { ref, watchEffect } from 'vue';
+
+const props = defineProps<{
+    slug: string
+    style?: 'fill' | 'flat' | 'line' | 'monochrome'
+    size?: number
+}>();
+
+const svgMarkup = ref('');
+
+watchEffect(async (onCleanup) => {
+    const controller = new AbortController();
+    onCleanup(() => controller.abort());
+
+    const response = await fetch(
+        `/icons/${props.style ?? 'fill'}/${props.slug}.svg`,
+        { signal: controller.signal }
+    );
+    svgMarkup.value = await response.text();
+});
+</script>
+
+<template>
+    <div
+        v-html="svgMarkup"
+        :style="{ width: `${size ?? 64}px`, height: `${size ?? 64}px` }"
+    />
+</template>
+```
+
+### Lottie
+
+<PmTabs
+    id="vue-lottie"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+```vue
+<script setup lang="ts">
+import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+const props = defineProps<{
+    slug: string
+    style?: 'fill' | 'flat' | 'line' | 'monochrome'
+    size?: number
+}>();
+
+const container = ref<HTMLElement>();
+let animation: AnimationItem;
+
+onMounted(() => {
+    if (!container.value) {
+        return;
+    }
+
+    animation = lottie.loadAnimation({
+        container: container.value,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+    });
+});
+
+onUnmounted(() => animation?.destroy());
+</script>
+
+<template>
+    <div
+        ref="container"
+        :style="{ width: `${size ?? 64}px`, height: `${size ?? 64}px` }"
+    />
+</template>
+```
+
+## Svelte
+
+### SVG as image
+
+```svelte
+<script lang="ts">
+    let { slug, style = 'fill', size = 64 }: {
+        slug: string;
+        style?: 'fill' | 'flat' | 'line' | 'monochrome';
+        size?: number;
+    } = $props();
+</script>
+
+<img
+    src="/icons/{style}/{slug}.svg"
+    alt={slug}
+    width={size}
+    height={size}
+/>
+```
+
+### Lottie
+
+<PmTabs
+    id="svelte-lottie"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+```svelte
+<script lang="ts">
+    import lottie from 'lottie-web';
+
+    let { slug, style = 'fill', size = 64 }: {
+        slug: string;
+        style?: 'fill' | 'flat' | 'line' | 'monochrome';
+        size?: number;
+    } = $props();
+
+    let container: HTMLElement;
+
+    $effect(() => {
+        const animation = lottie.loadAnimation({
+            container,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: `/icons/${style}/${slug}.json`
+        });
+
+        return () => animation.destroy();
+    });
+</script>
+
+<div bind:this={container} style="width: {size}px; height: {size}px" />
+```
+
+## Angular
+
+### SVG as image
+
+```typescript
+import { Component, Input } from '@angular/core';
+
+@Component({
+    selector: 'weather-icon',
+    standalone: true,
+    template: `
+        <img
+            [src]="'/icons/' + style + '/' + slug + '.svg'"
+            [alt]="slug"
+            [width]="size"
+            [height]="size"
+        />
+    `
+})
+export class WeatherIconComponent {
+    @Input({ required: true }) slug!: string;
+    @Input() style: 'fill' | 'flat' | 'line' | 'monochrome' = 'fill';
+    @Input() size = 64;
+}
+```
+
+### Lottie
+
+<PmTabs
+    id="angular-lottie"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+```typescript
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
+
+@Component({
+    selector: 'weather-lottie-icon',
+    standalone: true,
+    template: `
+        <div
+            #container
+            [style.width.px]="size"
+            [style.height.px]="size"
+        ></div>
+    `
+})
+export class WeatherLottieIconComponent implements OnInit, OnDestroy {
+    @ViewChild('container', { static: true }) container!: ElementRef<HTMLElement>;
+    @Input({ required: true }) slug!: string;
+    @Input() style: 'fill' | 'flat' | 'line' | 'monochrome' = 'fill';
+    @Input() size = 64;
+
+    private animation?: AnimationItem;
+
+    ngOnInit() {
+        this.animation = lottie.loadAnimation({
+            container: this.container.nativeElement,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: `/icons/${this.style}/${this.slug}.json`
+        });
+    }
+
+    ngOnDestroy() {
+        this.animation?.destroy();
+    }
+}
+```
+
+## Solid
+
+### SVG as image
+
+```tsx
+import type { Component } from 'solid-js';
+
+const WeatherIcon: Component<{
+    slug: string;
+    style?: 'fill' | 'flat' | 'line' | 'monochrome';
+    size?: number;
+}> = (props) => {
+    return (
+        <img
+            src={`/icons/${props.style ?? 'fill'}/${props.slug}.svg`}
+            alt={props.slug}
+            width={props.size ?? 64}
+            height={props.size ?? 64}
+        />
+    );
+};
+```
+
+### Lottie
+
+<PmTabs
+    id="solid-lottie"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+```tsx
+import { onCleanup, onMount } from 'solid-js';
+import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
+
+function WeatherLottieIcon(props: {
+    slug: string;
+    style?: 'fill' | 'flat' | 'line' | 'monochrome';
+    size?: number;
+}) {
+    let container!: HTMLDivElement;
+    let animation: AnimationItem;
+
+    onMount(() => {
+        animation = lottie.loadAnimation({
+            container,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+        });
+    });
+
+    onCleanup(() => animation?.destroy());
+
+    return (
+        <div
+            ref={container}
+            style={{ width: `${props.size ?? 64}px`, height: `${props.size ?? 64}px` }}
+        />
+    );
+}
+```
+
+## Astro
+
+### SVG as image
+
+```astro
+---
+interface Props {
+    slug: string;
+    style?: 'fill' | 'flat' | 'line' | 'monochrome';
+    size?: number;
+}
+
+const { slug, style = 'fill', size = 64 } = Astro.props;
+---
+<img src={`/icons/${style}/${slug}.svg`} alt={slug} width={size} height={size} />
+```
+
+### Lottie with client islands
+
+Astro is static by default, so Lottie animations need a client-side framework island. Use the Vue or React Lottie component from above with `client:visible` to load the animation only when it scrolls into view:
+
+```astro
+---
+import WeatherLottieIcon from '../components/WeatherLottieIcon.vue';
+---
+<WeatherLottieIcon slug="rain" client:visible />
+```
+
+## Next.js
+
+### SVG with Image component
+
+```tsx
+import Image from 'next/image';
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
+
+export default function Weather() {
+    return (
+        <Image
+            src={clearDay}
+            alt="Clear day"
+            width={64}
+            height={64}
+        />
+    );
+}
+```
+
+### Lottie with dynamic import
+
+<PmTabs
+    id="nextjs-lottie"
+    bun="bun add @meteocons/lottie lottie-react"
+    npm="npm install @meteocons/lottie lottie-react"
+    yarn="yarn add @meteocons/lottie lottie-react"
+    pnpm="pnpm add @meteocons/lottie lottie-react"
+/>
+
+Since Lottie requires browser APIs, use a dynamic import with `ssr: false`:
+
+```tsx
+'use client';
+
+import dynamic from 'next/dynamic';
+import rainAnimation from '@meteocons/lottie/fill/rain.json';
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+
+export default function RainIcon() {
+    return (
+        <Lottie
+            animationData={rainAnimation}
+            loop
+            autoplay
+            style={{ width: 64, height: 64 }}
+        />
+    );
+}
+```
+
+## Nuxt
+
+### SVG with Vite import
+
+Vite handles SVG imports out of the box:
+
+```vue
+<script setup lang="ts">
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
+</script>
+
+<template>
+    <img :src="clearDay" alt="Clear day" width="64" height="64" />
+</template>
+```
+
+### Lottie with client-only
+
+<PmTabs
+    id="nuxt-lottie"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+Wrap the Lottie component in `<ClientOnly>` to avoid SSR issues:
+
+```vue
+<script setup lang="ts">
+import lottie from 'lottie-web';
+import type { AnimationItem } from 'lottie-web';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+const props = defineProps<{ slug: string; style?: string }>();
+const container = ref<HTMLElement>();
+let animation: AnimationItem;
+
+onMounted(() => {
+    if (!container.value) {
+        return;
+    }
+
+    animation = lottie.loadAnimation({
+        container: container.value,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+    });
+});
+
+onUnmounted(() => animation?.destroy());
+</script>
+
+<template>
+    <ClientOnly>
+        <div ref="container" style="width: 64px; height: 64px" />
+    </ClientOnly>
+</template>
+```

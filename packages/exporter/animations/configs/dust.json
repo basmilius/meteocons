@@ -1,0 +1,403 @@
+{
+    "targets": [
+        "dust"
+    ],
+    "layers": {
+        "Dust 1": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0
+                }
+            ]
+        },
+        "Dust 2": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0.3
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0.3
+                }
+            ]
+        },
+        "Dust 3": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0.6
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0.6
+                }
+            ]
+        },
+        "Dust 4": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0.8999999999999999
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0.8999999999999999
+                }
+            ]
+        },
+        "Dust 5": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.2
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.2
+                }
+            ]
+        },
+        "Dust 6": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.5
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.5
+                }
+            ]
+        },
+        "Dust 7": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.7999999999999998
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.7999999999999998
+                }
+            ]
+        },
+        "Dust 8": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 2.1
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 2.1
+                }
+            ]
+        },
+        "Dust 9": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 2.4
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 2.4
+                }
+            ]
+        },
+        "Dust 10": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 2.6999999999999997
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 2.6999999999999997
+                }
+            ]
+        },
+        "Dust 11": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 3
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 3
+                }
+            ]
+        },
+        "Dust 12": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 3.3
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 3.3
+                }
+            ]
+        }
+    }
+}

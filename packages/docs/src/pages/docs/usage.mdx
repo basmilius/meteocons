@@ -1,0 +1,387 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Usage
+description: Patterns for using Meteocons SVG and Lottie icons on web and native.
+---
+import PmTabs from '../../components/PmTabs.astro';
+
+Common patterns for integrating Meteocons into your project. All examples use the **fill** style — swap `fill` for `flat`, `line`, or `monochrome` to use a different style.
+
+## SVG in HTML
+
+The simplest approach — load animated SVGs as images. Animations play automatically without any JavaScript.
+
+```html
+<img
+    src="/icons/fill/rain.svg"
+    alt="Rain"
+    width="64"
+    height="64"
+/>
+```
+
+You can also use SVGs as CSS backgrounds, though animations won't play in background images:
+
+```css
+.weather-icon {
+    width: 64px;
+    height: 64px;
+    background: url('/icons/fill/rain.svg') center / contain no-repeat;
+}
+```
+
+## Inline SVG
+
+Fetch and inline the SVG for full CSS control over individual elements. This is useful when you want to apply custom styling, filters, or CSS animations.
+
+```javascript
+async function loadIcon(container, slug, style = 'fill') {
+    const response = await fetch(`/icons/${style}/${slug}.svg`);
+    const svg = await response.text();
+    container.innerHTML = svg;
+}
+
+// Usage
+const el = document.getElementById('icon');
+await loadIcon(el, 'rain');
+```
+
+Once inlined, you can style every part of the SVG with CSS:
+
+```css
+#icon svg {
+    width: 64px;
+    height: 64px;
+}
+
+/* Pause animations on hover */
+#icon svg:hover * {
+    animation-play-state: paused;
+}
+```
+
+## Responsive sizing
+
+Icons are designed on a 512×512 canvas and scale cleanly. Use CSS to make them responsive:
+
+```css
+/* Fixed size */
+.icon-sm { width: 32px; height: 32px; }
+.icon-md { width: 64px; height: 64px; }
+.icon-lg { width: 128px; height: 128px; }
+
+/* Fluid — scales with parent */
+.icon-fluid {
+    width: 100%;
+    height: auto;
+    max-width: 128px;
+}
+```
+
+## Lottie on the web
+
+Lottie gives you full playback control — speed, direction, play/pause, and segment playback. Install `lottie-web`:
+
+<PmTabs
+    id="install-lottie-web"
+    bun="bun add lottie-web"
+    npm="npm install lottie-web"
+    yarn="yarn add lottie-web"
+    pnpm="pnpm add lottie-web"
+/>
+
+```javascript
+import lottie from 'lottie-web';
+
+const animation = lottie.loadAnimation({
+    container: document.getElementById('weather-icon'),
+    renderer: 'canvas',   // 'canvas' for performance, 'svg' for quality
+    loop: true,
+    autoplay: true,
+    path: '/icons/fill/rain.json'
+});
+
+// Playback control
+animation.setSpeed(0.5);          // half speed
+animation.setDirection(-1);        // play in reverse
+animation.goToAndStop(30, true);   // jump to frame 30
+animation.pause();
+animation.play();
+
+// Clean up when removing the element
+animation.destroy();
+```
+
+### Renderer comparison
+
+| Renderer | Pros | Cons |
+|----------|------|------|
+| `canvas` | Better performance, lower memory | No CSS styling of internals |
+| `svg` | CSS accessible, crisp at any zoom | Slower with many icons |
+
+Use `canvas` when displaying multiple icons on one page. Use `svg` when you need to style animation elements with CSS.
+
+## Lazy loading
+
+When displaying many icons (e.g. a dashboard or icon grid), load them on demand with `IntersectionObserver` to avoid blocking the initial page load.
+
+### Lazy SVG images
+
+```html
+<img
+    data-src="/icons/fill/rain.svg"
+    alt="Rain"
+    width="64"
+    height="64"
+    loading="lazy"
+/>
+```
+
+Native `loading="lazy"` works for `<img>` tags. For Lottie, use a manual observer:
+
+### Lazy Lottie animations
+
+```javascript
+import lottie from 'lottie-web';
+
+const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+        if (!entry.isIntersecting) {
+            continue;
+        }
+
+        lottie.loadAnimation({
+            container: entry.target,
+            renderer: 'canvas',
+            loop: true,
+            autoplay: true,
+            path: entry.target.dataset.src
+        });
+
+        observer.unobserve(entry.target);
+    }
+}, { rootMargin: '200px' });
+
+document.querySelectorAll('.lottie-icon').forEach(el => observer.observe(el));
+```
+
+```html
+<div class="lottie-icon" data-src="/icons/fill/rain.json" style="width: 64px; height: 64px"></div>
+<div class="lottie-icon" data-src="/icons/fill/snow.json" style="width: 64px; height: 64px"></div>
+<div class="lottie-icon" data-src="/icons/fill/wind.json" style="width: 64px; height: 64px"></div>
+```
+
+## Accessibility
+
+Weather icons convey information — make sure they're accessible to everyone.
+
+### Images with alt text
+
+Always provide meaningful alt text that describes the weather condition, not the icon name:
+
+```html
+<!-- Good: describes the weather -->
+<img src="/icons/fill/rain.svg" alt="Rain expected" width="64" height="64" />
+
+<!-- Bad: describes the icon -->
+<img src="/icons/fill/rain.svg" alt="rain icon" width="64" height="64" />
+```
+
+### Decorative icons
+
+If the icon is purely decorative (the weather is also described in text), hide it from screen readers:
+
+```html
+<div class="forecast">
+    <img src="/icons/fill/rain.svg" alt="" aria-hidden="true" width="48" height="48" />
+    <span>Rain — 18°C</span>
+</div>
+```
+
+### Reduced motion
+
+Some users prefer reduced motion. Respect their preference by pausing SVG animations:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+    img[src$=".svg"] {
+        /* SVG animations in <img> tags can't be paused with CSS,
+           so consider showing static fallbacks instead */
+    }
+}
+```
+
+For Lottie, check the preference in JavaScript:
+
+```javascript
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const animation = lottie.loadAnimation({
+    container: el,
+    path: '/icons/fill/rain.json',
+    loop: !prefersReducedMotion,
+    autoplay: !prefersReducedMotion
+});
+
+// Show the first frame as a static fallback
+if (prefersReducedMotion) {
+    animation.goToAndStop(0, true);
+}
+```
+
+## Dark mode with monochrome
+
+The **monochrome** style uses `currentColor`, making it perfect for dark mode support:
+
+```html
+<div class="weather-widget">
+    <img src="/icons/monochrome/rain.svg" alt="Rain" width="64" height="64" />
+    <span>Rain — 18°C</span>
+</div>
+```
+
+```css
+.weather-widget {
+    color: #1e293b;
+}
+
+@media (prefers-color-scheme: dark) {
+    .weather-widget {
+        color: #f1f5f9;
+    }
+}
+```
+
+The icon automatically adapts to the text color — no need for separate light and dark icon sets.
+
+## Lottie on mobile
+
+### iOS (Swift)
+
+Using the [lottie-ios](https://github.com/airbnb/lottie-ios) library:
+
+```swift
+import Lottie
+
+let animationView = LottieAnimationView(name: "rain")
+animationView.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
+animationView.loopMode = .loop
+animationView.play()
+view.addSubview(animationView)
+```
+
+### Android (Kotlin)
+
+Using the [lottie-android](https://github.com/airbnb/lottie-android) library:
+
+```xml
+<!-- layout.xml -->
+<com.airbnb.lottie.LottieAnimationView
+    android:id="@+id/weatherIcon"
+    android:layout_width="64dp"
+    android:layout_height="64dp"
+    app:lottie_rawRes="@raw/rain"
+    app:lottie_loop="true"
+    app:lottie_autoPlay="true" />
+```
+
+```kotlin
+// Or programmatically
+val animationView = findViewById<LottieAnimationView>(R.id.weatherIcon)
+animationView.setAnimation("rain.json")
+animationView.repeatCount = LottieDrawable.INFINITE
+animationView.playAnimation()
+```
+
+### React Native
+
+<PmTabs
+    id="install-rn"
+    bun="bun add lottie-react-native"
+    npm="npm install lottie-react-native"
+    yarn="yarn add lottie-react-native"
+    pnpm="pnpm add lottie-react-native"
+/>
+
+```tsx
+import LottieView from 'lottie-react-native';
+
+function WeatherIcon() {
+    return (
+        <LottieView
+            source={require('@meteocons/lottie/fill/rain.json')}
+            autoPlay
+            loop
+            style={{ width: 64, height: 64 }}
+        />
+    );
+}
+```
+
+## Dynamic loading
+
+Map weather API conditions to icon slugs for real-time weather displays:
+
+```typescript
+const CONDITION_MAP: Record<string, string> = {
+    sunny: 'clear-day',
+    clear: 'clear-day',
+    'clear-night': 'clear-night',
+    cloudy: 'overcast',
+    'partly-cloudy': 'partly-cloudy-day',
+    rainy: 'rain',
+    'heavy-rain': 'extreme-rain',
+    snowy: 'snow',
+    stormy: 'thunderstorms-day-rain',
+    windy: 'wind',
+    foggy: 'fog-day',
+    hail: 'hail',
+};
+
+function getIconUrl(condition: string, style = 'fill', format: 'svg' | 'json' = 'svg'): string {
+    const slug = CONDITION_MAP[condition] ?? 'not-available';
+    return `/icons/${style}/${slug}.${format}`;
+}
+
+// Example: render weather for a city
+function renderWeather(condition: string, temp: number) {
+    const iconUrl = getIconUrl(condition);
+
+    return `
+        <div class="weather">
+            <img src="${iconUrl}" alt="${condition}" width="64" height="64" />
+            <span>${temp}°C</span>
+        </div>
+    `;
+}
+```
+
+## Using the manifest
+
+The manifest file contains metadata about all icons — their slugs, categories, and whether they're animated. This is useful for building icon pickers, search features, or documentation.
+
+```typescript
+import manifest from '@meteocons/svg/manifest.json';
+
+// Get all icons in a flat list
+const allIcons = manifest.categories.flatMap(category => category.icons);
+console.log(`Total icons: ${allIcons.length}`);
+
+// Find all rain-related icons
+const rainIcons = allIcons.filter(icon => icon.slug.includes('rain'));
+
+// Get only animated icons
+const animatedIcons = allIcons.filter(icon => icon.animated);
+
+// Group by category
+for (const category of manifest.categories) {
+    console.log(`${category.name}: ${category.icons.length} icons`);
+}
+
+// Search by partial slug
+function searchIcons(query: string) {
+    return allIcons.filter(icon =>
+        icon.slug.includes(query.toLowerCase())
+    );
+}
+```

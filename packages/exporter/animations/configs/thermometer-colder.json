@@ -1,0 +1,51 @@
+{
+    "targets": [
+        "thermometer-colder",
+        "thermometer-warmer"
+    ],
+    "layers": {
+        "Value": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -2,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        },
+        "Arrow 3": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Arrow 2": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0.3
+        },
+        "Arrow 1": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0.6
+        }
+    }
+}

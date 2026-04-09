@@ -1,0 +1,33 @@
+{
+    "targets": [
+        "water-tide-high",
+        "water-tide-low"
+    ],
+    "layers": {
+        "Water": {
+            "animations": [
+                {
+                    "transform": "scaleY",
+                    "values": [
+                        1,
+                        1.08,
+                        1
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "origin": "bottom"
+                }
+            ]
+        },
+        "Arrow": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -4,
+                0
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "targets": [
+        "extreme-night-drizzle",
+        "extreme-night-rain",
+        "overcast-night-drizzle",
+        "overcast-night-rain"
+    ],
+    "includes": [
+        "moon",
+        "clouds",
+        "clouds-alt",
+        "rain"
+    ]
+}

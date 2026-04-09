@@ -1,0 +1,11 @@
+{
+    "targets": [
+        "mostly-clear-night-hail",
+        "partly-cloudy-night-hail"
+    ],
+    "includes": [
+        "moon",
+        "clouds",
+        "hail"
+    ]
+}

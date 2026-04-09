@@ -1,0 +1,22 @@
+{
+    "layers": {
+        "Wind Line 1": {
+            "property": "stroke-dashoffset",
+            "from": 0,
+            "to": 1000,
+            "duration": "6s",
+            "easing": "linear",
+            "delay": 0,
+            "dashArray": 50
+        },
+        "Wind Line 1_2": {
+            "property": "stroke-dashoffset",
+            "from": 0,
+            "to": 1000,
+            "duration": "6s",
+            "easing": "linear",
+            "delay": 0.2,
+            "dashArray": 50
+        }
+    }
+}

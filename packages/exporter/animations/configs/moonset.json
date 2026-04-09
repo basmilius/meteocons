@@ -1,0 +1,18 @@
+{
+    "targets": [
+        "clear-night",
+        "moon-first-quarter",
+        "moon-full",
+        "moon-last-quarter",
+        "moon-waning-crescent",
+        "moon-waning-gibbous",
+        "moon-waxing-crescent",
+        "moon-waxing-gibbous",
+        "moonrise",
+        "moonset",
+        "time-late-everning"
+    ],
+    "includes": [
+        "moon"
+    ]
+}

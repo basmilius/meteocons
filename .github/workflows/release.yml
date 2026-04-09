@@ -1,0 +1,79 @@
+name: 🚀 Release Meteocons
+
+on:
+    release:
+        types: [ prereleased, released ]
+
+env:
+    RELEASE_VERSION: ${{ github.event.release.tag_name }}
+
+permissions:
+    contents: read
+    deployments: write
+    id-token: write
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        name: 🚀 Publish to Registry
+        steps:
+            -   name: 👀 Checkout
+                uses: actions/checkout@v6
+
+            -   name: 🍞 Setup Bun
+                uses: oven-sh/setup-bun@v2
+
+            -   uses: actions/setup-node@v6
+                with:
+                    node-version: '25'
+                    registry-url: 'https://registry.npmjs.org'
+
+            -   name: ✏️ Tag v${{ env.RELEASE_VERSION }}
+                run: |
+                    sed -i 's/0.0.0/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+                    sed -i 's/workspace:\*/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+
+            -   name: 📦️ Install dependencies
+                run: bun install --frozen-lockfile
+
+            -   name: 🎨 Fetch SVGs from Figma
+                run: bun run fetch --force
+                env:
+                    FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+                    FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+
+            -   name: 🔄 Export icons
+                run: bun run export
+
+            -   name: 📋 Publish to packages
+                run: bun run publish-icons
+
+            -   name: 🔨 Build docs
+                run: bun --filter @meteocons/docs build
+
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }} (Pre-release)
+                if: ${{ github.event.release.prerelease }}
+                run: |
+                    (cd packages/svg && npm publish --access public --tag next)
+                    (cd packages/lottie && npm publish --access public --tag next)
+                    (cd packages/meteocons && npm publish --access public --tag next)
+
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
+                if: ${{ !github.event.release.prerelease }}
+                run: |
+                    (cd packages/svg && npm publish --access public)
+                    (cd packages/lottie && npm publish --access public)
+                    (cd packages/meteocons && npm publish --access public)
+
+            -   name: 🚀 Deploy Docs
+                id: deploy
+                uses: cloudflare/wrangler-action@v3
+                with:
+                    accountId: 5e565cf9fa55b0eae1f8131903da2ca9
+                    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                    wranglerVersion: "4.69.0"
+
+            -   name: ⭐️ Output
+                run: |
+                    echo "Deployed on ${{ steps.deploy.outputs.deployment-url }}"

@@ -1,0 +1,22 @@
+{
+    "name": "@meteocons/docs",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "prepare-icons": "bun scripts/prepare-icons.ts",
+        "dev": "bun scripts/prepare-icons.ts && astro dev",
+        "build": "bun scripts/prepare-icons.ts && astro build",
+        "preview": "astro preview"
+    },
+    "dependencies": {
+        "@astrojs/mdx": "^5.0.3",
+        "@astrojs/sitemap": "^3.7.2",
+        "@astrojs/vue": "^5.0.6",
+        "@meteocons/lottie": "workspace:*",
+        "@meteocons/svg": "workspace:*",
+        "astro": "^6.1.5",
+        "lottie-web": "^5.12.2",
+        "vue": "^3.5.13"
+    }
+}

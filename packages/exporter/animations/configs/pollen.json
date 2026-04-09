@@ -1,0 +1,242 @@
+{
+    "targets": [
+        "pollen",
+        "pollen-flower",
+        "pollen-grass",
+        "pollen-tree",
+        "pollen-tree-fir"
+    ],
+    "layers": {
+        "Pollen 7": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0
+                }
+            ]
+        },
+        "Pollen 6": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0.35
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0.35
+                }
+            ]
+        },
+        "Pollen 5": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0.7
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 0.7
+                }
+            ]
+        },
+        "Pollen 4": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.0499999999999998
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.0499999999999998
+                }
+            ]
+        },
+        "Pollen 3": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.4
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.4
+                }
+            ]
+        },
+        "Pollen 2": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1.75
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 1.75
+                }
+            ]
+        },
+        "Pollen 1": {
+            "animations": [
+                {
+                    "transform": "translate",
+                    "values": [
+                        0,
+                        0,
+                        8,
+                        -4
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 2.0999999999999996
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.2,
+                        0.8,
+                        1
+                    ],
+                    "duration": "3s",
+                    "delay": 2.0999999999999996
+                }
+            ]
+        }
+    }
+}

@@ -1,5 +1,36 @@
-.idea/
 node_modules/
-Adobe After Effects Auto-Save/
+bun.lockb
 
-.DS_Store
+# Exporter artefacten
+packages/exporter/.cache/
+packages/exporter/output/
+
+# SVG package (gegenereerd door publish-icons)
+packages/svg/fill/
+packages/svg/flat/
+packages/svg/line/
+packages/svg/monochrome/
+packages/svg/manifest.json
+
+# Lottie package (gegenereerd door publish-icons)
+packages/lottie/fill/
+packages/lottie/flat/
+packages/lottie/line/
+packages/lottie/monochrome/
+packages/lottie/manifest.json
+
+# Secrets
+.env
+
+# IDE
+.idea/*
+!.idea/.name
+!.idea/icon.svg
+
+# Deploy
+packages/preview/.wrangler/
+packages/docs/.wrangler/
+
+# Build output
+packages/preview/dist/
+packages/docs/dist/

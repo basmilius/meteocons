@@ -1,0 +1,846 @@
+<script setup lang="ts">
+    import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+
+    type Style = 'fill' | 'flat' | 'line' | 'monochrome';
+
+    interface IconEntry {
+        slug: string;
+        name: string;
+        animated: boolean;
+    }
+
+    interface Category {
+        name: string;
+        slug: string;
+        icons: IconEntry[];
+    }
+
+    interface Manifest {
+        styles: string[];
+        categories: Category[];
+    }
+
+    const STYLES: Style[] = ['fill', 'flat', 'line', 'monochrome'];
+
+    const manifest = ref<Manifest | null>(null);
+    const loading = ref(true);
+    const query = ref('');
+    const currentStyle = ref<Style>('fill');
+    const activeCategory = ref('');
+    const activeCategoryFilter = ref<string | null>(null);
+
+    // Detail popup
+    const selectedIcon = ref<IconEntry | null>(null);
+    const detailStyle = ref<Style>('fill');
+    const copiedAction = ref('');
+
+    const allCategories = computed(() => manifest.value?.categories ?? []);
+
+    const totalIconCount = computed(() =>
+        allCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
+    );
+
+    const filteredCategories = computed(() => {
+        if (!manifest.value) {
+            return [];
+        }
+
+        const q = query.value.toLowerCase().trim();
+
+        return manifest.value.categories
+            .filter(cat => !activeCategoryFilter.value || cat.slug === activeCategoryFilter.value)
+            .map(cat => ({
+                ...cat,
+                icons: cat.icons.filter(icon =>
+                    !q || icon.slug.includes(q) || icon.name.toLowerCase().includes(q)
+                )
+            }))
+            .filter(cat => cat.icons.length > 0);
+    });
+
+    const totalCount = computed(() =>
+        filteredCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
+    );
+
+    const UPPERCASE_WORDS = new Set(['ne', 'se', 'nw', 'sw']);
+
+    function formatName(slug: string): string {
+        return slug.replace(/-/g, ' ').replace(/\b\w+/g, (word) =>
+            UPPERCASE_WORDS.has(word) ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)
+        );
+    }
+
+    function svgUrl(slug: string, style?: Style): string {
+        return `/icons/${style ?? currentStyle.value}/${slug}.svg`;
+    }
+
+    function updateUrl(): void {
+        const params = new URLSearchParams(window.location.search);
+        params.set('style', currentStyle.value);
+
+        if (selectedIcon.value) {
+            params.set('icon', selectedIcon.value.slug);
+        } else {
+            params.delete('icon');
+        }
+
+        const url = `${window.location.pathname}?${params.toString()}`;
+        history.pushState(null, '', url);
+    }
+
+    function openDetail(icon: IconEntry): void {
+        selectedIcon.value = icon;
+        detailStyle.value = currentStyle.value;
+        copiedAction.value = '';
+        updateUrl();
+    }
+
+    function closeDetail(): void {
+        selectedIcon.value = null;
+        updateUrl();
+    }
+
+    function onPopState(): void {
+        const params = new URLSearchParams(window.location.search);
+        const iconParam = params.get('icon');
+        const styleParam = params.get('style');
+
+        if (styleParam && STYLES.includes(styleParam as Style)) {
+            currentStyle.value = styleParam as Style;
+        }
+
+        if (iconParam && manifest.value) {
+            const icon = manifest.value.categories
+                .flatMap(c => c.icons)
+                .find(i => i.slug === iconParam);
+
+            if (icon) {
+                selectedIcon.value = icon;
+                detailStyle.value = currentStyle.value;
+                return;
+            }
+        }
+
+        selectedIcon.value = null;
+    }
+
+    async function copyText(text: string, action: string): Promise<void> {
+        await navigator.clipboard.writeText(text);
+        copiedAction.value = action;
+        setTimeout(() => {
+            copiedAction.value = '';
+        }, 1500);
+    }
+
+    async function copySvgCode(): Promise<void> {
+        if (!selectedIcon.value) {
+            return;
+        }
+        const res = await fetch(svgUrl(selectedIcon.value.slug, detailStyle.value));
+        const text = await res.text();
+        await copyText(text, 'svg');
+    }
+
+    function downloadFile(url: string, filename: string): void {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    onMounted(async () => {
+        const params = new URLSearchParams(window.location.search);
+        const styleParam = params.get('style');
+        const iconParam = params.get('icon');
+
+        if (styleParam && STYLES.includes(styleParam as Style)) {
+            currentStyle.value = styleParam as Style;
+        }
+
+        try {
+            const res = await fetch('/icons/manifest.json');
+            manifest.value = await res.json();
+
+            if (iconParam && manifest.value) {
+                const icon = manifest.value.categories
+                    .flatMap(c => c.icons)
+                    .find(i => i.slug === iconParam);
+
+                if (icon) {
+                    selectedIcon.value = icon;
+                    detailStyle.value = currentStyle.value;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load manifest:', err);
+        } finally {
+            loading.value = false;
+        }
+
+        window.addEventListener('popstate', onPopState);
+    });
+
+    onUnmounted(() => {
+        window.removeEventListener('popstate', onPopState);
+    });
+</script>
+
+<template>
+    <div class="browser">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Icons</h1>
+                <span class="total">{{ totalCount }}</span>
+            </div>
+
+            <div class="search-wrap">
+                <svg class="search-icon" viewBox="0 0 20 20" width="15" height="15" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <circle cx="8.5" cy="8.5" r="5.5"/>
+                    <path d="M12.5 12.5L17 17"/>
+                </svg>
+                <input
+                    v-model="query"
+                    type="text"
+                    placeholder="Search icons..."
+                    class="search-input"
+                />
+            </div>
+
+            <div class="style-selector">
+                <button
+                    v-for="style in STYLES"
+                    :key="style"
+                    :class="['style-btn', {active: currentStyle === style}]"
+                    :aria-label="style"
+                    @click="currentStyle = style"
+                >
+                    <img :src="`/icons/${style}/clear-day.svg`" alt="" width="32" height="32"/>
+                </button>
+            </div>
+
+            <nav class="category-nav">
+                <div class="nav-label">Categories</div>
+                <button
+                    :class="['nav-item', {active: activeCategoryFilter === null}]"
+                    @click="activeCategoryFilter = null"
+                >
+                    <span>All</span>
+                    <span class="nav-count">{{ totalIconCount }}</span>
+                </button>
+                <button
+                    v-for="cat in allCategories"
+                    :key="cat.slug"
+                    :class="['nav-item', {active: activeCategoryFilter === cat.slug}]"
+                    @click="activeCategoryFilter = cat.slug"
+                >
+                    <span>{{ cat.name }}</span>
+                    <span class="nav-count">{{ cat.icons.length }}</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main grid -->
+        <main class="main">
+            <div v-if="loading" class="state">
+                <div class="spinner"/>
+            </div>
+            <div v-else-if="filteredCategories.length === 0" class="state">
+                No icons match "{{ query }}"
+            </div>
+
+            <template v-else>
+                <section
+                    v-for="category in filteredCategories"
+                    :key="category.slug"
+                    :id="`cat-${category.slug}`"
+                    class="category"
+                >
+                    <h2 class="category-title">{{ category.name }}</h2>
+                    <div class="icon-grid">
+                        <button
+                            v-for="icon in category.icons"
+                            :key="icon.slug"
+                            class="icon-cell"
+                            @click="openDetail(icon)"
+                        >
+                            <img
+                                :src="svgUrl(icon.slug)"
+                                :alt="icon.name"
+                                width="96"
+                                height="96"
+                                loading="lazy"
+                            />
+                            <span class="icon-label">{{ formatName(icon.slug) }}</span>
+                        </button>
+                    </div>
+                </section>
+            </template>
+        </main>
+
+        <!-- Detail popup -->
+        <Transition name="overlay">
+            <div v-if="selectedIcon" class="overlay" @click.self="closeDetail">
+                <Transition name="panel" appear>
+                    <div class="detail" v-if="selectedIcon">
+                        <button class="detail-close" @click="closeDetail" aria-label="Close">
+                            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round">
+                                <path d="M5 5l10 10M15 5L5 15"/>
+                            </svg>
+                        </button>
+
+                        <div class="detail-preview">
+                            <img
+                                :src="svgUrl(selectedIcon.slug, detailStyle)"
+                                :alt="selectedIcon.name"
+                                width="160"
+                                height="160"
+                                :key="`${selectedIcon.slug}-${detailStyle}`"
+                            />
+                        </div>
+
+                        <div class="detail-info">
+                            <h3 class="detail-name">{{ formatName(selectedIcon.slug) }}</h3>
+
+                            <div class="detail-styles">
+                                <button
+                                    v-for="style in STYLES"
+                                    :key="style"
+                                    :class="['detail-style-btn', {active: detailStyle === style}]"
+                                    @click="detailStyle = style"
+                                >
+                                    <img :src="svgUrl(selectedIcon.slug, style)" alt="" width="36" height="36"/>
+                                    <span>{{ style }}</span>
+                                </button>
+                            </div>
+
+                            <div class="detail-actions">
+                                <button class="action-btn" @click="copySvgCode">
+                                    <svg v-if="copiedAction !== 'svg'" viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M7 8l-4 4 4 4M13 8l4 4-4 4"/>
+                                    </svg>
+                                    <svg v-else viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M4 10l4 4 8-8"/>
+                                    </svg>
+                                    {{ copiedAction === 'svg' ? 'Copied!' : 'Copy SVG' }}
+                                </button>
+                                <button class="action-btn" @click="copyText(selectedIcon.slug, 'name')">
+                                    <svg v-if="copiedAction !== 'name'" viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                        <path d="M3 14V4a1 1 0 011-1h10"/>
+                                    </svg>
+                                    <svg v-else viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M4 10l4 4 8-8"/>
+                                    </svg>
+                                    {{ copiedAction === 'name' ? 'Copied!' : 'Copy name' }}
+                                </button>
+                            </div>
+                            <div class="detail-actions">
+                                <button class="action-btn" @click="downloadFile(svgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.svg`)">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M10 3v10M6 9l4 4 4-4M3 17h14"/>
+                                    </svg>
+                                    Download SVG
+                                </button>
+                                <button class="action-btn" @click="downloadFile(`/icons/${detailStyle}/${selectedIcon.slug}.json`, `${selectedIcon.slug}.json`)">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M10 3v10M6 9l4 4 4-4M3 17h14"/>
+                                    </svg>
+                                    Download Lottie
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Transition>
+            </div>
+        </Transition>
+    </div>
+</template>
+
+<style scoped>
+    .browser {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        min-height: 500px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        position: sticky;
+        top: var(--nav-height, 64px);
+        height: calc(100vh - var(--nav-height, 64px));
+        overflow-y: auto;
+        padding: 32px 24px 32px 0;
+        border-right: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--bg-raised, #e8ebf0) transparent;
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sidebar-header h1 {
+        font-family: var(--font-display, system-ui);
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text, #111827);
+    }
+
+    .total {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--amber, #e5850a);
+        background: rgba(229, 133, 10, 0.1);
+        padding: 3px 11px;
+        border-radius: 100px;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted, #9ca3af);
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 11px 14px 11px 38px;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: var(--radius-md, 14px);
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 500;
+        outline: none;
+        background: var(--bg, #ffffff);
+        color: var(--text, #111827);
+        transition: all 0.2s;
+    }
+
+    .search-input::placeholder {
+        color: var(--text-faint, #d1d5db);
+    }
+
+    .search-input:focus {
+        border-color: var(--amber, #e5850a);
+        box-shadow: 0 0 0 3px rgba(229, 133, 10, 0.1);
+    }
+
+    .style-selector {
+        display: flex;
+        gap: 4px;
+        background: var(--bg, #ffffff);
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: var(--radius-md, 14px);
+        padding: 4px;
+    }
+
+    .style-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border: none;
+        background: transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .style-btn img {
+        pointer-events: none;
+        opacity: 0.35;
+        transition: opacity 0.15s;
+    }
+
+    .style-btn:hover img {
+        opacity: 0.7;
+    }
+
+    .style-btn.active {
+        background: var(--amber, #e5850a);
+        box-shadow: 0 2px 8px rgba(229, 133, 10, 0.3);
+    }
+
+    .style-btn.active img {
+        opacity: 1;
+        filter: brightness(0) invert(1);
+    }
+
+    .category-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        flex: 1;
+    }
+
+    .nav-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-muted, #9ca3af);
+        padding: 0 10px;
+        margin-bottom: 6px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 10px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.85rem;
+        color: var(--text-secondary, #4b5563);
+        cursor: pointer;
+        transition: all 0.15s;
+        width: 100%;
+        text-align: left;
+    }
+
+    .nav-item:hover {
+        background: var(--bg-surface, #f1f3f6);
+        color: var(--text, #111827);
+    }
+
+    .nav-item.active {
+        color: var(--amber, #e5850a);
+        font-weight: 600;
+        background: rgba(229, 133, 10, 0.06);
+    }
+
+    .nav-count {
+        font-size: 0.75rem;
+        color: var(--text-muted, #9ca3af);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Main */
+    .main {
+        padding: 32px 0 32px 32px;
+    }
+
+    .state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        color: var(--text-muted, #9ca3af);
+    }
+
+    .spinner {
+        width: 28px;
+        height: 28px;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-top-color: var(--amber, #e5850a);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .category {
+        margin-bottom: 48px;
+    }
+
+    .category:last-child {
+        margin-bottom: 0;
+    }
+
+    .category-title {
+        font-family: var(--font-display, system-ui);
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text, #111827);
+        margin-bottom: 0;
+        position: sticky;
+        top: var(--nav-height, 64px);
+        background: var(--bg, #ffffff);
+        height: var(--nav-height, 64px);
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        z-index: 10;
+    }
+
+    .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 4px;
+        padding-top: 8px;
+    }
+
+    .icon-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 18px 6px 12px;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        background: transparent;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: inherit;
+    }
+
+    .icon-cell:hover img {
+        transform: scale(1.12);
+    }
+
+    .icon-cell:active img {
+        transform: scale(1.0);
+    }
+
+    .icon-cell img {
+        pointer-events: none;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .icon-label {
+        font-size: 10px;
+        color: var(--text-muted, #9ca3af);
+        text-align: center;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1;
+        transition: color 0.15s;
+    }
+
+    .icon-cell:hover .icon-label {
+        color: var(--text-secondary, #4b5563);
+    }
+
+    /* Overlay */
+    .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+
+    .overlay-enter-active {
+        transition: all 0.2s ease-out;
+    }
+
+    .overlay-leave-active {
+        transition: all 0.15s ease-in;
+    }
+
+    .overlay-enter-from,
+    .overlay-leave-to {
+        opacity: 0;
+    }
+
+    /* Detail panel */
+    .detail {
+        position: relative;
+        background: var(--bg-soft, #f8f9fb);
+        border: 1px solid var(--border-light, rgba(0, 0, 0, 0.1));
+        border-radius: var(--radius-xl, 28px);
+        box-shadow: 0 32px 100px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        max-width: 480px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .panel-enter-active {
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .panel-leave-active {
+        transition: all 0.15s ease-in;
+    }
+
+    .panel-enter-from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    .panel-leave-to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    .detail-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.06);
+        color: var(--text-muted, #9ca3af);
+        cursor: pointer;
+        transition: all 0.15s;
+        z-index: 10;
+    }
+
+    .detail-close:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: var(--text, #111827);
+    }
+
+    .detail-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 52px 32px 36px;
+        background: var(--bg, #ffffff);
+        border-bottom: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+    }
+
+    .detail-info {
+        padding: 24px 28px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .detail-name {
+        font-family: var(--font-display, system-ui);
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text, #111827);
+    }
+
+    .detail-styles {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .detail-style-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 8px 10px;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 14px;
+        background: var(--bg-surface, #f1f3f6);
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted, #9ca3af);
+        cursor: pointer;
+        text-transform: capitalize;
+        transition: all 0.15s;
+    }
+
+    .detail-style-btn:hover {
+        border-color: var(--border-light, rgba(0, 0, 0, 0.1));
+        color: var(--text-secondary, #4b5563);
+        background: var(--bg-raised, #e8ebf0);
+    }
+
+    .detail-style-btn.active {
+        border-color: var(--amber, #e5850a);
+        background: rgba(229, 133, 10, 0.1);
+        color: var(--amber, #e5850a);
+    }
+
+    .detail-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 11px 14px;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 12px;
+        background: var(--bg-surface, #f1f3f6);
+        font-family: inherit;
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: var(--text-secondary, #4b5563);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+        border-color: var(--amber, #e5850a);
+        background: rgba(229, 133, 10, 0.06);
+        color: var(--amber, #e5850a);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .browser {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+            height: auto;
+            border-right: none;
+            border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+            padding: 20px;
+        }
+
+        .category-nav {
+            display: none;
+        }
+
+        .main {
+            padding: 20px 16px;
+        }
+
+        .detail {
+            max-width: 100%;
+            border-radius: 20px;
+        }
+    }
+</style>

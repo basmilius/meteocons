@@ -1,0 +1,45 @@
+{
+    "targets": [
+        "falling-stars",
+        "starry-night",
+        "time-night"
+    ],
+    "includes": [
+        "moon"
+    ],
+    "layers": {
+        "Star 1": {
+            "property": "opacity",
+            "values": [
+                1,
+                0.3,
+                1
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Star 2": {
+            "property": "opacity",
+            "values": [
+                1,
+                0.3,
+                1
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 0.6
+        },
+        "Star 3": {
+            "property": "opacity",
+            "values": [
+                1,
+                0.3,
+                1
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out",
+            "delay": 1.2
+        }
+    }
+}

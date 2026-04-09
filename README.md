@@ -1,47 +1,112 @@
-<a href="https://bas.dev" target="_blank" rel="noopener">
-	<img src="https://bmcdn.nl/assets/branding/logo.svg" alt="Bas Milius Logo" height="60" width="60" />
-</a>
-
----
-
-<img src="header.png" alt="Meteocons"/>
+<img src="assets/header.png" alt="Meteocons"/>
 
 # Meteocons
-Free to use animated SVG weather icons. Handcrafted by [Bas Milius](https://bas.dev).
 
-## 👀 Preview
-- **Filled icons**: https://basmilius.github.io/weather-icons/index-fill.html
-- **Outlined icons**: https://basmilius.github.io/weather-icons/index.html
+Animated weather icons for the modern web. 475+ hand-crafted icons in 4 styles, available as SVG and Lottie.
 
-### ⚒ Process
-- An icon is designed in Adobe Illustrator.
-- Icons are exported to plain SVG files.
-- Animations are added by editing SVG files.
-- A node.js script minifies the SVG's.
+## Packages
 
-### 🎨 Design files
-This repository not only contains the production-ready files, but also the original design
-files. You may use these files to adjust icons or even create new ones. The design files
-are Adobe Illustrator .ai-files.
+| Package                              | Description                    |
+|--------------------------------------|--------------------------------|
+| [@meteocons/svg](packages/svg)       | Animated SVG weather icons     |
+| [@meteocons/lottie](packages/lottie) | Lottie JSON weather animations |
 
-### 🌥 Missing an icon?
-Please let me know by creating an issue. Keep in mind that I only accept icons that are
-somewhat weather related.
+## Installation
+
+```bash
+# SVG icons
+bun add @meteocons/svg
+
+# Lottie animations
+bun add @meteocons/lottie
+```
+
+## Styles
+
+Each icon is available in 4 styles:
+
+- **Fill** — Solid filled icons with rich colors
+- **Flat** — Flat design without gradients
+- **Line** — Clean outline style
+- **Monochrome** — Single color icons
+
+## Usage
+
+```html
+<!-- SVG -->
+<img
+    src="@meteocons/svg/fill/clear-day.svg"
+    alt="Clear day"/>
+
+<!-- Lottie (with lottie-web) -->
+<script>
+    import lottie from 'lottie-web';
+    import clearDay from '@meteocons/lottie/fill/clear-day.json';
+
+    lottie.loadAnimation({
+        container: document.getElementById('icon'),
+        animationData: clearDay,
+        loop: true,
+        autoplay: true,
+    });
+</script>
+```
+
+## Development
+
+This is the monorepo for the Meteocons export pipeline, icon packages, documentation and preview website.
+
+### Prerequisites
+
+- [Bun](https://bun.sh) >= 1.0
+- A Figma Personal Access Token (see below)
+
+### Setup
+
+```bash
+git clone ...
+cd meteocons
+bun install
+cp .env.example .env
+# Fill in FIGMA_TOKEN and FIGMA_FILE_KEY
+```
+
+### Commands
+
+```bash
+bun run fetch              # Fetch SVGs from Figma (uses cache)
+bun run fetch --force      # Force re-download
+bun run export             # Export all icons (SVG + Lottie)
+bun run export --frame X   # Export a single icon
+bun run validate           # Validate layer names and coverage
+bun run publish-icons      # Copy output to @meteocons/svg and @meteocons/lottie
+bun run docs:dev           # Start documentation website
+bun run preview:dev        # Start preview website
+```
+
+### Figma Personal Access Token
+
+1. Open Figma and click your avatar (top-left)
+2. Go to **Settings > Security**
+3. Scroll to **Personal access tokens** and click **Generate new token**
+4. Select the **`file_content:read`** scope
+
+### Animation configs
+
+Animations are defined as JSON files in `packages/exporter/animations/configs/`. Each config specifies which icons (`targets`) to animate and which layers to animate (`layers`). Reusable building blocks live in `animations/partials/` and are merged via `includes`.
+
+### Category configuration
+
+Icon categories are configured in `packages/exporter/categories.json`. The order of categories and icons in this file determines the display order on the website and in the manifest.
+
+## License
+
+[MIT](LICENSE) - Bas Milius
 
 ---
 
-<p float="left">
-    <img src="https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-day.svg" alt="Partly Cloudy Day" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day.svg" alt="Partly Cloudy Day" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/rain.svg" alt="Rain" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/tornado.svg" alt="Tornado" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-night.svg" alt="Clear Night" height="48"/>
-</p>
-
-<p float="left">
-    <img src="https://bmcdn.nl/assets/weather-icons/v2.0/line/clear-day.svg" alt="Partly Cloudy Day" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v2.0/line/partly-cloudy-day.svg" alt="Partly Cloudy Day" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v2.0/line/rain.svg" alt="Rain" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v2.0/line/tornado.svg" alt="Tornado" height="48"/>
-    <img src="https://bmcdn.nl/assets/weather-icons/v2.0/line/clear-night.svg" alt="Clear Night" height="48"/>
+<p align="center">
+    <a href="https://bas.dev" target="_blank" rel="noopener">
+        <img src="https://bmcdn.nl/assets/branding/logo.svg" alt="Bas-logo" height="30"/>
+    </a>
 </p>

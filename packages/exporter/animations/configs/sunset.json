@@ -1,0 +1,31 @@
+{
+    "targets": [
+        "clear-day",
+        "horizon",
+        "rainbow-clear",
+        "sun-hot",
+        "sunrise",
+        "sunset",
+        "time-afternoon",
+        "time-evening",
+        "time-late-afternoon",
+        "time-late-morning",
+        "time-morning",
+        "uv-index",
+        "uv-index-1",
+        "uv-index-10",
+        "uv-index-11",
+        "uv-index-11-plus",
+        "uv-index-2",
+        "uv-index-3",
+        "uv-index-4",
+        "uv-index-5",
+        "uv-index-6",
+        "uv-index-7",
+        "uv-index-8",
+        "uv-index-9"
+    ],
+    "includes": [
+        "sun"
+    ]
+}

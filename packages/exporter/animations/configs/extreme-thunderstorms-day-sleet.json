@@ -1,0 +1,12 @@
+{
+    "targets": [
+        "extreme-thunderstorms-day-sleet",
+        "extreme-thunderstorms-mostly-clear-day-sleet"
+    ],
+    "includes": [
+        "sun",
+        "clouds",
+        "sleet",
+        "lightning"
+    ]
+}

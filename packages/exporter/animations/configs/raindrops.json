@@ -1,0 +1,33 @@
+{
+    "targets": [
+        "raindrops"
+    ],
+    "layers": {
+        "Raindrop": {
+            "transform": "scale",
+            "values": [
+                1,
+                1,
+                1.1,
+                1.1,
+                1,
+                1
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        },
+        "Raindrop_2": {
+            "transform": "scale",
+            "values": [
+                1,
+                1,
+                1.1,
+                1.1,
+                1,
+                1
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

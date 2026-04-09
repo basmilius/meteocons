@@ -1,0 +1,11 @@
+{
+    "targets": [
+        "mostly-clear-day-snow",
+        "partly-cloudy-day-snow"
+    ],
+    "includes": [
+        "sun",
+        "clouds",
+        "snow"
+    ]
+}

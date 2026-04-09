@@ -1,0 +1,37 @@
+{
+    "targets": [
+        "thunderstorms-mostly-clear-night-fog",
+        "thunderstorms-mostly-clear-night-haze",
+        "thunderstorms-night-fog",
+        "thunderstorms-night-haze"
+    ],
+    "includes": [
+        "moon",
+        "clouds",
+        "lightning"
+    ],
+    "layers": {
+        "Line 2": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 1": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0.2
+        }
+    }
+}

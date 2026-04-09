@@ -1,0 +1,22 @@
+{
+    "targets": [
+        "umbrella-wind",
+        "umbrella-wind-alt"
+    ],
+    "includes": [
+        "wind-lines"
+    ],
+    "layers": {
+        "Umbrella": {
+            "transform": "rotate",
+            "values": [
+                -6,
+                6,
+                -6
+            ],
+            "origin": "center",
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "layers": {
+        "Clouds": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

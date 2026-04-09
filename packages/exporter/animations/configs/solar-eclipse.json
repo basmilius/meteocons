@@ -1,0 +1,9 @@
+{
+    "targets": [
+        "solar-eclipse"
+    ],
+    "includes": [
+        "sun",
+        "moon"
+    ]
+}

@@ -1,0 +1,114 @@
+---
+interface Props {
+    id: string;
+    bun: string;
+    npm: string;
+    yarn: string;
+    pnpm: string;
+}
+
+const {id, bun, npm, yarn, pnpm} = Astro.props;
+
+const managers = [
+    {key: 'bun', label: 'Bun', command: bun},
+    {key: 'npm', label: 'npm', command: npm},
+    {key: 'yarn', label: 'Yarn', command: yarn},
+    {key: 'pnpm', label: 'pnpm', command: pnpm},
+];
+---
+
+<div class="pm-tabs">
+    {managers.map((pm, i) => (
+        <Fragment>
+            <input
+                type="radio"
+                name={`pm-${id}`}
+                id={`pm-${id}-${pm.key}`}
+                class="pm-radio"
+                checked={i === 0}
+            />
+            <label for={`pm-${id}-${pm.key}`} class="pm-label">{pm.label}</label>
+        </Fragment>
+    ))}
+    {managers.map(pm => (
+        <pre class="pm-panel" data-pm={pm.key}><code>{pm.command}</code></pre>
+    ))}
+</div>
+
+<style>
+    .pm-tabs {
+        display: grid;
+        grid-template-columns: repeat(4, auto) 1fr;
+        grid-template-rows: auto auto;
+        margin-bottom: 24px;
+    }
+
+    .pm-radio {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .pm-label {
+        grid-row: 1;
+        padding: 8px 16px;
+        font-family: var(--font-body);
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        background: #1a1e2e;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: color 0.15s, border-color 0.15s;
+        user-select: none;
+    }
+
+    .pm-label:first-of-type {
+        border-radius: var(--radius-md) 0 0 0;
+    }
+
+    .pm-label:hover {
+        color: var(--text-faint);
+    }
+
+    .pm-panel {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        display: none;
+        margin: 0 !important;
+        border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
+    }
+
+    /* Show the panel that corresponds to the checked radio */
+    .pm-radio:nth-of-type(1):checked ~ .pm-panel:nth-of-type(1),
+    .pm-radio:nth-of-type(2):checked ~ .pm-panel:nth-of-type(2),
+    .pm-radio:nth-of-type(3):checked ~ .pm-panel:nth-of-type(3),
+    .pm-radio:nth-of-type(4):checked ~ .pm-panel:nth-of-type(4) {
+        display: block;
+    }
+
+    /* Active label styling */
+    .pm-radio:nth-of-type(1):checked ~ .pm-label:nth-of-type(1),
+    .pm-radio:nth-of-type(2):checked ~ .pm-label:nth-of-type(2),
+    .pm-radio:nth-of-type(3):checked ~ .pm-label:nth-of-type(3),
+    .pm-radio:nth-of-type(4):checked ~ .pm-label:nth-of-type(4) {
+        color: var(--amber);
+        border-bottom-color: var(--amber);
+    }
+
+    /* Fill the remaining header space */
+    .pm-label:last-of-type::after {
+        content: '';
+        grid-row: 1;
+        grid-column: 5;
+    }
+
+    /* Top-right radius on header row */
+    .pm-tabs::after {
+        content: '';
+        grid-row: 1;
+        grid-column: 5;
+        background: #1a1e2e;
+        border-radius: 0 var(--radius-md) 0 0;
+    }
+</style>

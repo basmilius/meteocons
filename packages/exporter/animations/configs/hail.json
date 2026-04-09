@@ -1,0 +1,9 @@
+{
+    "targets": [
+        "hail"
+    ],
+    "includes": [
+        "clouds",
+        "hail"
+    ]
+}

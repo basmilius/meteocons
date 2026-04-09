@@ -1,0 +1,205 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+    frontmatter: {
+        title: string;
+        description?: string;
+    };
+}
+
+const {frontmatter} = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+    {href: '/docs/getting-started', label: 'Getting Started'},
+    {href: '/docs/usage', label: 'Usage'},
+    {href: '/docs/frameworks', label: 'Frameworks'},
+    {href: '/docs/api', label: 'API Reference'},
+];
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+    <div class="docs">
+        <aside class="sidebar">
+            <nav>
+                <div class="sidebar-label">Documentation</div>
+                <ul>
+                    {navItems.map(item => (
+                        <li>
+                            <a
+                                href={item.href}
+                                class:list={[{active: currentPath === item.href || currentPath === item.href + '/'}]}
+                            >
+                                {item.label}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </aside>
+        <article class="content">
+            <div class="content-header">
+                <h1>{frontmatter.title}</h1>
+            </div>
+            <div class="prose">
+                <slot/>
+            </div>
+        </article>
+    </div>
+</BaseLayout>
+
+<style>
+    .docs {
+        max-width: var(--content-width);
+        margin: 0 auto;
+        padding: 48px 28px;
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 64px;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: calc(var(--nav-height) + 32px);
+        align-self: start;
+    }
+
+    .sidebar-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-muted);
+        padding: 0 14px;
+        margin-bottom: 12px;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar li {
+        margin-bottom: 2px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--text-secondary);
+        transition: all 0.15s;
+    }
+
+    .sidebar a:hover {
+        color: var(--text);
+        background: var(--bg-surface);
+    }
+
+    .sidebar a.active {
+        color: var(--amber);
+        background: var(--amber-bg);
+        font-weight: 500;
+    }
+
+    .content {
+        min-width: 0;
+        max-width: var(--content-narrow);
+    }
+
+    .content-header h1 {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    /* Prose styles for markdown content */
+    .prose :global(h2) {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 400;
+        margin-top: 56px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .prose :global(h3) {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 36px;
+        margin-bottom: 12px;
+    }
+
+    .prose :global(p) {
+        margin-bottom: 16px;
+        color: var(--text-secondary);
+        line-height: 1.75;
+    }
+
+    .prose :global(ul),
+    .prose :global(ol) {
+        margin-bottom: 16px;
+        padding-left: 24px;
+        color: var(--text-secondary);
+    }
+
+    .prose :global(li) {
+        margin-bottom: 6px;
+        line-height: 1.75;
+    }
+
+    .prose :global(pre) {
+        margin-bottom: 24px;
+    }
+
+    .prose :global(strong) {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .prose :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+    }
+
+    .prose :global(th),
+    .prose :global(td) {
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        text-align: left;
+        font-size: 0.9rem;
+    }
+
+    .prose :global(th) {
+        background: var(--bg-surface);
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .prose :global(td) {
+        color: var(--text-secondary);
+    }
+
+    .prose :global(hr) {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 48px 0;
+    }
+
+    @media (max-width: 768px) {
+        .docs {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .sidebar {
+            position: static;
+        }
+    }
+</style>

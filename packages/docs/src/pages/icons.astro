@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IconBrowser from '../components/vue/IconBrowser.vue';
+---
+
+<BaseLayout title="Icon Browser" description="Browse 475+ animated weather icons in Fill, Flat, Line and Monochrome.">
+    <div class="icons-page">
+        <IconBrowser client:load/>
+    </div>
+</BaseLayout>
+
+<style>
+    .icons-page {
+        max-width: var(--content-width);
+        margin: 0 auto;
+        padding: 0 28px;
+    }
+</style>

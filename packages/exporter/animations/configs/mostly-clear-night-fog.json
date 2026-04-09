@@ -1,0 +1,36 @@
+{
+    "targets": [
+        "mostly-clear-night-fog",
+        "mostly-clear-night-haze",
+        "partly-cloudy-night-fog",
+        "partly-cloudy-night-haze"
+    ],
+    "includes": [
+        "moon",
+        "clouds"
+    ],
+    "layers": {
+        "Line 2": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 1": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0.2
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "targets": [
+        "windsock",
+        "windsock-calm",
+        "windsock-moderate",
+        "windsock-weak"
+    ],
+    "layers": {
+        "Sock": {
+            "transform": "rotate",
+            "values": [
+                0,
+                4,
+                0
+            ],
+            "origin": "44.5px 41px",
+            "duration": "2s",
+            "easing": "ease-in-out"
+        }
+    }
+}

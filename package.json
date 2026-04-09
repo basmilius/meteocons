@@ -1,44 +1,29 @@
 {
-    "name": "@bybas/weather-icons",
-    "version": "3.0.0",
-    "description": "A set of animated svg weather icons.",
-    "homepage": "https://meteocons.com/",
-    "license": "MIT",
+    "name": "meteocons",
+    "private": true,
     "author": {
-        "name": "Bas Milius",
         "email": "bas@mili.us",
+        "name": "Bas Milius",
         "url": "https://bas.dev"
-    },
-    "main": "index.html",
-    "type": "module",
-    "bugs": {
-        "url": "https://github.com/basmilius/weather-icons/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/basmilius/weather-icons.git",
-        "directory": "packages/icons"
+        "url": "https://github.com/basmilius/meteocons-poc.git"
     },
-    "keywords": [
-        "openweathermap",
-        "tomorrow.io",
-        "icons",
-        "meteocons",
-        "weather icons",
-        "weather",
-        "bas milius",
-        "bybas"
+    "workspaces": [
+        "packages/*"
     ],
     "scripts": {
-        "build": "node scripts/build.js"
-    },
-    "devDependencies": {
-        "chalk": "5.0.0",
-        "fantasticon": "1.2.3",
-        "imagemin": "8.0.1",
-        "imagemin-optipng": "8.0.0",
-        "puppeteer": "13.0.1",
-        "rimraf": "3.0.2",
-        "svgo": "2.8.0"
+        "fetch": "bun packages/exporter/src/fetch.ts",
+        "fetch:force": "bun packages/exporter/src/fetch.ts --force",
+        "export": "bun packages/exporter/src/export.ts",
+        "list": "bun packages/exporter/src/fetch.ts --list",
+        "validate": "bun packages/exporter/src/validate.ts",
+        "publish-icons": "bun packages/exporter/src/publish-icons.ts",
+        "preview:dev": "bun --filter @meteocons/preview dev",
+        "preview:build": "bun --filter @meteocons/preview build",
+        "preview:deploy": "bun --filter @meteocons/preview deploy",
+        "docs:dev": "bun --filter @meteocons/docs dev",
+        "docs:build": "bun --filter @meteocons/docs build"
     }
 }

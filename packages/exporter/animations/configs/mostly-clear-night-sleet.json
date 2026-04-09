@@ -1,0 +1,11 @@
+{
+    "targets": [
+        "mostly-clear-night-sleet",
+        "partly-cloudy-night-sleet"
+    ],
+    "includes": [
+        "moon",
+        "clouds",
+        "sleet"
+    ]
+}

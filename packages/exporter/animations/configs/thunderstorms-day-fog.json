@@ -1,0 +1,37 @@
+{
+    "targets": [
+        "thunderstorms-day-fog",
+        "thunderstorms-day-haze",
+        "thunderstorms-mostly-clear-day-fog",
+        "thunderstorms-mostly-clear-day-haze"
+    ],
+    "includes": [
+        "sun",
+        "clouds",
+        "lightning"
+    ],
+    "layers": {
+        "Line 2": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 1": {
+            "transform": "translateX",
+            "values": [
+                0,
+                3,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0.2
+        }
+    }
+}

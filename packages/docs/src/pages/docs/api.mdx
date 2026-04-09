@@ -1,0 +1,217 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: API Reference
+description: Types, manifest structure, and naming conventions for Meteocons.
+---
+import PmTabs from '../../components/PmTabs.astro';
+
+Reference for the `@meteocons/svg` and `@meteocons/lottie` packages.
+
+## Packages
+
+| Package             | Contents               | Format  |
+|---------------------|------------------------|---------|
+| `@meteocons/svg`    | Animated SVG files     | `.svg`  |
+| `@meteocons/lottie` | Lottie JSON animations | `.json` |
+
+Both packages have identical directory structures, manifests, and TypeScript types.
+
+### Install
+
+<PmTabs
+    id="install-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
+<PmTabs
+    id="install-lottie"
+    bun="bun add @meteocons/lottie"
+    npm="npm install @meteocons/lottie"
+    yarn="yarn add @meteocons/lottie"
+    pnpm="pnpm add @meteocons/lottie"
+/>
+
+## TypeScript types
+
+Both packages export the following types from `index.d.ts`:
+
+```typescript
+export interface IconEntry {
+    slug: string;       // e.g. "clear-day"
+    name: string;       // e.g. "clear-day"
+    animated: boolean;  // true if icon has animation keyframes
+}
+
+export interface IconCategory {
+    name: string;       // e.g. "Standard"
+    slug: string;       // e.g. "standard"
+    icons: IconEntry[];
+}
+
+export interface IconManifest {
+    styles: string[];           // ["fill", "flat", "line", "monochrome"]
+    categories: IconCategory[];
+}
+```
+
+Import types in your project:
+
+```typescript
+import type { IconManifest, IconCategory, IconEntry } from '@meteocons/svg';
+```
+
+## Manifest
+
+Both packages include a `manifest.json` with metadata about all icons. This is useful for building icon pickers, search interfaces, or generating documentation.
+
+```typescript
+import type { IconManifest } from '@meteocons/svg';
+import manifest from '@meteocons/svg/manifest.json';
+
+// Access styles
+console.log(manifest.styles); // ["fill", "flat", "line", "monochrome"]
+
+// Access categories
+for (const category of manifest.categories) {
+    console.log(`${category.name} (${category.slug}): ${category.icons.length} icons`);
+}
+```
+
+### Query examples
+
+```typescript
+import manifest from '@meteocons/svg/manifest.json';
+
+// Flatten all icons into a single list
+const allIcons = manifest.categories.flatMap(c => c.icons);
+
+// Find all rain-related icons
+const rainIcons = allIcons.filter(icon => icon.slug.includes('rain'));
+// → ["rain", "drizzle", "partly-cloudy-day-rain", "thunderstorms-rain", ...]
+
+// Get only animated icons
+const animated = allIcons.filter(icon => icon.animated);
+
+// Get icons by category
+const standardIcons = manifest.categories
+    .find(c => c.slug === 'standard')
+    ?.icons ?? [];
+
+// Search icons by partial match
+function searchIcons(query: string): IconEntry[] {
+    const q = query.toLowerCase();
+    return allIcons.filter(icon => icon.slug.includes(q));
+}
+
+// Build a slug → category lookup
+const categoryBySlug = new Map<string, string>();
+for (const category of manifest.categories) {
+    for (const icon of category.icons) {
+        categoryBySlug.set(icon.slug, category.name);
+    }
+}
+```
+
+## Styles
+
+| Style          | Path               | Description                                            |
+|----------------|--------------------|--------------------------------------------------------|
+| **Fill**       | `fill/*.svg`       | Colorful with gradients — the most visually rich style |
+| **Flat**       | `flat/*.svg`       | Solid colors, no gradients — clean and consistent      |
+| **Line**       | `line/*.svg`       | Outline-based — minimal and lightweight                |
+| **Monochrome** | `monochrome/*.svg` | Single color, uses `currentColor` — adapts to context  |
+
+All four styles contain the same set of icons. The monochrome style is unique in that it uses `currentColor` instead of fixed colors, allowing icons to inherit the parent element's text color.
+
+## File naming
+
+Icons use kebab-case slugs following a consistent pattern:
+
+```
+{condition}[-{time}][-{variant}].{ext}
+```
+
+| Part        | Description                | Examples                        |
+|-------------|----------------------------|---------------------------------|
+| `condition` | The weather condition      | `clear`, `rain`, `snow`, `wind` |
+| `time`      | Optional day/night variant | `day`, `night`                  |
+| `variant`   | Optional modifier          | `rain`, `snow`, `sleet`, `fog`  |
+
+### Examples
+
+| Slug                     | Description                       |
+|--------------------------|-----------------------------------|
+| `clear-day`              | Clear sky, daytime                |
+| `clear-night`            | Clear sky, nighttime              |
+| `partly-cloudy-day`      | Partly cloudy, daytime            |
+| `rain`                   | Rain (generic, no time-of-day)    |
+| `thunderstorms-day-rain` | Thunderstorms with rain, daytime  |
+| `snow`                   | Snow                              |
+| `wind`                   | Wind                              |
+| `fog-day`                | Fog, daytime                      |
+| `thermometer`            | Generic thermometer               |
+| `thermometer-warmer`     | Thermometer showing warming trend |
+| `barometer`              | Barometer                         |
+| `wind-beaufort-1`        | Beaufort scale level 1            |
+| `moon-waxing-crescent`   | Moon phase: waxing crescent       |
+| `uv-index-1`             | UV index level 1                  |
+
+## Categories
+
+Icons are organized into the following categories:
+
+| Category        | Slug          | Description                                          |
+|-----------------|---------------|------------------------------------------------------|
+| **Standard**    | `standard`    | Weather conditions — clear, cloudy, rain, snow, etc. |
+| **Thermometer** | `thermometer` | Temperature indicators and trends                    |
+| **Barometer**   | `barometer`   | Air pressure indicators                              |
+| **Wind**        | `wind`        | Wind direction arrows and Beaufort scale             |
+| **Moon**        | `moon`        | Lunar phases                                         |
+| **UV Index**    | `uv-index`    | UV radiation levels (1–11+)                          |
+| **Alerts**      | `alerts`      | Weather warnings and extreme conditions              |
+
+## Animated vs static
+
+The `animated` field in each `IconEntry` indicates whether an icon has animation keyframes. Static icons (like wind direction arrows or UV index badges) are included in both packages — they render as still images.
+
+```typescript
+const allIcons = manifest.categories.flatMap(c => c.icons);
+
+const animated = allIcons.filter(icon => icon.animated);
+const static_ = allIcons.filter(icon => !icon.animated);
+
+console.log(`${animated.length} animated, ${static_.length} static`);
+```
+
+## Exports map
+
+Both packages use Node.js subpath exports for direct file imports:
+
+```json
+{
+    "exports": {
+        "./*": "./*",
+        "./manifest.json": "./manifest.json"
+    }
+}
+```
+
+This means you can import any file directly by path:
+
+```typescript
+// SVG files
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
+import rain from '@meteocons/svg/line/rain.svg';
+
+// Lottie JSON
+import clearDayLottie from '@meteocons/lottie/fill/clear-day.json';
+
+// Manifest
+import manifest from '@meteocons/svg/manifest.json';
+
+// Types
+import type { IconManifest, IconEntry } from '@meteocons/svg';
+```

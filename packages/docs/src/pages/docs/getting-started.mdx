@@ -1,0 +1,226 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Getting Started
+description: Install and start using Meteocons animated weather icons.
+---
+import PmTabs from '../../components/PmTabs.astro';
+
+Meteocons ships as two npm packages — **animated SVG** and **Lottie JSON**. Pick the format that fits your project, or install both.
+
+## Which format should I use?
+
+| | SVG | Lottie |
+|---|---|---|
+| **Best for** | Websites, web apps | Native apps, complex animations |
+| **How it works** | Native `<animate>` elements — no runtime needed | Requires a Lottie player (lottie-web, lottie-ios, etc.) |
+| **File size** | Very small (2–8 KB) | Larger (5–20 KB) |
+| **Rendering** | Crisp at any size, rendered by the browser | Canvas or SVG renderer via player |
+| **Customization** | CSS styling, `currentColor` in monochrome | Playback control (speed, direction, segments) |
+| **Platform** | Any browser or SVG viewer | Web, iOS, Android, React Native, Flutter |
+
+**Recommendation:** use SVG for web projects and Lottie when you need playback control or are building a native app.
+
+## Installation
+
+### SVG icons
+
+<PmTabs
+    id="install-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
+### Lottie icons
+
+<PmTabs
+    id="install-lottie"
+    bun="bun add @meteocons/lottie"
+    npm="npm install @meteocons/lottie"
+    yarn="yarn add @meteocons/lottie"
+    pnpm="pnpm add @meteocons/lottie"
+/>
+
+### Both packages
+
+<PmTabs
+    id="install-both"
+    bun="bun add @meteocons/svg @meteocons/lottie"
+    npm="npm install @meteocons/svg @meteocons/lottie"
+    yarn="yarn add @meteocons/svg @meteocons/lottie"
+    pnpm="pnpm add @meteocons/svg @meteocons/lottie"
+/>
+
+## Quick start
+
+### SVG — image tag
+
+The simplest way to render an icon. Animations start automatically.
+
+```html
+<img
+    src="node_modules/@meteocons/svg/fill/clear-day.svg"
+    alt="Clear day"
+    width="64"
+    height="64"
+/>
+```
+
+### SVG — bundler import
+
+With a bundler like Vite, Webpack, or Turbopack you can import SVGs directly:
+
+```javascript
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
+
+const img = document.createElement('img');
+img.src = clearDay;
+img.width = 64;
+img.height = 64;
+img.alt = 'Clear day';
+document.body.appendChild(img);
+```
+
+### SVG — inline for full control
+
+Fetch and inline the SVG to access individual elements, apply CSS, or control animations:
+
+```javascript
+const response = await fetch('/icons/fill/clear-day.svg');
+const svgMarkup = await response.text();
+
+const container = document.getElementById('weather-icon');
+container.innerHTML = svgMarkup;
+
+// Now you can style individual elements with CSS
+const svg = container.querySelector('svg');
+svg.style.width = '128px';
+svg.style.height = '128px';
+```
+
+### Lottie — web
+
+Install `lottie-web` alongside the icon package:
+
+<PmTabs
+    id="install-lottie-web"
+    bun="bun add @meteocons/lottie lottie-web"
+    npm="npm install @meteocons/lottie lottie-web"
+    yarn="yarn add @meteocons/lottie lottie-web"
+    pnpm="pnpm add @meteocons/lottie lottie-web"
+/>
+
+```javascript
+import lottie from 'lottie-web';
+
+const animation = lottie.loadAnimation({
+    container: document.getElementById('weather-icon'),
+    path: '/path/to/@meteocons/lottie/fill/clear-day.json',
+    renderer: 'svg',    // or 'canvas' for better performance
+    loop: true,
+    autoplay: true
+});
+
+// Control playback
+animation.setSpeed(0.5);    // half speed
+animation.pause();
+animation.play();
+animation.destroy();        // clean up when done
+```
+
+### CDN usage
+
+Use icons directly from a CDN without installing anything. Great for prototyping or static HTML pages.
+
+```html
+<!-- unpkg -->
+<img
+    src="https://unpkg.com/@meteocons/svg/fill/clear-day.svg"
+    alt="Clear day"
+    width="64"
+    height="64"
+/>
+
+<!-- jsDelivr -->
+<img
+    src="https://cdn.jsdelivr.net/npm/@meteocons/svg/fill/clear-day.svg"
+    alt="Clear day"
+    width="64"
+    height="64"
+/>
+```
+
+## Package structure
+
+Both packages follow the same layout with four icon styles:
+
+```
+@meteocons/svg/
+├── fill/              Filled, colorful icons with gradients
+├── flat/              Flat design — solid colors, no gradients
+├── line/              Outline-based, minimal weight
+├── monochrome/        Single-color, inherits currentColor
+├── manifest.json      Icon metadata and categories
+└── index.d.ts         TypeScript type definitions
+```
+
+Every style directory contains one file per icon, named by slug:
+
+```
+fill/clear-day.svg
+fill/rain.svg
+fill/snow.svg
+fill/thunderstorms-day-rain.svg
+```
+
+The `@meteocons/lottie` package has the same structure, but with `.json` files instead of `.svg`.
+
+## Styles
+
+Meteocons comes in four distinct styles. Every icon is available in all four.
+
+| Style | Look | Best for |
+|-------|------|----------|
+| **Fill** | Rich gradients and vibrant color | General use, dashboards, weather apps |
+| **Flat** | Solid colors, no gradients | Clean UIs, consistent color schemes |
+| **Line** | Outline only, thin strokes | Minimal interfaces, small sizes |
+| **Monochrome** | Single color, uses `currentColor` | Adaptive UIs, dark mode, theming |
+
+The **monochrome** style is special — it uses `currentColor`, so the icons automatically match your text color. This makes it ideal for dark mode or themed interfaces:
+
+```css
+/* Icons follow the text color */
+.weather-widget {
+    color: #334155;
+}
+
+/* Dark mode — icons adapt automatically */
+@media (prefers-color-scheme: dark) {
+    .weather-widget {
+        color: #e2e8f0;
+    }
+}
+```
+
+## TypeScript
+
+Both packages ship with TypeScript declarations. Import types directly:
+
+```typescript
+import type { IconManifest, IconCategory, IconEntry } from '@meteocons/svg';
+import manifest from '@meteocons/svg/manifest.json';
+
+// Full type safety
+const categories: IconCategory[] = manifest.categories;
+const firstIcon: IconEntry = categories[0].icons[0];
+
+console.log(firstIcon.slug);     // "clear-day"
+console.log(firstIcon.animated);  // true
+```
+
+## Next steps
+
+- [Usage patterns](/docs/usage) — inline SVG, lazy loading, dynamic icons, accessibility
+- [Framework guides](/docs/frameworks) — React, Vue, Svelte, Angular, and more
+- [API reference](/docs/api) — types, manifest, naming conventions

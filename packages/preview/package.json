@@ -1,0 +1,26 @@
+{
+    "name": "@meteocons/preview",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "prepare-icons": "bun scripts/prepare-icons.ts",
+        "dev": "bun scripts/prepare-icons.ts && vite",
+        "build": "bun scripts/prepare-icons.ts && vite build",
+        "preview": "vite preview",
+        "deploy": "bun run build && wrangler deploy"
+    },
+    "dependencies": {
+        "@meteocons/svg": "workspace:*",
+        "@meteocons/lottie": "workspace:*",
+        "lottie-web": "^5.12.2",
+        "vue": "^3.5.13"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.2.3",
+        "typescript": "^5.7.3",
+        "vite": "^6.3.1",
+        "vue-tsc": "^2.2.8",
+        "wrangler": "^4.80.0"
+    }
+}

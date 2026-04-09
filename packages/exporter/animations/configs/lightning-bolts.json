@@ -1,0 +1,8 @@
+{
+    "targets": [
+        "lightning-bolts"
+    ],
+    "includes": [
+        "lightning"
+    ]
+}

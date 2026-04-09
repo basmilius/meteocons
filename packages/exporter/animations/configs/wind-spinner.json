@@ -1,0 +1,15 @@
+{
+    "targets": [
+        "wind-spinner"
+    ],
+    "layers": {
+        "Blades": {
+            "transform": "rotate",
+            "from": 0,
+            "to": -360,
+            "origin": "64px 61px",
+            "duration": "6s",
+            "easing": "linear"
+        }
+    }
+}

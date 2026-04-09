@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
-    <defs>
-        <symbol id="a" viewBox="0 0 96 176">
-            <polygon points="32 0 0 96 32 96 16 176 96 64 48 64 80 0 32 0" fill="#f6a823"/>
-        </symbol>
-    </defs>
-    <use width="96" height="176" transform="translate(190.13 132.72) scale(1.36 1.36)" xlink:href="#a"/>
-</svg>

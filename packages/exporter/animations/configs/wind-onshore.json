@@ -1,0 +1,26 @@
+{
+    "targets": [
+        "wind-offshore",
+        "wind-onshore"
+    ],
+    "includes": [
+        "wind-lines"
+    ],
+    "layers": {
+        "Water": {
+            "animations": [
+                {
+                    "transform": "scaleY",
+                    "values": [
+                        1,
+                        1.08,
+                        1
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "origin": "bottom"
+                }
+            ]
+        }
+    }
+}

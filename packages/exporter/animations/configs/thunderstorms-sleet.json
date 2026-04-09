@@ -1,0 +1,10 @@
+{
+    "targets": [
+        "thunderstorms-sleet"
+    ],
+    "includes": [
+        "clouds",
+        "sleet",
+        "lightning"
+    ]
+}

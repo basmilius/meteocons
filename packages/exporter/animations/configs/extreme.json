@@ -1,0 +1,10 @@
+{
+    "targets": [
+        "extreme",
+        "overcast"
+    ],
+    "includes": [
+        "clouds",
+        "clouds-alt"
+    ]
+}

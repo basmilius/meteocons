@@ -1,0 +1,12 @@
+{
+    "targets": [
+        "extreme-thunderstorms-extreme-day",
+        "extreme-thunderstorms-overcast-day"
+    ],
+    "includes": [
+        "sun",
+        "clouds",
+        "clouds-alt",
+        "lightning"
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "targets": [
+        "thermometer-water"
+    ],
+    "layers": {
+        "Value": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -2,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        },
+        "Water": {
+            "animations": [
+                {
+                    "transform": "scaleY",
+                    "values": [
+                        1,
+                        1.08,
+                        1
+                    ],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "origin": "bottom"
+                }
+            ]
+        }
+    }
+}

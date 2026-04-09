@@ -1,0 +1,97 @@
+{
+    "layers": {
+        "Ice Ball 1": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [
+                        0,
+                        20
+                    ],
+                    "duration": "1s",
+                    "easing": "ease-in",
+                    "delay": 0
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.15,
+                        0.85,
+                        1
+                    ],
+                    "duration": "1s",
+                    "delay": 0
+                }
+            ]
+        },
+        "Ice Ball 2": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [
+                        0,
+                        20
+                    ],
+                    "duration": "1s",
+                    "easing": "ease-in",
+                    "delay": 0.3
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.15,
+                        0.85,
+                        1
+                    ],
+                    "duration": "1s",
+                    "delay": 0.3
+                }
+            ]
+        },
+        "Ice Ball 3": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [
+                        0,
+                        20
+                    ],
+                    "duration": "1s",
+                    "easing": "ease-in",
+                    "delay": 0.6
+                },
+                {
+                    "property": "opacity",
+                    "values": [
+                        0,
+                        1,
+                        1,
+                        0
+                    ],
+                    "keyTimes": [
+                        0,
+                        0.15,
+                        0.85,
+                        1
+                    ],
+                    "duration": "1s",
+                    "delay": 0.6
+                }
+            ]
+        }
+    }
+}

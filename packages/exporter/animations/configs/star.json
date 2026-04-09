@@ -1,0 +1,17 @@
+{
+    "targets": [
+        "star"
+    ],
+    "layers": {
+        "Star": {
+            "property": "opacity",
+            "values": [
+                1,
+                0.3,
+                1
+            ],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        }
+    }
+}

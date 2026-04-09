@@ -1,0 +1,33 @@
+{
+    "targets": [
+        "beanie",
+        "celsius",
+        "fahrenheit",
+        "flag-cold-wave",
+        "flag-fair",
+        "flag-gale-warning",
+        "flag-hurricane-warning",
+        "flag-local-rain",
+        "flag-ne-storm-warning",
+        "flag-nw-storm-warning",
+        "flag-rain",
+        "flag-se-storm-warning",
+        "flag-small-craft-advisory",
+        "flag-storm-warning",
+        "flag-sw-storm-warning",
+        "flag-temperature-change",
+        "glove",
+        "kelvin",
+        "moon-new",
+        "not-available",
+        "pressure-high-alt",
+        "pressure-low-alt",
+        "rainbow",
+        "rainbow-cloud",
+        "snowman",
+        "thermometer-glass",
+        "thermometer-glass-celsius",
+        "thermometer-glass-fahrenheit"
+    ],
+    "static": true
+}

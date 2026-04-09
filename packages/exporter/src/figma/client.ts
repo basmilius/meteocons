@@ -5,6 +5,9 @@ const BASE = 'https://api.figma.com/v1';
 /** Milliseconds to wait between batch export requests. */
 const BATCH_DELAY_MS = 500;
 
+/** Maximum number of concurrent S3 downloads per batch. */
+const CONCURRENCY = 10;
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /** Minimal Figma REST API client. */
@@ -44,6 +47,46 @@ export class FigmaClient {
         }
 
         throw new Error('Unreachable');
+    }
+
+    /**
+     * Downloads a single SVG from a signed S3 URL with exponential backoff
+     * on transient network errors (ECONNRESET, timeouts, 5xx).
+     */
+    private async downloadWithRetry(url: string, nodeId: string): Promise<string> {
+        const MAX_RETRIES = 3;
+
+        for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                const res = await fetch(url);
+
+                if (res.status >= 500 && attempt < MAX_RETRIES) {
+                    const delay = 1000 * 2 ** attempt;
+                    console.warn(`  ⏳ S3 ${res.status} for ${nodeId} — retrying in ${delay / 1000}s…`);
+                    await sleep(delay);
+                    continue;
+                }
+
+                if (!res.ok) {
+                    console.warn(`  ⚠  Failed to download SVG for ${nodeId}: ${res.status}`);
+                    return '';
+                }
+
+                return await res.text();
+            } catch (error: unknown) {
+                if (attempt === MAX_RETRIES) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    console.warn(`  ⚠  Download failed for ${nodeId} after ${MAX_RETRIES} retries: ${message}`);
+                    return '';
+                }
+
+                const delay = 1000 * 2 ** attempt;
+                console.warn(`  ⏳ Network error for ${nodeId} — retrying in ${delay / 1000}s…`);
+                await sleep(delay);
+            }
+        }
+
+        return '';
     }
 
     // ----- Public -----
@@ -87,23 +130,20 @@ export class FigmaClient {
                 throw new Error(`Figma export error: ${res.err}`);
             }
 
-            // Download all SVGs in parallel.
-            await Promise.all(
-                Object.entries(res.images).map(async ([nodeId, url]) => {
-                    if (!url) {
-                        console.warn(`  ⚠  No URL returned for node ${nodeId}`);
-                        return;
-                    }
+            // Download SVGs with bounded concurrency and retry.
+            const entries = Object.entries(res.images);
+            for (let j = 0; j < entries.length; j += CONCURRENCY) {
+                await Promise.all(
+                    entries.slice(j, j + CONCURRENCY).map(async ([nodeId, url]) => {
+                        if (!url) {
+                            console.warn(`  ⚠  No URL returned for node ${nodeId}`);
+                            return;
+                        }
 
-                    const svgRes = await fetch(url);
-                    if (!svgRes.ok) {
-                        console.warn(`  ⚠  Failed to download SVG for ${nodeId}: ${svgRes.status}`);
-                        return;
-                    }
-
-                    result[nodeId] = await svgRes.text();
-                })
-            );
+                        result[nodeId] = await this.downloadWithRetry(url, nodeId);
+                    })
+                );
+            }
         }
 
         return result;

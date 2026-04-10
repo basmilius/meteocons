@@ -52,6 +52,17 @@ Each icon is available in 4 styles:
 </script>
 ```
 
+## CDN
+
+All icons are also available via CDN at `cdn.meteocons.com`:
+
+```
+https://cdn.meteocons.com/{version}/svg/{style}/{icon}.svg
+https://cdn.meteocons.com/{version}/lottie/{style}/{icon}.json
+```
+
+See the [CDN documentation](https://meteocons.com/docs/cdn) for details.
+
 ## Development
 
 This is the monorepo for the Meteocons export pipeline, icon packages, documentation and preview website.

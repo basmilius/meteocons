@@ -1,5 +1,7 @@
 <script setup lang="ts">
-    import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+    import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+    import lottie from 'lottie-web';
+    import type { AnimationItem } from 'lottie-web';
 
     type Style = 'fill' | 'flat' | 'line' | 'monochrome';
 
@@ -33,6 +35,9 @@
     const selectedIcon = ref<IconEntry | null>(null);
     const detailStyle = ref<Style>('fill');
     const copiedAction = ref('');
+    const previewMode = ref<'svg' | 'lottie'>('svg');
+    const lottieContainer = ref<HTMLElement | null>(null);
+    let lottieAnimation: AnimationItem | null = null;
 
     const allCategories = computed(() => manifest.value?.categories ?? []);
 
@@ -140,6 +145,51 @@
         const text = await res.text();
         await copyText(text, 'svg');
     }
+
+    function destroyLottie(): void {
+        if (lottieAnimation) {
+            lottieAnimation.destroy();
+            lottieAnimation = null;
+        }
+    }
+
+    async function loadLottie(): Promise<void> {
+        destroyLottie();
+        await nextTick();
+
+        if (!selectedIcon.value || previewMode.value !== 'lottie' || !lottieContainer.value) {
+            return;
+        }
+
+        const url = `/icons/${detailStyle.value}/${selectedIcon.value.slug}.json`;
+
+        try {
+            lottieAnimation = lottie.loadAnimation({
+                container: lottieContainer.value,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: url,
+            });
+        } catch {
+            // Lottie file might not exist for static icons
+        }
+    }
+
+    watch([previewMode, detailStyle], () => {
+        if (previewMode.value === 'lottie') {
+            loadLottie();
+        } else {
+            destroyLottie();
+        }
+    });
+
+    watch(selectedIcon, (icon) => {
+        if (!icon) {
+            destroyLottie();
+            previewMode.value = 'svg';
+        }
+    });
 
     function downloadFile(url: string, filename: string): void {
         const a = document.createElement('a');
@@ -294,12 +344,34 @@
                         </button>
 
                         <div class="detail-preview">
+                            <div class="preview-toggle">
+                                <button
+                                    :class="['toggle-btn', { active: previewMode === 'svg' }]"
+                                    @click="previewMode = 'svg'"
+                                >
+                                    SVG
+                                </button>
+                                <button
+                                    :class="['toggle-btn', { active: previewMode === 'lottie' }]"
+                                    @click="previewMode = 'lottie'"
+                                >
+                                    Lottie
+                                </button>
+                            </div>
+
                             <img
+                                v-if="previewMode === 'svg'"
                                 :src="svgUrl(selectedIcon.slug, detailStyle)"
                                 :alt="selectedIcon.name"
                                 width="160"
                                 height="160"
                                 :key="`${selectedIcon.slug}-${detailStyle}`"
+                            />
+                            <div
+                                v-else
+                                ref="lottieContainer"
+                                class="lottie-player"
+                                :key="`lottie-${selectedIcon.slug}-${detailStyle}`"
                             />
                         </div>
 
@@ -731,9 +803,49 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
         padding: 52px 32px 36px;
         background: var(--bg, #ffffff);
         border-bottom: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+    }
+
+    .preview-toggle {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        display: flex;
+        gap: 2px;
+        background: var(--bg-surface, #f1f3f6);
+        border-radius: 10px;
+        padding: 3px;
+    }
+
+    .toggle-btn {
+        padding: 5px 12px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted, #9ca3af);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .toggle-btn:hover {
+        color: var(--text-secondary, #4b5563);
+    }
+
+    .toggle-btn.active {
+        background: var(--bg, #ffffff);
+        color: var(--text, #111827);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .lottie-player {
+        width: 160px;
+        height: 160px;
     }
 
     .detail-info {

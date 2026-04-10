@@ -457,6 +457,29 @@
         ]
     },
     {
+        "name": "Solar and Power",
+        "icons": [
+            "solar-panel",
+            "solar-panel-day",
+            "solar-panel-night",
+            "solar-panel-cloudy",
+            "solar-panel-low",
+            "solar-panel-medium",
+            "solar-panel-high",
+            "solar-panel-alert",
+            "solar-panel-battery-empty",
+            "solar-panel-battery-low",
+            "solar-panel-battery-half",
+            "solar-panel-battery-full",
+            "solar-panel-battery-charging",
+            "grid-eco",
+            "grid-solar",
+            "grid-price-low",
+            "grid-import",
+            "grid-export"
+        ]
+    },
+    {
         "name": "Thermometer",
         "icons": [
             "thermometer",

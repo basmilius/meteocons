@@ -1,0 +1,13 @@
+{
+    "targets": [
+        "solar-panel-battery-charging"
+    ],
+    "layers": {
+        "Level": {
+            "property": "opacity",
+            "values": [0.5, 1, 0.5],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        }
+    }
+}

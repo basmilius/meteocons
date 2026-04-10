@@ -1,0 +1,14 @@
+{
+    "targets": [
+        "grid-eco"
+    ],
+    "layers": {
+        "Vector": {
+            "transform": "rotate",
+            "values": [-3, 3, -3],
+            "origin": "center",
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

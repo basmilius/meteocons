@@ -1,0 +1,8 @@
+{
+    "targets": [
+        "solar-panel-night"
+    ],
+    "includes": [
+        "moon"
+    ]
+}

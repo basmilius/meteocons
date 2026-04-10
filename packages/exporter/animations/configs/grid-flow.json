@@ -1,0 +1,29 @@
+{
+    "targets": [
+        "grid-import",
+        "grid-export"
+    ],
+    "layers": {
+        "Arrow 1": {
+            "property": "opacity",
+            "values": [0, 1, 1, 0],
+            "keyTimes": [0, 0.15, 0.85, 1],
+            "duration": "1.5s",
+            "delay": 0
+        },
+        "Arrow 2": {
+            "property": "opacity",
+            "values": [0, 1, 1, 0],
+            "keyTimes": [0, 0.15, 0.85, 1],
+            "duration": "1.5s",
+            "delay": 0.4
+        },
+        "Arrow 3": {
+            "property": "opacity",
+            "values": [0, 1, 1, 0],
+            "keyTimes": [0, 0.15, 0.85, 1],
+            "duration": "1.5s",
+            "delay": 0.8
+        }
+    }
+}

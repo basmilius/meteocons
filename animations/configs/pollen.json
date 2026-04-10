@@ -3,8 +3,21 @@
         "pollen",
         "pollen-flower",
         "pollen-grass",
+        "pollen-grass-high",
+        "pollen-grass-low",
+        "pollen-grass-moderate",
+        "pollen-grass-very-high",
         "pollen-tree",
-        "pollen-tree-fir"
+        "pollen-tree-fir",
+        "pollen-tree-high",
+        "pollen-tree-low",
+        "pollen-tree-moderate",
+        "pollen-tree-very-high",
+        "pollen-weed",
+        "pollen-weed-high",
+        "pollen-weed-low",
+        "pollen-weed-moderate",
+        "pollen-weed-very-high"
     ],
     "layers": {
         "Pollen 7": {

@@ -1,13 +1,20 @@
 import { ref } from 'vue';
 import type { Style } from '../types';
+import { getUrlParam, setUrlParam } from './useUrlSync';
 
 const STORAGE_KEY = 'meteocons-style';
+const VALID_STYLES = ['fill', 'flat', 'line', 'monochrome'];
 const DEFAULT_STYLE: Style = 'fill';
 
 function loadStyle(): Style {
+    const urlStyle = getUrlParam('style');
+    if (urlStyle && VALID_STYLES.includes(urlStyle)) {
+        return urlStyle as Style;
+    }
+
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored && ['fill', 'flat', 'line', 'monochrome'].includes(stored)) {
+        if (stored && VALID_STYLES.includes(stored)) {
             return stored as Style;
         }
     } catch {
@@ -26,6 +33,7 @@ export function useStyleSwitcher() {
         } catch {
             // localStorage niet beschikbaar
         }
+        setUrlParam('style', style);
     }
 
     function svgUrl(slug: string): string {

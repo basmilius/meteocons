@@ -1,9 +1,10 @@
 <script
     setup
     lang="ts">
-    import { nextTick, ref, watch } from 'vue';
+    import { nextTick, onMounted, ref, watch } from 'vue';
     import type { Category, DisplayMode } from '../types';
     import { useScrollSpy } from '../composables/useScrollSpy';
+    import { getUrlParam, setUrlParam } from '../composables/useUrlSync';
     import AppHeader from './AppHeader.vue';
     import AppSidebar from './AppSidebar.vue';
     import IconGrid from './IconGrid.vue';
@@ -32,7 +33,16 @@
         if (section) {
             section.scrollIntoView({behavior: 'smooth', block: 'start'});
         }
+        setUrlParam('category', slug);
     }
+
+    onMounted(async () => {
+        const category = getUrlParam('category');
+        if (category) {
+            await nextTick();
+            scrollToCategory(category);
+        }
+    });
 </script>
 
 <template>

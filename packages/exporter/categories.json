@@ -351,6 +351,7 @@
         "icons": [
             "alert-avalanche-danger",
             "alert-falling-rocks",
+            "code-black",
             "code-green",
             "code-orange",
             "code-purple",
@@ -422,11 +423,6 @@
             "not-available",
             "lightning-bolt",
             "lightning-bolts",
-            "pollen",
-            "pollen-flower",
-            "pollen-grass",
-            "pollen-tree",
-            "pollen-tree-fir",
             "pressure-high",
             "pressure-high-alt",
             "pressure-low",
@@ -512,6 +508,29 @@
             "time-late-afternoon",
             "time-evening",
             "time-late-everning"
+        ]
+    },
+    {
+        "name": "Pollen",
+        "icons": [
+            "pollen",
+            "pollen-flower",
+            "pollen-grass",
+            "pollen-tree",
+            "pollen-tree-fir",
+            "pollen-weed",
+            "pollen-grass-low",
+            "pollen-grass-moderate",
+            "pollen-grass-high",
+            "pollen-grass-very-high",
+            "pollen-tree-low",
+            "pollen-tree-moderate",
+            "pollen-tree-high",
+            "pollen-tree-very-high",
+            "pollen-weed-low",
+            "pollen-weed-moderate",
+            "pollen-weed-high",
+            "pollen-weed-very-high"
         ]
     },
     {

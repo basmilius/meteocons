@@ -1,5 +1,6 @@
 {
     "targets": [
+        "code-black",
         "code-green",
         "code-orange",
         "code-purple",

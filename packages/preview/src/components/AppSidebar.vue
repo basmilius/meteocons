@@ -1,9 +1,10 @@
 <script
     setup
     lang="ts">
+    import { computed } from 'vue';
     import type { Category } from '../types';
 
-    defineProps<{
+    const props = defineProps<{
         categories: Category[]
         activeSlug: string
     }>();
@@ -11,13 +12,17 @@
     const emit = defineEmits<{
         navigate: [slug: string]
     }>();
+
+    const sortedCategories = computed(() =>
+        props.categories.toSorted((a, b) => a.name.localeCompare(b.name))
+    );
 </script>
 
 <template>
     <nav>
         <div class="nav-label">Categories</div>
         <a
-            v-for="category in categories"
+            v-for="category in sortedCategories"
             :key="category.slug"
             :class="{ active: activeSlug === category.slug }"
             href="#"

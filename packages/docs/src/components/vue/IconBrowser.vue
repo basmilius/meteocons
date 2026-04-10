@@ -46,6 +46,10 @@
 
     const allCategories = computed(() => manifest.value?.categories ?? []);
 
+    const sortedCategories = computed(() =>
+        allCategories.value.toSorted((a, b) => a.name.localeCompare(b.name))
+    );
+
     const totalIconCount = computed(() =>
         allCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
     );
@@ -57,7 +61,7 @@
 
         const q = query.value.toLowerCase().trim();
 
-        return manifest.value.categories
+        return allCategories.value
             .filter(cat => !activeCategoryFilter.value || cat.slug === activeCategoryFilter.value)
             .map(cat => ({
                 ...cat,
@@ -94,9 +98,15 @@
         return `${CDN_BASE}/${version}/lottie/${style}/${slug}.json`;
     }
 
-    function updateUrl(): void {
+    function buildUrl(): string {
         const params = new URLSearchParams(window.location.search);
         params.set('style', currentStyle.value);
+
+        if (activeCategoryFilter.value) {
+            params.set('category', activeCategoryFilter.value);
+        } else {
+            params.delete('category');
+        }
 
         if (selectedIcon.value) {
             params.set('icon', selectedIcon.value.slug);
@@ -104,8 +114,11 @@
             params.delete('icon');
         }
 
-        const url = `${window.location.pathname}?${params.toString()}`;
-        history.pushState(null, '', url);
+        return `${window.location.pathname}?${params.toString()}`;
+    }
+
+    function updateUrl(): void {
+        history.pushState(null, '', buildUrl());
     }
 
     function openDetail(icon: IconEntry): void {
@@ -124,10 +137,13 @@
         const params = new URLSearchParams(window.location.search);
         const iconParam = params.get('icon');
         const styleParam = params.get('style');
+        const categoryParam = params.get('category');
 
         if (styleParam && STYLES.includes(styleParam as Style)) {
             currentStyle.value = styleParam as Style;
         }
+
+        activeCategoryFilter.value = categoryParam ?? null;
 
         if (iconParam && manifest.value) {
             const icon = manifest.value.categories
@@ -215,13 +231,27 @@
         document.body.removeChild(a);
     }
 
+    function selectCategory(slug: string | null): void {
+        activeCategoryFilter.value = slug;
+        window.scrollTo({top: 0});
+    }
+
+    watch([currentStyle, activeCategoryFilter], () => {
+        history.replaceState(null, '', buildUrl());
+    });
+
     onMounted(async () => {
         const params = new URLSearchParams(window.location.search);
         const styleParam = params.get('style');
         const iconParam = params.get('icon');
+        const categoryParam = params.get('category');
 
         if (styleParam && STYLES.includes(styleParam as Style)) {
             currentStyle.value = styleParam as Style;
+        }
+
+        if (categoryParam) {
+            activeCategoryFilter.value = categoryParam;
         }
 
         try {
@@ -291,16 +321,16 @@
                 <div class="nav-label">Categories</div>
                 <button
                     :class="['nav-item', {active: activeCategoryFilter === null}]"
-                    @click="activeCategoryFilter = null"
+                    @click="selectCategory(null)"
                 >
                     <span>All</span>
                     <span class="nav-count">{{ totalIconCount }}</span>
                 </button>
                 <button
-                    v-for="cat in allCategories"
+                    v-for="cat in sortedCategories"
                     :key="cat.slug"
                     :class="['nav-item', {active: activeCategoryFilter === cat.slug}]"
-                    @click="activeCategoryFilter = cat.slug"
+                    @click="selectCategory(cat.slug)"
                 >
                     <span>{{ cat.name }}</span>
                     <span class="nav-count">{{ cat.icons.length }}</span>

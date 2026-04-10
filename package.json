@@ -25,6 +25,6 @@
         "preview:deploy": "bun --filter @meteocons/preview deploy",
         "docs:dev": "bun --filter @meteocons/docs dev",
         "docs:build": "bun --filter @meteocons/docs build",
-        "prepare": "bun export && bun publish-icons && bun --filter @meteocons/docs prepare-icons"
+        "animate": "bun export && bun publish-icons && bun --filter @meteocons/docs prepare-icons"
     }
 }

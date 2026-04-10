@@ -31,6 +31,7 @@ jobs:
             -   name: ✏️ Tag v${{ env.RELEASE_VERSION }}
                 run: |
                     sed -i 's/0.0.0/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+                    sed -i 's/0.0.0/${{ env.RELEASE_VERSION }}/g' packages/docs/src/pages/docs/cdn.mdx packages/docs/src/pages/docs/getting-started.mdx
                     sed -i 's/workspace:\*/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
 
             -   name: 📦️ Install dependencies
@@ -47,6 +48,25 @@ jobs:
 
             -   name: 📋 Publish to packages
                 run: bun run publish-icons
+
+            -   name: 📤 Upload to CDN
+                env:
+                    AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+                    AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+                    AWS_DEFAULT_REGION: auto
+                    AWS_ENDPOINT_URL: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+                run: |
+                    mkdir -p cdn-staging/${{ env.RELEASE_VERSION }}/svg
+                    mkdir -p cdn-staging/${{ env.RELEASE_VERSION }}/lottie
+
+                    for style in fill flat line monochrome; do
+                        cp -r packages/svg/$style cdn-staging/${{ env.RELEASE_VERSION }}/svg/
+                        cp -r packages/lottie/$style cdn-staging/${{ env.RELEASE_VERSION }}/lottie/
+                    done
+
+                    aws s3 sync cdn-staging/${{ env.RELEASE_VERSION }}/ \
+                        s3://meteocons/${{ env.RELEASE_VERSION }}/ \
+                        --no-progress
 
             -   name: 🔨 Build docs
                 run: bun --filter @meteocons/docs build
@@ -69,7 +89,7 @@ jobs:
                 id: deploy
                 uses: cloudflare/wrangler-action@v3
                 with:
-                    accountId: 5e565cf9fa55b0eae1f8131903da2ca9
+                    accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
                     gitHubToken: ${{ secrets.GITHUB_TOKEN }}
                     wranglerVersion: "4.69.0"

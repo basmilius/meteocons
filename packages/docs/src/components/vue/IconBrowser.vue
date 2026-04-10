@@ -23,6 +23,11 @@
     }
 
     const STYLES: Style[] = ['fill', 'flat', 'line', 'monochrome'];
+    const CDN_BASE = 'https://cdn.meteocons.com';
+
+    const props = defineProps<{
+        version?: string;
+    }>();
 
     const manifest = ref<Manifest | null>(null);
     const loading = ref(true);
@@ -77,6 +82,16 @@
 
     function svgUrl(slug: string, style?: Style): string {
         return `/icons/${style ?? currentStyle.value}/${slug}.svg`;
+    }
+
+    function cdnSvgUrl(slug: string, style: Style): string {
+        const version = props.version && props.version !== '0.0.0' ? props.version : 'latest';
+        return `${CDN_BASE}/${version}/svg/${style}/${slug}.svg`;
+    }
+
+    function cdnLottieUrl(slug: string, style: Style): string {
+        const version = props.version && props.version !== '0.0.0' ? props.version : 'latest';
+        return `${CDN_BASE}/${version}/lottie/${style}/${slug}.json`;
     }
 
     function updateUrl(): void {
@@ -436,6 +451,50 @@
                                     </svg>
                                     Download Lottie
                                 </button>
+                            </div>
+
+                            <div class="detail-cdn">
+                                <div class="cdn-label">CDN</div>
+                                <div class="cdn-url-row">
+                                    <code class="cdn-url">{{ cdnSvgUrl(selectedIcon.slug, detailStyle) }}</code>
+                                    <button
+                                        class="cdn-copy-btn"
+                                        @click="copyText(cdnSvgUrl(selectedIcon.slug, detailStyle), 'cdn-svg')"
+                                        :aria-label="copiedAction === 'cdn-svg' ? 'Copied' : 'Copy SVG URL'"
+                                    >
+                                        <svg v-if="copiedAction !== 'cdn-svg'" viewBox="0 0 20 20" width="14" height="14" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                            <path d="M3 14V4a1 1 0 011-1h10"/>
+                                        </svg>
+                                        <svg v-else viewBox="0 0 20 20" width="14" height="14" fill="none"
+                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M4 10l4 4 8-8"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="cdn-url-row">
+                                    <code class="cdn-url">{{ cdnLottieUrl(selectedIcon.slug, detailStyle) }}</code>
+                                    <button
+                                        class="cdn-copy-btn"
+                                        @click="copyText(cdnLottieUrl(selectedIcon.slug, detailStyle), 'cdn-lottie')"
+                                        :aria-label="copiedAction === 'cdn-lottie' ? 'Copied' : 'Copy Lottie URL'"
+                                    >
+                                        <svg v-if="copiedAction !== 'cdn-lottie'" viewBox="0 0 20 20" width="14" height="14" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                            <path d="M3 14V4a1 1 0 011-1h10"/>
+                                        </svg>
+                                        <svg v-else viewBox="0 0 20 20" width="14" height="14" fill="none"
+                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M4 10l4 4 8-8"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -926,6 +985,63 @@
         border-color: var(--amber, #e5850a);
         background: rgba(229, 133, 10, 0.06);
         color: var(--amber, #e5850a);
+    }
+
+    /* CDN URLs */
+    .detail-cdn {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+    }
+
+    .cdn-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-muted, #9ca3af);
+    }
+
+    .cdn-url-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cdn-url {
+        flex: 1;
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        background: var(--bg-surface, #f1f3f6);
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 8px;
+        color: var(--text-secondary, #4b5563);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .cdn-copy-btn {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 8px;
+        background: var(--bg-surface, #f1f3f6);
+        color: var(--text-muted, #9ca3af);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .cdn-copy-btn:hover {
+        border-color: var(--amber, #e5850a);
+        color: var(--amber, #e5850a);
+        background: rgba(229, 133, 10, 0.06);
     }
 
     /* Responsive */

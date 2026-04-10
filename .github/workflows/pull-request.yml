@@ -32,7 +32,7 @@ jobs:
               id: deploy
               uses: cloudflare/wrangler-action@v3
               with:
-                  accountId: 5e565cf9fa55b0eae1f8131903da2ca9
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
                   command: versions upload --tag pr-${{ github.event.pull_request.number }}
                   gitHubToken: ${{ secrets.GITHUB_TOKEN }}

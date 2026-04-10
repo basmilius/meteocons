@@ -1,0 +1,87 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: CDN
+description: Use Meteocons icons directly from the CDN without installing packages.
+---
+
+All Meteocons icons are available via **cdn.meteocons.com** — no installation required. Every release is published to the CDN with a versioned path, so you can link directly to any icon in any style and format.
+
+## URL structure
+
+```
+https://cdn.meteocons.com/{version}/{format}/{style}/{icon}.{ext}
+```
+
+| Segment | Description | Values |
+|---------|-------------|--------|
+| `version` | Release version | `1.0.0`, `1.1.0`, etc. |
+| `format` | Icon format | `svg`, `lottie` |
+| `style` | Icon style | `fill`, `flat`, `line`, `monochrome` |
+| `icon` | Icon slug | `clear-day`, `rain`, `thunderstorms-day-rain`, etc. |
+| `ext` | File extension | `.svg` for SVG, `.json` for Lottie |
+
+**Example URLs:**
+
+```
+https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg
+https://cdn.meteocons.com/0.0.0/lottie/line/rain.json
+```
+
+## SVG
+
+Use an `<img>` tag to render an icon directly. Animations start automatically.
+
+```html
+<img
+    src="https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg"
+    alt="Clear day"
+    width="64"
+    height="64"
+/>
+```
+
+For full control over styling and animation, fetch and inline the SVG:
+
+```javascript
+const response = await fetch('https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg');
+const svgMarkup = await response.text();
+
+document.getElementById('weather-icon').innerHTML = svgMarkup;
+```
+
+## Lottie
+
+Load a Lottie animation directly from the CDN using `lottie-web`:
+
+```javascript
+import lottie from 'lottie-web';
+
+const animation = lottie.loadAnimation({
+    container: document.getElementById('weather-icon'),
+    path: 'https://cdn.meteocons.com/0.0.0/lottie/fill/clear-day.json',
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+});
+```
+
+Or use the Lottie JSON URL with any other Lottie player — DotLottie, Lottie React, lottie-ios, lottie-android, etc.
+
+## Versioning
+
+Every release gets its own path on the CDN. This means older versions remain available and URLs never break.
+
+**Tip:** always pin a specific version in production to avoid unexpected changes when a new version is released.
+
+```html
+<!-- Good: pinned version -->
+<img src="https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg" alt="Clear day" />
+
+<!-- Avoid: no version pinning means manually updating URLs on each release -->
+```
+
+You can find the current version in the [icon browser](/icons) or in the footer of this site.
+
+## CORS
+
+The CDN serves all files with appropriate CORS headers, so cross-origin requests from any domain are supported. You can safely use `fetch()` or load Lottie animations from the CDN on any website.

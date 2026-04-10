@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { version } from '../../package.json';
 
 interface Props {
     title: string;
@@ -9,6 +10,7 @@ interface Props {
 
 const {title, description = 'Animated weather icons for the modern web. 475+ icons in SVG and Lottie.', fullWidth = false} = Astro.props;
 const currentPath = Astro.url.pathname;
+const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
 ---
 
 <html lang="en">
@@ -79,6 +81,7 @@ const currentPath = Astro.url.pathname;
                     </div>
                     <div class="footer-bottom">
                         <p>Designed and built by <a href="https://bas.dev" target="_blank" rel="noopener">Bas Milius</a></p>
+                        <span class="footer-version">{displayVersion}</span>
                     </div>
                 </div>
             </footer>
@@ -280,6 +283,9 @@ const currentPath = Astro.url.pathname;
     }
 
     .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding-top: 20px;
         border-top: 1px solid var(--border);
     }
@@ -287,6 +293,15 @@ const currentPath = Astro.url.pathname;
     .footer-bottom p {
         color: var(--text-muted);
         font-size: 0.825rem;
+    }
+
+    .footer-version {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--amber);
+        background: rgba(229, 133, 10, 0.1);
+        padding: 3px 11px;
+        border-radius: 100px;
     }
 
     @media (max-width: 640px) {

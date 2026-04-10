@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import IconBrowser from '../components/vue/IconBrowser.vue';
+import { version } from '../../package.json';
 ---
 
 <BaseLayout title="Icon Browser" description="Browse 475+ animated weather icons in Fill, Flat, Line and Monochrome.">
     <div class="icons-page">
-        <IconBrowser client:load/>
+        <IconBrowser client:load version={version}/>
     </div>
 </BaseLayout>
 

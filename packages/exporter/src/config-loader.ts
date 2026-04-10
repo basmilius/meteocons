@@ -6,7 +6,7 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-const ANIM_DIR = join(import.meta.dir, '..', 'animations');
+const ANIM_DIR = join(import.meta.dir, '..', '..', '..', 'animations');
 const PARTIALS_DIR = join(ANIM_DIR, 'partials');
 const CONFIGS_DIR = join(ANIM_DIR, 'configs');
 

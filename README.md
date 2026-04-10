@@ -93,7 +93,7 @@ bun run preview:dev        # Start preview website
 
 ### Animation configs
 
-Animations are defined as JSON files in `packages/exporter/animations/configs/`. Each config specifies which icons (`targets`) to animate and which layers to animate (`layers`). Reusable building blocks live in `animations/partials/` and are merged via `includes`.
+Animations are defined as JSON files in `animations/configs/`. Each config specifies which icons (`targets`) to animate and which layers to animate (`layers`). Reusable building blocks live in `animations/partials/` and are merged via `includes`.
 
 ### Category configuration
 

@@ -31,8 +31,8 @@ bun run docs:dev           # Start docs website dev server
 ```
 Figma → fetch → packages/exporter/.cache/svgs/   (statische SVGs)
                     ↓
-packages/exporter/animations/configs/*.json       (declaratieve animatie-definitie)
-packages/exporter/animations/partials/*.json      (herbruikbare bouwstenen)
+animations/configs/*.json                         (declaratieve animatie-definitie)
+animations/partials/*.json                        (herbruikbare bouwstenen)
                     ↓
 config-loader.ts → resolveConfig                  (merge includes + overrides)
                     ↓
@@ -48,7 +48,7 @@ publish-icons.ts → packages/svg/{style}/*.svg     (animated als beschikbaar, a
 
 ## Animatie JSON configs
 
-Animaties worden gedefinieerd in `packages/exporter/animations/configs/*.json`. Elke config heeft `targets` (welke iconen) en `layers` (welke elementen animeren). Herbruikbare bouwstenen staan in `packages/exporter/animations/partials/*.json` en worden via `includes` gemerged.
+Animaties worden gedefinieerd in `animations/configs/*.json`. Elke config heeft `targets` (welke iconen) en `layers` (welke elementen animeren). Herbruikbare bouwstenen staan in `animations/partials/*.json` en worden via `includes` gemerged.
 
 ### Voorbeeld config
 
@@ -121,9 +121,9 @@ packages/exporter/
 │   │   └── types.ts          # Figma API types
 │   └── utils/
 │       └── bbox.ts           # Bounding box + center berekening
-└── animations/
-    ├── partials/             # Herbruikbare bouwstenen (sun, moon, clouds, rain, etc.)
-    └── configs/              # Samengestelde animaties met targets
+animations/                       # (root, buiten packages/exporter)
+├── partials/                     # Herbruikbare bouwstenen (sun, moon, clouds, rain, etc.)
+└── configs/                      # Samengestelde animaties met targets
 ```
 
 ## SVG animatie (svg/processor.ts)

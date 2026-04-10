@@ -213,11 +213,14 @@ function convertMaskChildren(maskElement: any): LottieMask[] {
         }
 
         if (result.isEvenOdd && result.beziers.length >= 2) {
+            // Use subtract mask (mode 's') with the inner cutout shape.
+            // This matches the approach in synthesizeMaskFromCloud and avoids
+            // lottie-web rendering issues with inverted add masks (inv: true, mode: 'a').
             masks.push({
-                inv: true,
-                mode: 'a',
+                inv: false,
+                mode: 's',
                 nm: 'Mask',
-                pt: {a: 0, k: ensureCCW(result.beziers[1])},
+                pt: {a: 0, k: result.beziers[1]},
                 o: {a: 0, k: 100},
                 x: {a: 0, k: 0}
             } as any);

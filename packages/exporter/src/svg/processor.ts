@@ -35,7 +35,10 @@ function createAnimateTransform(doc: any, attrs: Record<string, string>): any {
 
 function applyAnimation(doc: any, element: any, anim: AnimationDef): void {
     const dur = anim.duration ?? '1s';
-    const begin = anim.delay ? `${anim.delay}s` : '0s';
+    const durSeconds = parseFloat(dur);
+    const delaySeconds = anim.delay ?? 0;
+    const remainder = delaySeconds > 0 ? delaySeconds % durSeconds : 0;
+    const begin = remainder > 0 ? `-${durSeconds - remainder}s` : '0s';
 
     if (anim.transform) {
         const type = mapTransformType(anim.transform);
@@ -91,12 +94,6 @@ function applyAnimation(doc: any, element: any, anim: AnimationDef): void {
         // dashArray: set stroke-dasharray on the element
         if (anim.dashArray) {
             element.setAttribute('stroke-dasharray', String(anim.dashArray));
-        }
-
-        // If opacity animation has a delay and starts at 0, set initial opacity
-        // to 0 so the element is invisible before the animation kicks in.
-        if (anim.property === 'opacity' && anim.delay && anim.values && anim.values[0] === 0) {
-            element.setAttribute('opacity', '0');
         }
 
         element.appendChild(createAnimate(doc, attrs));

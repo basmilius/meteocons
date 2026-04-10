@@ -8,6 +8,17 @@ import { animateMaskBezier, buildMasksForElement, findMaskSourceConfig, synthesi
 import type { LottieAnimatedValue, LottieBezier, LottieJSON, LottieKeyframe, LottieLayer, LottieTransform } from './types';
 import type { AnimationDef, LayerConfig, ResolvedConfig } from '../config-loader';
 
+/** Compute the phase offset so that a delayed animation appears to have started
+ *  `delay` frames ago — matching the steady-state position it would have if it
+ *  had been running from the beginning with a real delay. */
+function computePhase(delay: number, cycle: number): number {
+    if (delay <= 0) {
+        return 0;
+    }
+    const remainder = delay % cycle;
+    return remainder > 0 ? cycle - remainder : 0;
+}
+
 function resolveOrigin(origin: string | undefined, element: any): { ax: number; ay: number } {
     if (!origin || origin === 'center') {
         const center = computeCenter(element);
@@ -81,7 +92,7 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
 
             if (anim.from !== undefined && anim.to !== undefined) {
                 const range = anim.to - anim.from;
-                const phase = delay > 0 ? delay % cycle : 0;
+                const phase = computePhase(delay, cycle);
                 const phaseOffset = (phase / cycle) * range;
                 const startValue = anim.from + phaseOffset;
                 const kfs: LottieKeyframe[] = [];
@@ -95,7 +106,7 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                 kfs.push(kfEnd(COMP_FRAMES, [startValue + rep * range], easing));
                 base.r = animatedValue(kfs);
             } else if (anim.values) {
-                const phase = delay > 0 ? delay % cycle : 0;
+                const phase = computePhase(delay, cycle);
                 const numSegs = anim.values.length - 1;
                 const kfs: LottieKeyframe[] = [];
 
@@ -194,7 +205,7 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                         return pairs;
                     })();
 
-                const phase = delay > 0 ? delay % cycle : 0;
+                const phase = computePhase(delay, cycle);
                 const numScaleSegs = scaleValues.length - 1;
                 const kfs: LottieKeyframe[] = [];
 
@@ -253,7 +264,7 @@ function applyPropertyAnim(base: LottieTransform, anim: AnimationDef): void {
         const vals = anim.values ?? [anim.from ?? 0, anim.to ?? 100];
         const opacityVals = vals.map(v => v * 100);
         const numSegs = opacityVals.length - 1;
-        const phase = delay > 0 ? delay % cycle : 0;
+        const phase = computePhase(delay, cycle);
         const hasKeyTimes = !!(anim.keyTimes && anim.keyTimes.length === opacityVals.length);
         const segTimes = hasKeyTimes
             ? anim.keyTimes!
@@ -314,7 +325,7 @@ function buildPositionKeyframes(
 ): LottieKeyframe[] {
     const kfs: LottieKeyframe[] = [];
     const isCyclic = arraysEqual(positions[0], positions[positions.length - 1]);
-    const phase = delay > 0 ? Math.round(delay) % cycle : 0;
+    const phase = computePhase(Math.round(delay), cycle);
     const numSegs = positions.length - 1;
 
     if (isCyclic) {

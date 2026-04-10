@@ -63,6 +63,17 @@ export function parseDuration(dur?: string): number {
     return Math.round(parseFloat(dur) * FPS);
 }
 
+/** Compute the phase offset so that a delayed animation appears to have started
+ *  `delay` frames ago — matching the steady-state position it would have if it
+ *  had been running from the beginning with a real delay. */
+export function computePhase(delay: number, cycle: number): number {
+    if (delay <= 0) {
+        return 0;
+    }
+    const remainder = delay % cycle;
+    return remainder > 0 ? cycle - remainder : 0;
+}
+
 export function arraysEqual(a: number[], b: number[]): boolean {
     return a.length === b.length && a.every((v, i) => v === b[i]);
 }

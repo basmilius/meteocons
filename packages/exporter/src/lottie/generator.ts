@@ -1,23 +1,12 @@
 import { DOMParser } from '@xmldom/xmldom';
 import { computeCenter, computeOriginPoint } from '../utils/bbox';
 import type { Easing } from './animation-helpers';
-import { animatedValue, arraysEqual, COMP_FRAMES, FPS, getEasing, kf, kfEnd, lerpPositions, lerpValues, parseDuration, staticTransform, staticValue } from './animation-helpers';
+import { animatedValue, arraysEqual, COMP_FRAMES, computePhase, FPS, getEasing, kf, kfEnd, lerpPositions, lerpValues, parseDuration, staticTransform, staticValue } from './animation-helpers';
 import { extractGradients } from './gradients';
 import { addStrokeDashes, buildShapeGroup, collectIds, collectTopLevelElements, offsetShapeGroup } from './shapes';
-import { animateMaskBezier, buildMasksForElement, findMaskSourceConfig, synthesizeMaskFromCloud } from './masks';
+import { animateMaskBezier, animateRectMaskProperties, buildMasksForElement, findMaskSourceConfig, findRectMaskPropertyConfig, synthesizeMaskFromCloud } from './masks';
 import type { LottieAnimatedValue, LottieBezier, LottieJSON, LottieKeyframe, LottieLayer, LottieTransform } from './types';
 import type { AnimationDef, LayerConfig, ResolvedConfig } from '../config-loader';
-
-/** Compute the phase offset so that a delayed animation appears to have started
- *  `delay` frames ago — matching the steady-state position it would have if it
- *  had been running from the beginning with a real delay. */
-function computePhase(delay: number, cycle: number): number {
-    if (delay <= 0) {
-        return 0;
-    }
-    const remainder = delay % cycle;
-    return remainder > 0 ? cycle - remainder : 0;
-}
 
 function resolveOrigin(origin: string | undefined, element: any): { ax: number; ay: number } {
     if (!origin || origin === 'center') {
@@ -517,6 +506,20 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                 }
             }
 
+            // Rect mask property animations (y, height) for still-static masks
+            const rectConfig = findRectMaskPropertyConfig(doc, element, config);
+            if (rectConfig) {
+                for (const mask of rawMasks!) {
+                    if (mask.pt.a !== 0) {
+                        continue;
+                    }
+                    const animated = animateRectMaskProperties(rectConfig.rect, rectConfig.layerConfig, -cx, -cy);
+                    if (animated) {
+                        mask.pt = animated;
+                    }
+                }
+            }
+
             (layer as any).hasMask = true;
             layer.masksProperties = rawMasks!;
 
@@ -540,6 +543,20 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                         continue;
                     }
                     const animated = animateMaskBezier(mask.pt.k as LottieBezier, maskSourceConfig);
+                    if (animated) {
+                        mask.pt = animated;
+                    }
+                }
+            }
+
+            // Rect mask property animations (y, height) for still-static masks
+            const rectConfig2 = findRectMaskPropertyConfig(doc, element, config);
+            if (rectConfig2) {
+                for (const mask of rawMasks!) {
+                    if (mask.pt.a !== 0) {
+                        continue;
+                    }
+                    const animated = animateRectMaskProperties(rectConfig2.rect, rectConfig2.layerConfig, -cx, -cy);
                     if (animated) {
                         mask.pt = animated;
                     }

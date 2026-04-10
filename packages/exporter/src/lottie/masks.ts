@@ -1,6 +1,6 @@
 import { svgPathToLottieBeziers } from './path-converter';
 import { findById } from '../utils/bbox';
-import { COMP_FRAMES, FPS, getEasing, lerpPositions, parseDuration } from './animation-helpers';
+import { COMP_FRAMES, computePhase, FPS, getEasing, lerpPositions, lerpValues, parseDuration } from './animation-helpers';
 import { findFirstPathElement } from './shapes';
 import type { LottieBezier, LottieMask, LottieMaskKeyframe } from './types';
 import type { AnimationDef, LayerConfig, ResolvedConfig } from '../config-loader';
@@ -441,7 +441,7 @@ export function animateMaskBezier(
         && positions[0][1] === positions[positions.length - 1][1];
 
     const numSegs = positions.length - 1;
-    const phase = delay > 0 ? delay % cycle : 0;
+    const phase = computePhase(delay, cycle);
     const kfs: LottieMaskKeyframe[] = [];
 
     if (isCyclic) {
@@ -651,4 +651,190 @@ export function findMaskSourceConfig(doc: any, element: any, resolvedConfig: Res
     }
 
     return null;
+}
+
+/**
+ * Finds a rect element inside a mask that has property animations (y, height, x, width)
+ * in the resolved config. Returns the rect dimensions and corresponding layer config.
+ */
+export function findRectMaskPropertyConfig(
+    doc: any, element: any, config: ResolvedConfig
+): { rect: { x: number; y: number; width: number; height: number }; layerConfig: LayerConfig } | null {
+    let current = element;
+    let maskId: string | null = null;
+
+    while (current && current.nodeType === 1) {
+        const maskAttr: string = current.getAttribute?.('mask') ?? '';
+        const match = maskAttr.match(/url\(#([^)]+)\)/);
+        if (match) {
+            maskId = match[1];
+            break;
+        }
+        current = current.parentNode;
+    }
+
+    if (!maskId) {
+        return null;
+    }
+
+    function findMask(node: any): any | null {
+        if (node.nodeType !== 1) {
+            return null;
+        }
+        if (node.tagName?.toLowerCase() === 'mask' && node.getAttribute('id') === maskId) {
+            return node;
+        }
+        for (const child of Array.from(node.childNodes as any[])) {
+            const found = findMask(child);
+            if (found) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    const maskElement = findMask(doc.documentElement);
+    if (!maskElement) {
+        return null;
+    }
+
+    const rectProperties = new Set(['y', 'height', 'x', 'width']);
+    for (const child of Array.from(maskElement.childNodes as any[])) {
+        if (child.nodeType !== 1 || child.tagName?.toLowerCase() !== 'rect') {
+            continue;
+        }
+        const childId: string = child.getAttribute?.('id') ?? '';
+        if (!childId) {
+            continue;
+        }
+
+        const layerConfig = config.layers[childId];
+        if (!layerConfig) {
+            continue;
+        }
+
+        const anims: AnimationDef[] = layerConfig.animations
+            ? layerConfig.animations
+            : layerConfig.property ? [layerConfig as AnimationDef] : [];
+
+        const hasPropertyAnim = anims.some(a => a.property && rectProperties.has(a.property));
+        if (hasPropertyAnim) {
+            return {
+                rect: {
+                    x: parseFloat(child.getAttribute('x') ?? '0'),
+                    y: parseFloat(child.getAttribute('y') ?? '0'),
+                    width: parseFloat(child.getAttribute('width') ?? '0'),
+                    height: parseFloat(child.getAttribute('height') ?? '0')
+                },
+                layerConfig
+            };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Animates a rect mask based on property animations (y, height).
+ * Generates bezier keyframes that represent the changing rect dimensions over time.
+ */
+export function animateRectMaskProperties(
+    baseRect: { x: number; y: number; width: number; height: number },
+    layerConfig: LayerConfig,
+    offsetX: number = 0,
+    offsetY: number = 0
+): { a: 1; k: LottieMaskKeyframe[] } | null {
+    const anims: AnimationDef[] = layerConfig.animations
+        ? layerConfig.animations
+        : layerConfig.property ? [layerConfig as AnimationDef] : [];
+
+    const yAnim = anims.find(a => a.property === 'y');
+    const hAnim = anims.find(a => a.property === 'height');
+    if (!yAnim && !hAnim) {
+        return null;
+    }
+
+    const refAnim = yAnim ?? hAnim!;
+    const cycle = parseDuration(refAnim.duration);
+    const easing = getEasing(refAnim.easing);
+    const delay = Math.round((refAnim.delay ?? 0) * FPS);
+
+    const yValues = yAnim?.values ? [...yAnim.values] : [baseRect.y];
+    const hValues = hAnim?.values ? [...hAnim.values] : [baseRect.height];
+
+    // Pad shorter array to match longer
+    while (yValues.length < hValues.length) {
+        yValues.push(yValues[yValues.length - 1]);
+    }
+    while (hValues.length < yValues.length) {
+        hValues.push(hValues[hValues.length - 1]);
+    }
+
+    const numSegs = yValues.length - 1;
+
+    function rectBezier(yVal: number, hVal: number): LottieBezier {
+        const { x, width } = baseRect;
+        return {
+            v: [
+                [x + offsetX, yVal + offsetY],
+                [x + width + offsetX, yVal + offsetY],
+                [x + width + offsetX, yVal + hVal + offsetY],
+                [x + offsetX, yVal + hVal + offsetY]
+            ] as [number, number][],
+            i: [[0, 0], [0, 0], [0, 0], [0, 0]] as [number, number][],
+            o: [[0, 0], [0, 0], [0, 0], [0, 0]] as [number, number][],
+            c: true
+        };
+    }
+
+    function lerpRect(fraction: number): LottieBezier {
+        const yVal = lerpValues(yValues, fraction);
+        const hVal = lerpValues(hValues, fraction);
+        return rectBezier(yVal, hVal);
+    }
+
+    const phase = computePhase(delay, cycle);
+    const kfs: LottieMaskKeyframe[] = [];
+
+    if (phase === 0) {
+        let t = 0;
+        while (t < COMP_FRAMES) {
+            for (let i = 0; i < numSegs; i++) {
+                const segT = Math.round(t + (i / numSegs) * cycle);
+                if (segT >= COMP_FRAMES) {
+                    break;
+                }
+                kfs.push({ t: segT, s: [rectBezier(yValues[i], hValues[i])], ...easing });
+            }
+            t += cycle;
+        }
+        kfs.push({ t: COMP_FRAMES, s: [rectBezier(yValues[0], hValues[0])], ...easing });
+    } else {
+        const phaseRatio = phase / cycle;
+        const startBezier = lerpRect(phaseRatio);
+        kfs.push({ t: 0, s: [startBezier], ...easing });
+
+        const startSeg = Math.floor(phaseRatio * numSegs) + 1;
+        for (let i = startSeg; i < numSegs; i++) {
+            const segT = Math.round((i / numSegs) * cycle - phase);
+            if (segT > 0 && segT < COMP_FRAMES) {
+                kfs.push({ t: segT, s: [rectBezier(yValues[i], hValues[i])], ...easing });
+            }
+        }
+
+        let t = Math.round(cycle - phase);
+        while (t < COMP_FRAMES) {
+            for (let i = 0; i < numSegs; i++) {
+                const segT = Math.round(t + (i / numSegs) * cycle);
+                if (segT >= COMP_FRAMES) {
+                    break;
+                }
+                kfs.push({ t: segT, s: [rectBezier(yValues[i], hValues[i])], ...easing });
+            }
+            t += cycle;
+        }
+        kfs.push({ t: COMP_FRAMES, s: [startBezier], ...easing });
+    }
+
+    return kfs.length >= 2 ? { a: 1, k: kfs } : null;
 }

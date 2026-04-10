@@ -9,7 +9,7 @@
             "values": [0, 1, 1, 0],
             "keyTimes": [0, 0.15, 0.85, 1],
             "duration": "1.5s",
-            "delay": 0
+            "delay": 0.8
         },
         "Arrow 2": {
             "property": "opacity",
@@ -23,7 +23,7 @@
             "values": [0, 1, 1, 0],
             "keyTimes": [0, 0.15, 0.85, 1],
             "duration": "1.5s",
-            "delay": 0.8
+            "delay": 0
         }
     }
 }

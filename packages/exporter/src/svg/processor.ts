@@ -435,6 +435,10 @@ function syncMasksForLayer(
     layerConfig: LayerConfig, animatedIds: Set<string>,
     syncedMaskIds: Set<string>
 ): void {
+    if (layerConfig.syncMask === false) {
+        return;
+    }
+
     if (isPositionConfig(layerConfig)) {
         for (const maskChildId of findDirectParentMaskContent(doc, element)) {
             if (animatedIds.has(maskChildId) || syncedMaskIds.has(maskChildId)) {

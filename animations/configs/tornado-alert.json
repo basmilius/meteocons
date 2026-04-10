@@ -1,0 +1,54 @@
+{
+    "targets": [
+        "tornado-alert"
+    ],
+    "layers": {
+        "Line 5": {
+            "transform": "translateX",
+            "values": [0, 2, 0],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 4": {
+            "transform": "translateX",
+            "values": [0, 4, 0],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 3": {
+            "transform": "translateX",
+            "values": [0, 6, 0],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 2": {
+            "transform": "translateX",
+            "values": [0, 8, 0],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Line 1": {
+            "transform": "translateX",
+            "values": [0, 10, 0],
+            "duration": "3s",
+            "easing": "ease-in-out",
+            "delay": 0
+        },
+        "Alert": {
+            "property": "opacity",
+            "values": [1, 1, 0, 0, 1],
+            "keyTimes": [0, 0.294, 0.5, 0.794, 1],
+            "duration": "1s"
+        },
+        "Exclamation": {
+            "property": "opacity",
+            "values": [1, 1, 0, 0, 1],
+            "keyTimes": [0, 0.294, 0.5, 0.794, 1],
+            "duration": "1s"
+        }
+    }
+}

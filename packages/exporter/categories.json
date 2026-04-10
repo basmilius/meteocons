@@ -28,9 +28,6 @@
             "dust",
             "dust-day",
             "dust-night",
-            null,
-            "hurricane",
-            "tornado",
             "sun-hot"
         ]
     },
@@ -391,6 +388,18 @@
             "code-red",
             "code-yellow",
             null,
+            "weather-alarm",
+            "weather-alarm-day",
+            "weather-alarm-night",
+            "cyclone",
+            "cyclone-alert",
+            "fire-alert",
+            "hurricane",
+            "hurricane-alert",
+            "tornado",
+            "tornado-alert",
+            "water-alert",
+            null,
             "flag-cold-wave",
             "flag-fair",
             "flag-gale-warning",
@@ -403,11 +412,7 @@
             "flag-small-craft-advisory",
             "flag-storm-warning",
             "flag-sw-storm-warning",
-            "flag-temperature-change",
-            null,
-            "weather-alarm",
-            "weather-alarm-day",
-            "weather-alarm-night"
+            "flag-temperature-change"
         ]
     },
     {

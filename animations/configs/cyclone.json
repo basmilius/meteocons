@@ -1,9 +1,9 @@
 {
     "targets": [
-        "hurricane"
+        "cyclone"
     ],
     "layers": {
-        "Hurricane": {
+        "Cyclone": {
             "transform": "rotate",
             "from": 0,
             "to": -360,

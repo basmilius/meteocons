@@ -25,7 +25,7 @@ interface ManifestIcon {
 interface ManifestCategory {
     name: string;
     slug: string;
-    icons: ManifestIcon[];
+    icons: (ManifestIcon | null)[];
 }
 
 interface PackageManifest {
@@ -39,7 +39,7 @@ function toSlug(name: string): string {
 
 interface CategoryDefinition {
     name: string;
-    icons: string[];
+    icons: (string | null)[];
 }
 
 const CATEGORIES_FILE = join(import.meta.dir, '..', 'categories.json');
@@ -55,6 +55,9 @@ function loadCategoryMapping(): Map<string, string> {
 
     for (const category of categories) {
         for (const icon of category.icons) {
+            if (icon === null) {
+                continue;
+            }
             mapping.set(icon, category.name);
         }
     }
@@ -76,6 +79,9 @@ function loadIconOrder(): Map<string, number> {
 
     for (const category of categories) {
         for (const icon of category.icons) {
+            if (icon === null) {
+                continue;
+            }
             order.set(icon, index++);
         }
     }
@@ -187,12 +193,14 @@ for (const frame of manifest.frames) {
 // Volgorde: eerst categorieën uit categories.json (in bestandsvolgorde),
 // daarna eventuele categorieën die alleen vanuit Figma komen.
 const categoryOrder: string[] = [];
+const categoryDefinitions = new Map<string, (string | null)[]>();
 
 if (existsSync(CATEGORIES_FILE)) {
     const definitions: CategoryDefinition[] = JSON.parse(readFileSync(CATEGORIES_FILE, 'utf-8'));
     for (const def of definitions) {
         if (!categoryOrder.includes(def.name)) {
             categoryOrder.push(def.name);
+            categoryDefinitions.set(def.name, def.icons);
         }
     }
 }
@@ -203,6 +211,41 @@ for (const name of categoryMap.keys()) {
     }
 }
 
+/**
+ * Bouwt de icons-array voor een categorie, inclusief null-separators uit categories.json.
+ * Icons die in categoryMap staan maar niet in categories.json worden aan het einde toegevoegd.
+ */
+function buildCategoryIcons(categoryName: string): (ManifestIcon | null)[] {
+    const available = categoryMap.get(categoryName)!;
+    const definition = categoryDefinitions.get(categoryName);
+
+    if (!definition) {
+        // Categorie niet in categories.json — sorteer alfabetisch
+        return [...available.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+    }
+
+    const result: (ManifestIcon | null)[] = [];
+    const placed = new Set<string>();
+
+    for (const entry of definition) {
+        if (entry === null) {
+            result.push(null);
+        } else if (available.has(entry)) {
+            result.push(available.get(entry)!);
+            placed.add(entry);
+        }
+    }
+
+    // Eventuele icons die niet in categories.json staan, achteraan toevoegen
+    for (const [slug, icon] of available) {
+        if (!placed.has(slug)) {
+            result.push(icon);
+        }
+    }
+
+    return result;
+}
+
 const packageManifest: PackageManifest = {
     styles: STYLES,
     categories: categoryOrder
@@ -210,14 +253,7 @@ const packageManifest: PackageManifest = {
         .map(name => ({
             name,
             slug: toSlug(name),
-            icons: [...categoryMap.get(name)!.values()].sort((a, b) => {
-                const orderA = iconOrder.get(a.slug) ?? Infinity;
-                const orderB = iconOrder.get(b.slug) ?? Infinity;
-                if (orderA !== orderB) {
-                    return orderA - orderB;
-                }
-                return a.slug.localeCompare(b.slug);
-            })
+            icons: buildCategoryIcons(name)
         }))
 };
 

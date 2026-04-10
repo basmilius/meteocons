@@ -25,7 +25,7 @@ interface ManifestIcon {
 interface ManifestCategory {
     name: string;
     slug: string;
-    icons: ManifestIcon[];
+    icons: (ManifestIcon | null)[];
 }
 
 interface PackageManifest {
@@ -45,7 +45,7 @@ interface PreviewManifest {
     categories: {
         name: string;
         slug: string;
-        icons: PreviewIcon[];
+        icons: (PreviewIcon | null)[];
     }[];
 }
 
@@ -93,12 +93,17 @@ const previewManifest: PreviewManifest = {
     categories: svgManifest.categories.map(cat => ({
         name: cat.name,
         slug: cat.slug,
-        icons: cat.icons.map(icon => ({
-            slug: icon.slug,
-            name: icon.name,
-            animated: icon.animated,
-            hasLottie: true
-        }))
+        icons: cat.icons.map(icon => {
+            if (icon === null) {
+                return null;
+            }
+            return {
+                slug: icon.slug,
+                name: icon.name,
+                animated: icon.animated,
+                hasLottie: true
+            };
+        })
     }))
 };
 
@@ -108,9 +113,9 @@ writeFileSync(
     'utf-8'
 );
 
-const totalIcons = previewManifest.categories.reduce((sum, cat) => sum + cat.icons.length, 0);
+const totalIcons = previewManifest.categories.reduce((sum, cat) => sum + cat.icons.filter(Boolean).length, 0);
 const animatedCount = previewManifest.categories.reduce(
-    (sum, cat) => sum + cat.icons.filter(i => i.animated).length,
+    (sum, cat) => sum + cat.icons.filter((i): i is PreviewIcon => i?.animated === true).length,
     0
 );
 

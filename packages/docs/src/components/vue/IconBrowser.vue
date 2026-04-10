@@ -14,7 +14,7 @@
     interface Category {
         name: string;
         slug: string;
-        icons: IconEntry[];
+        icons: (IconEntry | null)[];
     }
 
     interface Manifest {
@@ -51,8 +51,56 @@
     );
 
     const totalIconCount = computed(() =>
-        allCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
+        allCategories.value.reduce((sum, cat) => sum + cat.icons.filter(Boolean).length, 0)
     );
+
+    /**
+     * Verwijdert overbodige null-separators: geen leading, trailing of opeenvolgende nulls.
+     */
+    function cleanSeparators(icons: (IconEntry | null)[]): (IconEntry | null)[] {
+        const result: (IconEntry | null)[] = [];
+
+        for (const item of icons) {
+            if (item === null) {
+                if (result.length > 0 && result[result.length - 1] !== null) {
+                    result.push(null);
+                }
+            } else {
+                result.push(item);
+            }
+        }
+
+        if (result.length > 0 && result[result.length - 1] === null) {
+            result.pop();
+        }
+
+        return result;
+    }
+
+    /**
+     * Splitst een icons-array op null-separators in groepen.
+     */
+    function splitGroups(icons: (IconEntry | null)[]): IconEntry[][] {
+        const groups: IconEntry[][] = [];
+        let current: IconEntry[] = [];
+
+        for (const icon of icons) {
+            if (icon === null) {
+                if (current.length > 0) {
+                    groups.push(current);
+                    current = [];
+                }
+            } else {
+                current.push(icon);
+            }
+        }
+
+        if (current.length > 0) {
+            groups.push(current);
+        }
+
+        return groups;
+    }
 
     const filteredCategories = computed(() => {
         if (!manifest.value) {
@@ -65,15 +113,17 @@
             .filter(cat => !activeCategoryFilter.value || cat.slug === activeCategoryFilter.value)
             .map(cat => ({
                 ...cat,
-                icons: cat.icons.filter(icon =>
-                    !q || icon.slug.includes(q) || icon.name.toLowerCase().includes(q)
+                icons: cleanSeparators(
+                    cat.icons.filter(icon =>
+                        icon === null || !q || icon.slug.includes(q) || icon.name.toLowerCase().includes(q)
+                    )
                 )
             }))
-            .filter(cat => cat.icons.length > 0);
+            .filter(cat => cat.icons.some(Boolean));
     });
 
     const totalCount = computed(() =>
-        filteredCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
+        filteredCategories.value.reduce((sum, cat) => sum + cat.icons.filter(Boolean).length, 0)
     );
 
     const UPPERCASE_WORDS = new Set(['ne', 'se', 'nw', 'sw']);
@@ -333,7 +383,7 @@
                     @click="selectCategory(cat.slug)"
                 >
                     <span>{{ cat.name }}</span>
-                    <span class="nav-count">{{ cat.icons.length }}</span>
+                    <span class="nav-count">{{ cat.icons.filter(Boolean).length }}</span>
                 </button>
             </nav>
         </aside>
@@ -355,9 +405,14 @@
                     class="category"
                 >
                     <h2 class="category-title">{{ category.name }}</h2>
-                    <div class="icon-grid">
+                    <div
+                        v-for="(group, gi) in splitGroups(category.icons)"
+                        :key="gi"
+                        class="icon-grid"
+                        :class="{ 'icon-grid--spaced': gi > 0 }"
+                    >
                         <button
-                            v-for="icon in category.icons"
+                            v-for="icon in group"
                             :key="icon.slug"
                             class="icon-cell"
                             @click="openDetail(icon)"
@@ -763,6 +818,10 @@
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 4px;
         padding-top: 8px;
+    }
+
+    .icon-grid--spaced {
+        margin-top: 24px;
     }
 
     .icon-cell {

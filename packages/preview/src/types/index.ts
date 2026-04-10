@@ -12,7 +12,7 @@ export interface IconEntry {
 export interface Category {
     name: string;
     slug: string;
-    icons: IconEntry[];
+    icons: (IconEntry | null)[];
 }
 
 export interface PreviewManifest {

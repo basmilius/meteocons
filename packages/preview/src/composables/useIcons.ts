@@ -1,5 +1,5 @@
 import { computed, ref, type Ref } from 'vue';
-import type { Category, DisplayMode, PreviewManifest } from '../types';
+import type { Category, DisplayMode, IconEntry, PreviewManifest } from '../types';
 
 const manifest = ref<PreviewManifest | null>(null);
 const loading = ref(true);
@@ -36,13 +36,39 @@ export function useIcons(searchQuery: Ref<string>, displayMode: Ref<DisplayMode>
 
     const categories = computed(() => manifest.value?.categories ?? []);
 
+    /**
+     * Verwijdert overbodige null-separators: geen leading, trailing of opeenvolgende nulls.
+     */
+    function cleanSeparators(icons: (IconEntry | null)[]): (IconEntry | null)[] {
+        const result: (IconEntry | null)[] = [];
+
+        for (const item of icons) {
+            if (item === null) {
+                if (result.length > 0 && result[result.length - 1] !== null) {
+                    result.push(null);
+                }
+            } else {
+                result.push(item);
+            }
+        }
+
+        if (result.length > 0 && result[result.length - 1] === null) {
+            result.pop();
+        }
+
+        return result;
+    }
+
     const filteredCategories = computed<Category[]>(() => {
         const query = searchQuery.value.toLowerCase().trim();
         const isLottie = displayMode.value === 'lottie';
 
         return categories.value
             .map((category) => {
-                const filteredIcons = category.icons.filter((icon) => {
+                const filtered = category.icons.filter((icon) => {
+                    if (icon === null) {
+                        return true;
+                    }
                     if (isLottie && !icon.hasLottie) {
                         return false;
                     }
@@ -52,13 +78,13 @@ export function useIcons(searchQuery: Ref<string>, displayMode: Ref<DisplayMode>
                     return true;
                 });
 
-                return {...category, icons: filteredIcons};
+                return {...category, icons: cleanSeparators(filtered)};
             })
-            .filter((category) => category.icons.length > 0);
+            .filter((category) => category.icons.some(Boolean));
     });
 
     const totalCount = computed(() =>
-        filteredCategories.value.reduce((sum, cat) => sum + cat.icons.length, 0)
+        filteredCategories.value.reduce((sum, cat) => sum + cat.icons.filter(Boolean).length, 0)
     );
 
     return {

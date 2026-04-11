@@ -5,36 +5,56 @@
     "layers": {
         "Line 5": {
             "transform": "translateX",
-            "values": [0, 2, 0],
-            "duration": "3s",
+            "values": [
+                -2,
+                2,
+                -2
+            ],
+            "duration": "2s",
             "easing": "ease-in-out",
             "delay": 0
         },
         "Line 4": {
             "transform": "translateX",
-            "values": [0, 4, 0],
-            "duration": "3s",
+            "values": [
+                -4,
+                4,
+                -4
+            ],
+            "duration": "2s",
             "easing": "ease-in-out",
             "delay": 0
         },
         "Line 3": {
             "transform": "translateX",
-            "values": [0, 6, 0],
-            "duration": "3s",
+            "values": [
+                -6,
+                6,
+                -6
+            ],
+            "duration": "2s",
             "easing": "ease-in-out",
             "delay": 0
         },
         "Line 2": {
             "transform": "translateX",
-            "values": [0, 8, 0],
-            "duration": "3s",
+            "values": [
+                -8,
+                8,
+                -8
+            ],
+            "duration": "2s",
             "easing": "ease-in-out",
             "delay": 0
         },
         "Line 1": {
             "transform": "translateX",
-            "values": [0, 10, 0],
-            "duration": "3s",
+            "values": [
+                -10,
+                10,
+                -10
+            ],
+            "duration": "2s",
             "easing": "ease-in-out",
             "delay": 0
         },

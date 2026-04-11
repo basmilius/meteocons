@@ -30,6 +30,12 @@
             "duration": "3s",
             "easing": "ease-in-out"
         },
+        "Cube": {
+            "transform": "rotate",
+            "values": [0, -360],
+            "duration": "2s",
+            "easing": "linear"
+        },
         "Debris 1": {
             "animations": [
                 {
@@ -41,7 +47,6 @@
                         -4
                     ],
                     "duration": "3s",
-                    "easing": "ease-in-out",
                     "delay": 0
                 },
                 {
@@ -74,7 +79,6 @@
                         -4
                     ],
                     "duration": "3s",
-                    "easing": "ease-in-out",
                     "delay": 0.3
                 },
                 {
@@ -107,7 +111,6 @@
                         -4
                     ],
                     "duration": "3s",
-                    "easing": "ease-in-out",
                     "delay": 0.6
                 },
                 {

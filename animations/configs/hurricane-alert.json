@@ -8,7 +8,7 @@
             "from": 0,
             "to": -360,
             "origin": "center",
-            "duration": "3s",
+            "duration": "2s",
             "easing": "linear"
         },
         "Alert": {

@@ -13,7 +13,7 @@ The simplest approach — load animated SVGs as images. Animations play automati
 
 ```html
 <img
-    src="/icons/fill/rain.svg"
+    src="https://cdn.meteocons.com/latest/svg/fill/rain.svg"
     alt="Rain"
     width="64"
     height="64"
@@ -26,7 +26,7 @@ You can also use SVGs as CSS backgrounds, though animations won't play in backgr
 .weather-icon {
     width: 64px;
     height: 64px;
-    background: url('/icons/fill/rain.svg') center / contain no-repeat;
+    background: url('https://cdn.meteocons.com/latest/svg/fill/rain.svg') center / contain no-repeat;
 }
 ```
 
@@ -36,7 +36,7 @@ Fetch and inline the SVG for full CSS control over individual elements. This is 
 
 ```javascript
 async function loadIcon(container, slug, style = 'fill') {
-    const response = await fetch(`/icons/${style}/${slug}.svg`);
+    const response = await fetch(`https://cdn.meteocons.com/latest/svg/${style}/${slug}.svg`);
     const svg = await response.text();
     container.innerHTML = svg;
 }
@@ -98,7 +98,7 @@ const animation = lottie.loadAnimation({
     renderer: 'canvas',   // 'canvas' for performance, 'svg' for quality
     loop: true,
     autoplay: true,
-    path: '/icons/fill/rain.json'
+    path: 'https://cdn.meteocons.com/latest/lottie/fill/rain.json'
 });
 
 // Playback control
@@ -129,7 +129,7 @@ When displaying many icons (e.g. a dashboard or icon grid), load them on demand 
 
 ```html
 <img
-    data-src="/icons/fill/rain.svg"
+    data-src="https://cdn.meteocons.com/latest/svg/fill/rain.svg"
     alt="Rain"
     width="64"
     height="64"
@@ -166,9 +166,9 @@ document.querySelectorAll('.lottie-icon').forEach(el => observer.observe(el));
 ```
 
 ```html
-<div class="lottie-icon" data-src="/icons/fill/rain.json" style="width: 64px; height: 64px"></div>
-<div class="lottie-icon" data-src="/icons/fill/snow.json" style="width: 64px; height: 64px"></div>
-<div class="lottie-icon" data-src="/icons/fill/wind.json" style="width: 64px; height: 64px"></div>
+<div class="lottie-icon" data-src="https://cdn.meteocons.com/latest/lottie/fill/rain.json" style="width: 64px; height: 64px"></div>
+<div class="lottie-icon" data-src="https://cdn.meteocons.com/latest/lottie/fill/snow.json" style="width: 64px; height: 64px"></div>
+<div class="lottie-icon" data-src="https://cdn.meteocons.com/latest/lottie/fill/wind.json" style="width: 64px; height: 64px"></div>
 ```
 
 ## Accessibility
@@ -181,10 +181,10 @@ Always provide meaningful alt text that describes the weather condition, not the
 
 ```html
 <!-- Good: describes the weather -->
-<img src="/icons/fill/rain.svg" alt="Rain expected" width="64" height="64" />
+<img src="https://cdn.meteocons.com/latest/svg/fill/rain.svg" alt="Rain expected" width="64" height="64" />
 
 <!-- Bad: describes the icon -->
-<img src="/icons/fill/rain.svg" alt="rain icon" width="64" height="64" />
+<img src="https://cdn.meteocons.com/latest/svg/fill/rain.svg" alt="rain icon" width="64" height="64" />
 ```
 
 ### Decorative icons
@@ -193,7 +193,7 @@ If the icon is purely decorative (the weather is also described in text), hide i
 
 ```html
 <div class="forecast">
-    <img src="/icons/fill/rain.svg" alt="" aria-hidden="true" width="48" height="48" />
+    <img src="https://cdn.meteocons.com/latest/svg/fill/rain.svg" alt="" aria-hidden="true" width="48" height="48" />
     <span>Rain — 18°C</span>
 </div>
 ```
@@ -218,7 +218,7 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 
 const animation = lottie.loadAnimation({
     container: el,
-    path: '/icons/fill/rain.json',
+    path: 'https://cdn.meteocons.com/latest/lottie/fill/rain.json',
     loop: !prefersReducedMotion,
     autoplay: !prefersReducedMotion
 });
@@ -235,7 +235,7 @@ The **monochrome** style uses `currentColor`, making it perfect for dark mode su
 
 ```html
 <div class="weather-widget">
-    <img src="/icons/monochrome/rain.svg" alt="Rain" width="64" height="64" />
+    <img src="https://cdn.meteocons.com/latest/svg/monochrome/rain.svg" alt="Rain" width="64" height="64" />
     <span>Rain — 18°C</span>
 </div>
 ```
@@ -340,7 +340,8 @@ const CONDITION_MAP: Record<string, string> = {
 
 function getIconUrl(condition: string, style = 'fill', format: 'svg' | 'json' = 'svg'): string {
     const slug = CONDITION_MAP[condition] ?? 'not-available';
-    return `/icons/${style}/${slug}.${format}`;
+    const type = format === 'json' ? 'lottie' : 'svg';
+    return `https://cdn.meteocons.com/latest/${type}/${style}/${slug}.${format}`;
 }
 
 // Example: render weather for a city

@@ -23,8 +23,8 @@ https://cdn.meteocons.com/{version}/{format}/{style}/{icon}.{ext}
 **Example URLs:**
 
 ```
-https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg
-https://cdn.meteocons.com/0.0.0/lottie/line/rain.json
+https://cdn.meteocons.com/latest/svg/fill/clear-day.svg
+https://cdn.meteocons.com/latest/lottie/line/rain.json
 ```
 
 ## SVG
@@ -33,7 +33,7 @@ Use an `<img>` tag to render an icon directly. Animations start automatically.
 
 ```html
 <img
-    src="https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg"
+    src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg"
     alt="Clear day"
     width="64"
     height="64"
@@ -43,7 +43,7 @@ Use an `<img>` tag to render an icon directly. Animations start automatically.
 For full control over styling and animation, fetch and inline the SVG:
 
 ```javascript
-const response = await fetch('https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg');
+const response = await fetch('https://cdn.meteocons.com/latest/svg/fill/clear-day.svg');
 const svgMarkup = await response.text();
 
 document.getElementById('weather-icon').innerHTML = svgMarkup;
@@ -58,7 +58,7 @@ import lottie from 'lottie-web';
 
 const animation = lottie.loadAnimation({
     container: document.getElementById('weather-icon'),
-    path: 'https://cdn.meteocons.com/0.0.0/lottie/fill/clear-day.json',
+    path: 'https://cdn.meteocons.com/latest/lottie/fill/clear-day.json',
     renderer: 'svg',
     loop: true,
     autoplay: true,
@@ -75,7 +75,7 @@ Every release gets its own path on the CDN. This means older versions remain ava
 
 ```html
 <!-- Good: pinned version -->
-<img src="https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg" alt="Clear day" />
+<img src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg" alt="Clear day" />
 
 <!-- Avoid: no version pinning means manually updating URLs on each release -->
 ```

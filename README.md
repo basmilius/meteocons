@@ -65,7 +65,7 @@ See the [CDN documentation](https://meteocons.com/docs/cdn) for details.
 
 ## Development
 
-This is the monorepo for the Meteocons export pipeline, icon packages, documentation and preview website.
+This is the monorepo for the Meteocons export pipeline, icon packages and documentation.
 
 ### Prerequisites
 
@@ -92,7 +92,6 @@ bun run export --frame X   # Export a single icon
 bun run validate           # Validate layer names and coverage
 bun run publish-icons      # Copy output to @meteocons/svg and @meteocons/lottie
 bun run docs:dev           # Start documentation website
-bun run preview:dev        # Start preview website
 ```
 
 ### Figma Personal Access Token

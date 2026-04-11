@@ -2,6 +2,7 @@
     import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
     import lottie from 'lottie-web';
     import type { AnimationItem } from 'lottie-web';
+    import { iconSvgUrl, iconLottieUrl, CDN_BASE, cdnVersion } from '../../lib/icons';
 
     type Style = 'fill' | 'flat' | 'line' | 'monochrome';
 
@@ -23,11 +24,6 @@
     }
 
     const STYLES: Style[] = ['fill', 'flat', 'line', 'monochrome'];
-    const CDN_BASE = 'https://cdn.meteocons.com';
-
-    const props = defineProps<{
-        version?: string;
-    }>();
 
     const manifest = ref<Manifest | null>(null);
     const loading = ref(true);
@@ -135,17 +131,19 @@
     }
 
     function svgUrl(slug: string, style?: Style): string {
-        return `/icons/${style ?? currentStyle.value}/${slug}.svg`;
+        return iconSvgUrl(style ?? currentStyle.value, slug);
+    }
+
+    function lottieUrl(slug: string, style?: Style): string {
+        return iconLottieUrl(style ?? currentStyle.value, slug);
     }
 
     function cdnSvgUrl(slug: string, style: Style): string {
-        const version = props.version && props.version !== '0.0.0' ? props.version : 'latest';
-        return `${CDN_BASE}/${version}/svg/${style}/${slug}.svg`;
+        return `${CDN_BASE}/${cdnVersion()}/svg/${style}/${slug}.svg`;
     }
 
     function cdnLottieUrl(slug: string, style: Style): string {
-        const version = props.version && props.version !== '0.0.0' ? props.version : 'latest';
-        return `${CDN_BASE}/${version}/lottie/${style}/${slug}.json`;
+        return `${CDN_BASE}/${cdnVersion()}/lottie/${style}/${slug}.json`;
     }
 
     function buildUrl(): string {
@@ -242,7 +240,7 @@
             return;
         }
 
-        const url = `/icons/${detailStyle.value}/${selectedIcon.value.slug}.json`;
+        const url = lottieUrl(selectedIcon.value.slug, detailStyle.value);
 
         try {
             lottieAnimation = lottie.loadAnimation({
@@ -363,7 +361,7 @@
                     :aria-label="style"
                     @click="currentStyle = style"
                 >
-                    <img :src="`/icons/${style}/clear-day.svg`" alt="" width="32" height="32"/>
+                    <img :src="svgUrl('clear-day', style)" alt="" width="32" height="32"/>
                 </button>
             </div>
 
@@ -528,7 +526,7 @@
                                     </svg>
                                     Download SVG
                                 </button>
-                                <button class="action-btn" @click="downloadFile(`/icons/${detailStyle}/${selectedIcon.slug}.json`, `${selectedIcon.slug}.json`)">
+                                <button class="action-btn" @click="downloadFile(lottieUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.json`)">
                                     <svg viewBox="0 0 20 20" width="16" height="16" fill="none"
                                          stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                          stroke-linejoin="round">

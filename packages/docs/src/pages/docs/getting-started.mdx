@@ -60,7 +60,7 @@ The simplest way to render an icon. Animations start automatically.
 
 ```html
 <img
-    src="node_modules/@meteocons/svg/fill/clear-day.svg"
+    src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg"
     alt="Clear day"
     width="64"
     height="64"
@@ -87,7 +87,7 @@ document.body.appendChild(img);
 Fetch and inline the SVG to access individual elements, apply CSS, or control animations:
 
 ```javascript
-const response = await fetch('/icons/fill/clear-day.svg');
+const response = await fetch('https://cdn.meteocons.com/latest/svg/fill/clear-day.svg');
 const svgMarkup = await response.text();
 
 const container = document.getElementById('weather-icon');
@@ -116,7 +116,7 @@ import lottie from 'lottie-web';
 
 const animation = lottie.loadAnimation({
     container: document.getElementById('weather-icon'),
-    path: '/path/to/@meteocons/lottie/fill/clear-day.json',
+    path: 'https://cdn.meteocons.com/latest/lottie/fill/clear-day.json',
     renderer: 'svg',    // or 'canvas' for better performance
     loop: true,
     autoplay: true
@@ -136,7 +136,7 @@ Use icons directly from a CDN without installing anything. Great for prototyping
 ```html
 <!-- Meteocons CDN -->
 <img
-    src="https://cdn.meteocons.com/0.0.0/svg/fill/clear-day.svg"
+    src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg"
     alt="Clear day"
     width="64"
     height="64"

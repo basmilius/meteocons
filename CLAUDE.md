@@ -1,6 +1,6 @@
 # Meteocons
 
-Monorepo voor Meteocons: animated weather icons. Bevat de export pipeline, publishable icon packages, preview website en documentatie.
+Monorepo voor Meteocons: animated weather icons. Bevat de export pipeline, publishable icon packages en documentatie.
 
 ## Monorepo structuur
 
@@ -9,7 +9,6 @@ packages/
 ├── exporter/     # @meteocons/exporter  — Figma → SVG/Lottie export pipeline
 ├── svg/          # @meteocons/svg       — Publishable SVG icon package
 ├── lottie/       # @meteocons/lottie    — Publishable Lottie icon package
-├── preview/      # @meteocons/preview   — Vue 3 + Vite preview website
 └── docs/         # @meteocons/docs      — Astro docs + marketing website
 ```
 
@@ -22,7 +21,6 @@ bun run export             # Exporteer alle iconen (SVG + Lottie)
 bun run export --frame X   # Exporteer één icoon
 bun run validate           # Valideer layer-namen en coverage
 bun run publish-icons      # Kopieer output naar @meteocons/svg en @meteocons/lottie
-bun run preview:dev        # Start preview website dev server
 bun run docs:dev           # Start docs website dev server
 ```
 

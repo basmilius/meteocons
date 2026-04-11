@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { version } from '../../package.json';
+import { iconSvgUrl } from '../lib/icons';
 
 interface Props {
     title: string;
@@ -32,7 +33,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         <nav class="nav">
             <div class="nav-inner">
                 <a href="/" class="nav-brand">
-                    <img src="/icons/fill/clear-day.svg" alt="" width="42" height="42"/>
+                    <img src={iconSvgUrl('fill', 'clear-day')} alt="" width="42" height="42"/>
                     <span>Meteocons</span>
                 </a>
                 <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links');const open=nav.classList.toggle('open');this.setAttribute('aria-expanded',open)">
@@ -69,7 +70,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
                 <div class="footer-inner">
                     <div class="footer-top">
                         <div class="footer-brand">
-                            <img src="/icons/fill/clear-day.svg" alt="" width="24" height="24"/>
+                            <img src={iconSvgUrl('fill', 'clear-day')} alt="" width="24" height="24"/>
                             <span>Meteocons</span>
                         </div>
                         <div class="footer-links">

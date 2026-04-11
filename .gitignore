@@ -28,9 +28,7 @@ packages/lottie/manifest.json
 !.idea/icon.svg
 
 # Deploy
-packages/preview/.wrangler/
 packages/docs/.wrangler/
 
 # Build output
-packages/preview/dist/
 packages/docs/dist/

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PmTabs from '../components/PmTabs.astro';
+import { iconSvgUrl } from '../lib/icons';
 
 const heroIcons = [
     'clear-day', 'partly-cloudy-day-rain', 'thunderstorms-day-rain', 'snow',
@@ -121,7 +122,7 @@ const weatherCards = [
                 <div class="showcase-track">
                     {[...heroIcons, ...heroIcons, ...heroIcons].map((slug, i) => (
                         <div class="showcase-item" aria-hidden={i >= heroIcons.length}>
-                            <img src={`/icons/fill/${slug}.svg`} alt={i < heroIcons.length ? slug : ''} width="80" height="80" loading="eager"/>
+                            <img src={iconSvgUrl('fill', slug)} alt={i < heroIcons.length ? slug : ''} width="80" height="80" loading="eager"/>
                         </div>
                     ))}
                 </div>
@@ -133,7 +134,7 @@ const weatherCards = [
             <div class="preview-inner">
                 {featureIcons.map(({slug, delay}) => (
                     <div class="preview-card" style={`animation-delay: ${delay}s`}>
-                        <img src={`/icons/fill/${slug}.svg`} alt={slug} width="64" height="64"/>
+                        <img src={iconSvgUrl('fill', slug)} alt={slug} width="64" height="64"/>
                     </div>
                 ))}
             </div>
@@ -194,7 +195,7 @@ const weatherCards = [
                                     <div class="weather-city">{card.city}</div>
                                     <div class="weather-desc">{card.desc}</div>
                                 </div>
-                                <img src={`/icons/${card.style}/${card.icon}.svg`} alt="" width="96" height="96" class="weather-icon"/>
+                                <img src={iconSvgUrl(card.style, card.icon)} alt="" width="96" height="96" class="weather-icon"/>
                             </div>
 
                             <div class="weather-temp-row">
@@ -206,7 +207,7 @@ const weatherCards = [
                                 {card.forecast.map(h => (
                                     <div class="forecast-hour">
                                         <span class="forecast-time">{h.time}</span>
-                                        <img src={`/icons/${card.style}/${h.icon}.svg`} alt="" width="40" height="40"/>
+                                        <img src={iconSvgUrl(card.style, h.icon)} alt="" width="40" height="40"/>
                                         <span class="forecast-temp">{h.temp}&deg;</span>
                                     </div>
                                 ))}

@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { iconSvgUrl } from '../lib/icons';
 ---
 
 <BaseLayout title="Page not found">
     <div class="not-found">
-        <img src="/icons/fill/thunderstorms-extreme.svg" alt="" width="128" height="128"/>
+        <img src={iconSvgUrl('fill', 'thunderstorms-extreme')} alt="" width="128" height="128"/>
         <h1>404</h1>
         <p>This page doesn't exist.</p>
         <a href="/" class="back-link">

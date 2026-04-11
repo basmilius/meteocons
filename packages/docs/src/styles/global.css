@@ -5,10 +5,10 @@
     --font-body: 'Outfit', system-ui, sans-serif;
 
     --bg: #ffffff;
-    --bg-soft: #f8f9fb;
-    --bg-surface: #f1f3f6;
-    --bg-raised: #e8ebf0;
-    --bg-hover: #eceef3;
+    --bg-soft: #f9fafb;
+    --bg-surface: #f3f4f6;
+    --bg-raised: #e5e7eb;
+    --bg-hover: #f3f4f6;
 
     --amber: #e5850a;
     --amber-light: #f59e0b;
@@ -24,20 +24,20 @@
     --text-muted: #9ca3af;
     --text-faint: #d1d5db;
 
-    --border: rgba(0, 0, 0, 0.06);
-    --border-light: rgba(0, 0, 0, 0.1);
+    --border: #f3f4f6;
+    --border-light: #e5e7eb;
     --border-amber: rgba(229, 133, 10, 0.25);
 
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+    --radius-sm: 9px;
+    --radius-md: 15px;
+    --radius-lg: 21px;
+    --radius-xl: 30px;
 
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
-    --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.12);
-    --shadow-amber: 0 8px 32px rgba(229, 133, 10, 0.15);
+    --shadow-sm: 0 3px 6px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 12px 39px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 24px 81px rgba(0, 0, 0, 0.12);
+    --shadow-amber: 0 9px 33px rgba(229, 133, 10, 0.15);
 
     --content-width: 1200px;
     --content-narrow: 800px;
@@ -52,8 +52,9 @@
 }
 
 html {
+    font-size: 16px;
     scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--nav-height) + 32px);
+    scroll-padding-top: calc(var(--nav-height) + 33px);
 }
 
 body {
@@ -89,8 +90,8 @@ code {
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
     font-size: 0.875em;
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    padding: 2px 7px;
+    border: 2px solid var(--border);
+    padding: 3px 6px;
     border-radius: 6px;
     color: #b45309;
 }
@@ -98,8 +99,8 @@ code {
 pre {
     background: #1a1e2e;
     color: #c8cdd8;
-    border: 1px solid var(--border);
-    padding: 24px 28px;
+    border: 2px solid var(--border);
+    padding: 24px 27px;
     border-radius: var(--radius-md);
     overflow-x: auto;
     line-height: 1.75;
@@ -110,7 +111,7 @@ pre code {
     border: none;
     padding: 0;
     color: inherit;
-    font-size: 0.875rem;
+    font-size: 14px;
 }
 
 img {
@@ -122,7 +123,7 @@ img {
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(27px);
     }
     to {
         opacity: 1;

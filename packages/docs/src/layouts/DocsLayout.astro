@@ -54,25 +54,25 @@ const navItems = [
     .docs {
         max-width: var(--content-width);
         margin: 0 auto;
-        padding: 48px 28px;
+        padding: 48px 27px;
         display: grid;
         grid-template-columns: 220px 1fr;
-        gap: 64px;
+        gap: 63px;
     }
 
     .sidebar {
         position: sticky;
-        top: calc(var(--nav-height) + 32px);
+        top: calc(var(--nav-height) + 33px);
         align-self: start;
     }
 
     .sidebar-label {
-        font-size: 0.7rem;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.12em;
         color: var(--text-muted);
-        padding: 0 14px;
+        padding: 0 15px;
         margin-bottom: 12px;
     }
 
@@ -82,14 +82,14 @@ const navItems = [
     }
 
     .sidebar li {
-        margin-bottom: 2px;
+        margin-bottom: 3px;
     }
 
     .sidebar a {
         display: block;
-        padding: 8px 14px;
+        padding: 9px 15px;
         border-radius: var(--radius-sm);
-        font-size: 0.9rem;
+        font-size: 14px;
         font-weight: 400;
         color: var(--text-secondary);
         transition: all 0.15s;
@@ -113,38 +113,38 @@ const navItems = [
 
     .content-header h1 {
         font-family: var(--font-display);
-        font-size: 2.5rem;
+        font-size: 40px;
         font-weight: 400;
-        margin-bottom: 8px;
+        margin-bottom: 9px;
     }
 
     /* Prose styles for markdown content */
     .prose :global(h2) {
         font-family: var(--font-display);
-        font-size: 1.6rem;
+        font-size: 26px;
         font-weight: 400;
-        margin-top: 56px;
-        margin-bottom: 20px;
+        margin-top: 57px;
+        margin-bottom: 21px;
         padding-bottom: 12px;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 2px solid var(--border);
     }
 
     .prose :global(h3) {
-        font-size: 1.1rem;
+        font-size: 18px;
         font-weight: 600;
         margin-top: 36px;
         margin-bottom: 12px;
     }
 
     .prose :global(p) {
-        margin-bottom: 16px;
+        margin-bottom: 15px;
         color: var(--text-secondary);
         line-height: 1.75;
     }
 
     .prose :global(ul),
     .prose :global(ol) {
-        margin-bottom: 16px;
+        margin-bottom: 15px;
         padding-left: 24px;
         color: var(--text-secondary);
     }
@@ -171,10 +171,10 @@ const navItems = [
 
     .prose :global(th),
     .prose :global(td) {
-        padding: 12px 16px;
-        border: 1px solid var(--border);
+        padding: 12px 15px;
+        border: 2px solid var(--border);
         text-align: left;
-        font-size: 0.9rem;
+        font-size: 14px;
     }
 
     .prose :global(th) {
@@ -189,7 +189,7 @@ const navItems = [
 
     .prose :global(hr) {
         border: none;
-        border-top: 1px solid var(--border);
+        border-top: 2px solid var(--border);
         margin: 48px 0;
     }
 

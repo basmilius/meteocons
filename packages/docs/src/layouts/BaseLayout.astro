@@ -9,7 +9,7 @@ interface Props {
     fullWidth?: boolean;
 }
 
-const {title, description = 'Animated weather icons for the modern web. 475+ icons in SVG and Lottie.', fullWidth = false} = Astro.props;
+const {title, description = 'Animated weather icons for the modern web. 500+ icons in SVG and Lottie.', fullWidth = false} = Astro.props;
 const currentPath = Astro.url.pathname;
 const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
 ---
@@ -37,11 +37,11 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
                     <span>Meteocons</span>
                 </a>
                 <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links');const bd=document.querySelector('.nav-backdrop');const open=nav.classList.toggle('open');bd.classList.toggle('open',open);this.setAttribute('aria-expanded',open)">
-                    <svg class="icon-menu" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <path d="M4 8h16M4 16h16"/>
+                    <svg class="icon-menu" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <path d="M96 152C96 138.7 106.7 128 120 128L520 128C533.3 128 544 138.7 544 152C544 165.3 533.3 176 520 176L120 176C106.7 176 96 165.3 96 152zM96 320C96 306.7 106.7 296 120 296L520 296C533.3 296 544 306.7 544 320C544 333.3 533.3 344 520 344L120 344C106.7 344 96 333.3 96 320zM544 488C544 501.3 533.3 512 520 512L120 512C106.7 512 96 501.3 96 488C96 474.7 106.7 464 120 464L520 464C533.3 464 544 474.7 544 488z"/>
                     </svg>
-                    <svg class="icon-close" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <path d="M6 6l12 12M18 6L6 18"/>
+                    <svg class="icon-close" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <path d="M135.5 169C126.1 159.6 126.1 144.4 135.5 135.1C144.9 125.8 160.1 125.7 169.4 135.1L320.4 286.1L471.4 135.1C480.8 125.7 496 125.7 505.3 135.1C514.6 144.5 514.7 159.7 505.3 169L354.3 320L505.3 471C514.7 480.4 514.7 495.6 505.3 504.9C495.9 514.2 480.7 514.3 471.4 504.9L320.4 353.9L169.4 504.9C160 514.3 144.8 514.3 135.5 504.9C126.2 495.5 126.1 480.3 135.5 471L286.5 320L135.5 169z"/>
                     </svg>
                 </button>
                 <div class="nav-backdrop" onclick="const nav=document.querySelector('.nav-links');const btn=document.querySelector('.nav-toggle');nav.classList.remove('open');this.classList.remove('open');btn.setAttribute('aria-expanded','false')"></div>
@@ -103,13 +103,13 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         z-index: 100;
         height: var(--nav-height);
         background: white;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 2px solid var(--border);
     }
 
     .nav-inner {
         max-width: var(--content-width);
         margin: 0 auto;
-        padding: 0 28px;
+        padding: 0 27px;
         height: 100%;
         display: flex;
         align-items: center;
@@ -120,11 +120,11 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         display: flex;
         margin-left: -3px;
         align-items: center;
-        gap: 10px;
+        gap: 9px;
         color: var(--text);
         font-family: var(--font-display);
         font-weight: 800;
-        font-size: 1.3rem;
+        font-size: 21px;
         letter-spacing: -0.02em;
     }
 
@@ -135,21 +135,21 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 3px;
     }
 
     .nav-divider {
         width: 1px;
         height: 24px;
         background: var(--border-light);
-        margin: 0 8px;
+        margin: 0 9px;
     }
 
     .nav-links > a {
         color: var(--text-secondary);
-        font-size: 1rem;
+        font-size: 16px;
         font-weight: 500;
-        padding: 10px 18px;
+        padding: 9px 18px;
         border-radius: var(--radius-sm);
         transition: all 0.15s;
     }
@@ -166,7 +166,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
 
     .nav-icon {
         display: flex;
-        padding: 8px !important;
+        padding: 9px !important;
         color: var(--text-muted) !important;
     }
 
@@ -183,8 +183,8 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         display: none;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         border: none;
         border-radius: var(--radius-sm);
         background: transparent;
@@ -214,16 +214,16 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         }
 
         .nav-inner {
-            padding: 0 20px;
+            padding: 0 21px;
             justify-content: center;
         }
 
         .nav-toggle {
             display: flex;
             position: absolute;
-            left: 20px;
-            width: 44px;
-            height: 44px;
+            left: 21px;
+            width: 45px;
+            height: 45px;
             border-radius: var(--radius-md);
         }
 
@@ -251,13 +251,13 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
             right: 0;
             z-index: 50;
             background: var(--bg);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 20px 20px;
+            border-bottom: 2px solid var(--border);
+            padding: 12px 21px 21px;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-8px);
+            transform: translateY(-9px);
             transition: opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
         }
 
@@ -270,9 +270,9 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         .nav-links > a {
             display: flex;
             align-items: center;
-            padding: 13px 16px;
+            padding: 12px 15px;
             border-radius: var(--radius-sm);
-            font-size: 1rem;
+            font-size: 16px;
             font-weight: 500;
         }
 
@@ -281,20 +281,20 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         }
 
         .nav-links > .nav-icon {
-            padding: 13px 16px !important;
+            padding: 12px 15px !important;
         }
 
         .nav-divider {
             width: 100%;
             height: 1px;
-            margin: 8px 0;
+            margin: 9px 0;
         }
     }
 
     .footer {
-        border-top: 1px solid var(--border);
+        border-top: 2px solid var(--border);
         margin-top: 120px;
-        padding: 48px 28px;
+        padding: 48px 27px;
         background: var(--bg-soft);
     }
 
@@ -303,7 +303,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: 28px;
+        gap: 27px;
     }
 
     .footer-top {
@@ -315,10 +315,10 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
     .footer-brand {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 9px;
         font-family: var(--font-display);
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 16px;
         color: var(--text);
     }
 
@@ -329,7 +329,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
 
     .footer-links a {
         color: var(--text-muted);
-        font-size: 0.875rem;
+        font-size: 14px;
         font-weight: 500;
         transition: color 0.15s;
     }
@@ -342,28 +342,28 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-top: 20px;
-        border-top: 1px solid var(--border);
+        padding-top: 21px;
+        border-top: 2px solid var(--border);
     }
 
     .footer-bottom p {
         color: var(--text-muted);
-        font-size: 0.825rem;
+        font-size: 13px;
     }
 
     .footer-version {
-        font-size: 0.75rem;
+        font-size: 12px;
         font-weight: 600;
         color: var(--amber);
         background: rgba(229, 133, 10, 0.1);
-        padding: 3px 11px;
+        padding: 3px 12px;
         border-radius: 100px;
     }
 
     @media (max-width: 640px) {
         .footer-top {
             flex-direction: column;
-            gap: 20px;
+            gap: 21px;
         }
     }
 </style>

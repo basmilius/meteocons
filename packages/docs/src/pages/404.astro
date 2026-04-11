@@ -9,8 +9,8 @@ import { iconSvgUrl } from '../lib/icons';
         <h1>404</h1>
         <p>This page doesn't exist.</p>
         <a href="/" class="back-link">
-            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M15 10H5M9 14l-4-4 4-4"/>
+            <svg viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M71 303C61.6 312.4 61.6 327.6 71 336.9L239 505C248.4 514.4 263.6 514.4 272.9 505C282.2 495.6 282.3 480.4 272.9 471.1L145.9 344L552 344C565.3 344 576 333.3 576 320C576 306.7 565.3 296 552 296L145.9 296L273 169C282.4 159.6 282.4 144.4 273 135.1C263.6 125.8 248.4 125.7 239.1 135.1L71 303z"/>
             </svg>
             Back to home
         </a>
@@ -25,13 +25,13 @@ import { iconSvgUrl } from '../lib/icons';
         justify-content: center;
         text-align: center;
         min-height: 60vh;
-        padding: 60px 28px;
+        padding: 60px 27px;
         gap: 12px;
     }
 
     .not-found h1 {
         font-family: var(--font-display);
-        font-size: 4rem;
+        font-size: 64px;
         font-weight: 800;
         color: var(--text);
         line-height: 1;
@@ -39,18 +39,18 @@ import { iconSvgUrl } from '../lib/icons';
 
     .not-found p {
         color: var(--text-muted);
-        font-size: 1.1rem;
+        font-size: 18px;
     }
 
     .back-link {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        margin-top: 16px;
-        padding: 10px 20px;
+        margin-top: 15px;
+        padding: 9px 21px;
         border-radius: var(--radius-md);
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 14px;
         color: var(--amber);
         background: var(--amber-bg);
         transition: all 0.15s;

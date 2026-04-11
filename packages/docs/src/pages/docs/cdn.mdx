@@ -69,18 +69,21 @@ Or use the Lottie JSON URL with any other Lottie player — DotLottie, Lottie Re
 
 ## Versioning
 
-Every release gets its own path on the CDN. This means older versions remain available and URLs never break.
-
-**Tip:** always pin a specific version in production to avoid unexpected changes when a new version is released.
+Every release gets its own path on the CDN. Pin a specific version in production to avoid unexpected changes when a new version is released.
 
 ```html
 <!-- Good: pinned version -->
-<img src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg" alt="Clear day" />
+<img src="https://cdn.meteocons.com/1.0.0/svg/fill/clear-day.svg" alt="Clear day" />
 
-<!-- Avoid: no version pinning means manually updating URLs on each release -->
+<!-- Avoid: latest may change without notice -->
+<img src="https://cdn.meteocons.com/latest/svg/fill/clear-day.svg" alt="Clear day" />
 ```
 
 You can find the current version in the [icon browser](/icons) or in the footer of this site.
+
+### Retention
+
+Full releases remain available on the CDN **forever** — URLs will never break. Pre-releases (e.g. `1.1.0-beta.1`) are available for **3 months** after the next full release and are then removed.
 
 ## CORS
 

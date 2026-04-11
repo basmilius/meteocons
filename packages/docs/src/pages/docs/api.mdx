@@ -173,18 +173,9 @@ Icons are organized into the following categories:
 | **UV Index**    | `uv-index`    | UV radiation levels (1–11+)                          |
 | **Alerts**      | `alerts`      | Weather warnings and extreme conditions              |
 
-## Animated vs static
+## Animation status
 
-The `animated` field in each `IconEntry` indicates whether an icon has animation keyframes. Static icons (like wind direction arrows or UV index badges) are included in both packages — they render as still images.
-
-```typescript
-const allIcons = manifest.categories.flatMap(c => c.icons);
-
-const animated = allIcons.filter(icon => icon.animated);
-const static_ = allIcons.filter(icon => !icon.animated);
-
-console.log(`${animated.length} animated, ${static_.length} static`);
-```
+All icons in Meteocons are animated. The `animated` field in each `IconEntry` is always `true`.
 
 ## Exports map
 

@@ -9,11 +9,31 @@ Guides for popular frameworks. All examples use the **fill** style — swap `fil
 
 ## React
 
+<PmTabs
+    id="react-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
-The simplest approach — render the SVG as an `<img>` tag:
+The simplest approach — import the SVG and render it as an `<img>` tag:
 
 ```tsx
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
+
+function WeatherIcon() {
+    return <img src={clearDay} alt="Clear day" width={64} height={64} />;
+}
+```
+
+For dynamic icons where the slug is a prop, use a helper to resolve the import:
+
+```tsx
+import { useEffect, useState } from 'react';
+
 interface WeatherIconProps {
     slug: string;
     style?: 'fill' | 'flat' | 'line' | 'monochrome';
@@ -21,14 +41,19 @@ interface WeatherIconProps {
 }
 
 function WeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
-    return (
-        <img
-            src={`/icons/${style}/${slug}.svg`}
-            alt={slug}
-            width={size}
-            height={size}
-        />
-    );
+    const [src, setSrc] = useState('');
+
+    useEffect(() => {
+        import(`@meteocons/svg/${style}/${slug}.svg`).then(
+            (mod) => setSrc(mod.default)
+        );
+    }, [slug, style]);
+
+    if (!src) {
+        return <div style={{ width: size, height: size }} />;
+    }
+
+    return <img src={src} alt={slug} width={size} height={size} />;
 }
 
 // Usage
@@ -41,15 +66,26 @@ function WeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
 For full CSS control, fetch and inject the SVG markup:
 
 ```tsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function InlineSvgIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [svgUrl, setSvgUrl] = useState('');
 
     useEffect(() => {
+        import(`@meteocons/svg/${style}/${slug}.svg`).then(
+            (mod) => setSvgUrl(mod.default)
+        );
+    }, [slug, style]);
+
+    useEffect(() => {
+        if (!svgUrl || !containerRef.current) {
+            return;
+        }
+
         const controller = new AbortController();
 
-        fetch(`/icons/${style}/${slug}.svg`, { signal: controller.signal })
+        fetch(svgUrl, { signal: controller.signal })
             .then(res => res.text())
             .then(svg => {
                 if (containerRef.current) {
@@ -58,7 +94,7 @@ function InlineSvgIcon({ slug, style = 'fill', size = 64 }: WeatherIconProps) {
             });
 
         return () => controller.abort();
-    }, [slug, style]);
+    }, [svgUrl]);
 
     return <div ref={containerRef} style={{ width: size, height: size }} />;
 }
@@ -102,13 +138,9 @@ function DynamicWeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProp
     const [animationData, setAnimationData] = useState(null);
 
     useEffect(() => {
-        const controller = new AbortController();
-
-        fetch(`/icons/${style}/${slug}.json`, { signal: controller.signal })
-            .then(res => res.json())
-            .then(setAnimationData);
-
-        return () => controller.abort();
+        import(`@meteocons/lottie/${style}/${slug}.json`).then(
+            (mod) => setAnimationData(mod.default)
+        );
     }, [slug, style]);
 
     if (!animationData) {
@@ -128,20 +160,38 @@ function DynamicWeatherIcon({ slug, style = 'fill', size = 64 }: WeatherIconProp
 
 ## Vue
 
+<PmTabs
+    id="vue-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
 ```vue
 <script setup lang="ts">
-defineProps<{
+import { computed, defineAsyncComponent, ref, watchEffect } from 'vue';
+
+const props = defineProps<{
     slug: string
     style?: 'fill' | 'flat' | 'line' | 'monochrome'
     size?: number
 }>();
+
+const src = ref('');
+
+watchEffect(async () => {
+    const mod = await import(`@meteocons/svg/${props.style ?? 'fill'}/${props.slug}.svg`);
+    src.value = mod.default;
+});
 </script>
 
 <template>
     <img
-        :src="`/icons/${style ?? 'fill'}/${slug}.svg`"
+        v-if="src"
+        :src="src"
         :alt="slug"
         :width="size ?? 64"
         :height="size ?? 64"
@@ -167,10 +217,8 @@ watchEffect(async (onCleanup) => {
     const controller = new AbortController();
     onCleanup(() => controller.abort());
 
-    const response = await fetch(
-        `/icons/${props.style ?? 'fill'}/${props.slug}.svg`,
-        { signal: controller.signal }
-    );
+    const mod = await import(`@meteocons/svg/${props.style ?? 'fill'}/${props.slug}.svg`);
+    const response = await fetch(mod.default, { signal: controller.signal });
     svgMarkup.value = await response.text();
 });
 </script>
@@ -208,17 +256,19 @@ const props = defineProps<{
 const container = ref<HTMLElement>();
 let animation: AnimationItem;
 
-onMounted(() => {
+onMounted(async () => {
     if (!container.value) {
         return;
     }
+
+    const mod = await import(`@meteocons/lottie/${props.style ?? 'fill'}/${props.slug}.json`);
 
     animation = lottie.loadAnimation({
         container: container.value,
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+        animationData: mod.default
     });
 });
 
@@ -235,23 +285,22 @@ onUnmounted(() => animation?.destroy());
 
 ## Svelte
 
+<PmTabs
+    id="svelte-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
 ```svelte
 <script lang="ts">
-    let { slug, style = 'fill', size = 64 }: {
-        slug: string;
-        style?: 'fill' | 'flat' | 'line' | 'monochrome';
-        size?: number;
-    } = $props();
+    import clearDay from '@meteocons/svg/fill/clear-day.svg';
 </script>
 
-<img
-    src="/icons/{style}/{slug}.svg"
-    alt={slug}
-    width={size}
-    height={size}
-/>
+<img src={clearDay} alt="Clear day" width={64} height={64} />
 ```
 
 ### Lottie
@@ -277,15 +326,17 @@ onUnmounted(() => animation?.destroy());
     let container: HTMLElement;
 
     $effect(() => {
-        const animation = lottie.loadAnimation({
-            container,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: `/icons/${style}/${slug}.json`
-        });
+        import(`@meteocons/lottie/${style}/${slug}.json`).then((mod) => {
+            const animation = lottie.loadAnimation({
+                container,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                animationData: mod.default
+            });
 
-        return () => animation.destroy();
+            return () => animation.destroy();
+        });
     });
 </script>
 
@@ -294,27 +345,42 @@ onUnmounted(() => animation?.destroy());
 
 ## Angular
 
+<PmTabs
+    id="angular-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
 ```typescript
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
     selector: 'weather-icon',
     standalone: true,
     template: `
         <img
-            [src]="'/icons/' + style + '/' + slug + '.svg'"
+            [src]="src"
             [alt]="slug"
             [width]="size"
             [height]="size"
         />
     `
 })
-export class WeatherIconComponent {
+export class WeatherIconComponent implements OnInit {
     @Input({ required: true }) slug!: string;
     @Input() style: 'fill' | 'flat' | 'line' | 'monochrome' = 'fill';
     @Input() size = 64;
+
+    src = '';
+
+    async ngOnInit() {
+        const mod = await import(`@meteocons/svg/${this.style}/${this.slug}.svg`);
+        this.src = mod.default;
+    }
 }
 ```
 
@@ -352,13 +418,15 @@ export class WeatherLottieIconComponent implements OnInit, OnDestroy {
 
     private animation?: AnimationItem;
 
-    ngOnInit() {
+    async ngOnInit() {
+        const mod = await import(`@meteocons/lottie/${this.style}/${this.slug}.json`);
+
         this.animation = lottie.loadAnimation({
             container: this.container.nativeElement,
             renderer: 'svg',
             loop: true,
             autoplay: true,
-            path: `/icons/${this.style}/${this.slug}.json`
+            animationData: mod.default
         });
     }
 
@@ -370,25 +438,22 @@ export class WeatherLottieIconComponent implements OnInit, OnDestroy {
 
 ## Solid
 
+<PmTabs
+    id="solid-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
 ```tsx
-import type { Component } from 'solid-js';
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
 
-const WeatherIcon: Component<{
-    slug: string;
-    style?: 'fill' | 'flat' | 'line' | 'monochrome';
-    size?: number;
-}> = (props) => {
-    return (
-        <img
-            src={`/icons/${props.style ?? 'fill'}/${props.slug}.svg`}
-            alt={props.slug}
-            width={props.size ?? 64}
-            height={props.size ?? 64}
-        />
-    );
-};
+function WeatherIcon() {
+    return <img src={clearDay} alt="Clear day" width={64} height={64} />;
+}
 ```
 
 ### Lottie
@@ -414,13 +479,15 @@ function WeatherLottieIcon(props: {
     let container!: HTMLDivElement;
     let animation: AnimationItem;
 
-    onMount(() => {
+    onMount(async () => {
+        const mod = await import(`@meteocons/lottie/${props.style ?? 'fill'}/${props.slug}.json`);
+
         animation = lottie.loadAnimation({
             container,
             renderer: 'svg',
             loop: true,
             autoplay: true,
-            path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+            animationData: mod.default
         });
     });
 
@@ -437,19 +504,21 @@ function WeatherLottieIcon(props: {
 
 ## Astro
 
+<PmTabs
+    id="astro-svg"
+    bun="bun add @meteocons/svg"
+    npm="npm install @meteocons/svg"
+    yarn="yarn add @meteocons/svg"
+    pnpm="pnpm add @meteocons/svg"
+/>
+
 ### SVG as image
 
 ```astro
 ---
-interface Props {
-    slug: string;
-    style?: 'fill' | 'flat' | 'line' | 'monochrome';
-    size?: number;
-}
-
-const { slug, style = 'fill', size = 64 } = Astro.props;
+import clearDay from '@meteocons/svg/fill/clear-day.svg';
 ---
-<img src={`/icons/${style}/${slug}.svg`} alt={slug} width={size} height={size} />
+<img src={clearDay} alt="Clear day" width="64" height="64" />
 ```
 
 ### Lottie with client islands
@@ -553,17 +622,19 @@ const props = defineProps<{ slug: string; style?: string }>();
 const container = ref<HTMLElement>();
 let animation: AnimationItem;
 
-onMounted(() => {
+onMounted(async () => {
     if (!container.value) {
         return;
     }
+
+    const mod = await import(`@meteocons/lottie/${props.style ?? 'fill'}/${props.slug}.json`);
 
     animation = lottie.loadAnimation({
         container: container.value,
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: `/icons/${props.style ?? 'fill'}/${props.slug}.json`
+        animationData: mod.default
     });
 });
 

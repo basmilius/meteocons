@@ -203,16 +203,7 @@ If the icon is purely decorative (the weather is also described in text), hide i
 
 Some users prefer reduced motion. Respect their preference by pausing SVG animations:
 
-```css
-@media (prefers-reduced-motion: reduce) {
-    img[src$=".svg"] {
-        /* SVG animations in <img> tags can't be paused with CSS,
-           so consider showing static fallbacks instead */
-    }
-}
-```
-
-For Lottie, check the preference in JavaScript:
+For Lottie, check the preference in JavaScript and show the first frame instead of looping:
 
 ```javascript
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -224,7 +215,6 @@ const animation = lottie.loadAnimation({
     autoplay: !prefersReducedMotion
 });
 
-// Show the first frame as a static fallback
 if (prefersReducedMotion) {
     animation.goToAndStop(0, true);
 }

@@ -2,6 +2,9 @@
     "targets": [
         "water-alert"
     ],
+    "includes": [
+        "alert"
+    ],
     "layers": {
         "Water": {
             "animations": [
@@ -13,18 +16,6 @@
                     "origin": "bottom"
                 }
             ]
-        },
-        "Alert": {
-            "property": "opacity",
-            "values": [1, 1, 0, 0, 1],
-            "keyTimes": [0, 0.294, 0.5, 0.794, 1],
-            "duration": "1s"
-        },
-        "Exclamation": {
-            "property": "opacity",
-            "values": [1, 1, 0, 0, 1],
-            "keyTimes": [0, 0.294, 0.5, 0.794, 1],
-            "duration": "1s"
         }
     }
 }

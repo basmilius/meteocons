@@ -1,0 +1,14 @@
+{
+    "layers": {
+        "Value": {
+            "transform": "translateY",
+            "values": [
+                0,
+                -2,
+                0
+            ],
+            "duration": "3s",
+            "easing": "ease-in-out"
+        }
+    }
+}

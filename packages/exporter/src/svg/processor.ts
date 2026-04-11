@@ -529,3 +529,39 @@ export function processSvg(svgContent: string, resolvedConfig: ResolvedConfig): 
 
     return new XMLSerializer().serializeToString(doc);
 }
+
+/**
+ * Replaces hardcoded `black` fills/strokes with `currentColor` for monochrome icons.
+ * Skips elements inside `<defs>`, `<mask>`, and `<clipPath>` to preserve SVG mask semantics.
+ */
+export function applyMonochromeColors(svgString: string): string {
+    const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+    const skip = new Set(['defs', 'mask', 'clipPath']);
+
+    function isInsideSkipped(el: any): boolean {
+        let node = el.parentNode;
+        while (node) {
+            if (skip.has(node.tagName)) {
+                return true;
+            }
+            node = node.parentNode;
+        }
+        return false;
+    }
+
+    const all = doc.getElementsByTagName('*');
+    for (let i = 0; i < all.length; i++) {
+        const el = all[i];
+        if (isInsideSkipped(el)) {
+            continue;
+        }
+        if (el.getAttribute('fill') === 'black') {
+            el.setAttribute('fill', 'currentColor');
+        }
+        if (el.getAttribute('stroke') === 'black') {
+            el.setAttribute('stroke', 'currentColor');
+        }
+    }
+
+    return new XMLSerializer().serializeToString(doc);
+}

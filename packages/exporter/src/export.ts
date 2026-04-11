@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { readManifest, readSvg } from './cache';
 import { findConfig, resolveConfig } from './config-loader';
-import { processSvg } from './svg/processor';
+import { processSvg, applyMonochromeColors } from './svg/processor';
 import { generateLottie } from './lottie/generator';
 
 export interface ExportOptions {
@@ -82,7 +82,11 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
                 }
                 const slug = toSlug(frame.frameName);
                 const staticConfig = {static: true, layers: {}};
-                writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
+                let staticSvg = toViewBox(svgContent);
+                if (subfolder === 'monochrome') {
+                    staticSvg = applyMonochromeColors(staticSvg);
+                }
+                writeFileSync(join(svgDir, `${slug}.static.svg`), staticSvg, 'utf-8');
                 writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
                 skipped++;
                 continue;
@@ -93,7 +97,11 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
             if (resolved.static || Object.keys(resolved.layers).length === 0) {
                 const slug = toSlug(frame.frameName);
                 const staticConfig = {static: true, layers: {}};
-                writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
+                let staticSvg = toViewBox(svgContent);
+                if (subfolder === 'monochrome') {
+                    staticSvg = applyMonochromeColors(staticSvg);
+                }
+                writeFileSync(join(svgDir, `${slug}.static.svg`), staticSvg, 'utf-8');
                 writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
                 warn(`  ⚠  ${frame.frameName} — static`);
                 skipped++;
@@ -102,7 +110,11 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
 
             const slug = toSlug(frame.frameName);
 
-            writeFileSync(join(svgDir, `${slug}.animated.svg`), processSvg(svgContent, resolved), 'utf-8');
+            let animatedSvg = processSvg(svgContent, resolved);
+            if (subfolder === 'monochrome') {
+                animatedSvg = applyMonochromeColors(animatedSvg);
+            }
+            writeFileSync(join(svgDir, `${slug}.animated.svg`), animatedSvg, 'utf-8');
             writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, resolved)), 'utf-8');
 
             const summary = Object.keys(resolved.layers).join(', ');

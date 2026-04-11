@@ -232,13 +232,22 @@ if (prefersReducedMotion) {
 
 ## Dark mode with monochrome
 
-The **monochrome** style uses `currentColor`, making it perfect for dark mode support:
+The **monochrome** style uses `currentColor` for all fills and strokes, so the icons automatically match your text color. This is ideal for dark mode, theming, or branded interfaces.
+
+### Inline SVG (recommended)
+
+Fetch the SVG and inject it as inline HTML. The icon inherits the CSS `color` property:
 
 ```html
 <div class="weather-widget">
-    <img src="https://cdn.meteocons.com/latest/svg/monochrome/rain.svg" alt="Rain" width="64" height="64" />
+    <span class="icon"></span>
     <span>Rain — 18°C</span>
 </div>
+```
+
+```javascript
+const response = await fetch('https://cdn.meteocons.com/latest/svg/monochrome/rain.svg');
+document.querySelector('.icon').innerHTML = await response.text();
 ```
 
 ```css
@@ -253,7 +262,80 @@ The **monochrome** style uses `currentColor`, making it perfect for dark mode su
 }
 ```
 
-The icon automatically adapts to the text color — no need for separate light and dark icon sets.
+### CSS mask-image
+
+Use the SVG as a mask and control the color via `background-color`. Works with external files, but does not support animations:
+
+```css
+.weather-icon {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background-color: currentColor;
+    mask-image: url('https://cdn.meteocons.com/latest/svg/monochrome/rain.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+}
+```
+
+### Image tag
+
+When using an `<img>` tag, `currentColor` does not work because the SVG is rendered in an isolated context. The icon will always appear black. Use the `<img>` tag only when you don't need color customization:
+
+```html
+<img src="https://cdn.meteocons.com/latest/svg/monochrome/rain.svg" alt="Rain" width="64" height="64" />
+```
+
+## Lottie color customization
+
+Lottie files encode colors as static RGBA values — there is no `currentColor` equivalent. To change colors at runtime, you have two options.
+
+### DOM manipulation (SVG renderer)
+
+When using lottie-web with the `svg` renderer, you can modify the rendered SVG elements:
+
+```javascript
+const animation = lottie.loadAnimation({
+    container: el,
+    path: 'https://cdn.meteocons.com/latest/lottie/monochrome/rain.json',
+    renderer: 'svg',
+    loop: true,
+    autoplay: true
+});
+
+animation.addEventListener('DOMLoaded', () => {
+    el.querySelectorAll('[fill="rgb(0,0,0)"]').forEach(node => {
+        node.setAttribute('fill', '#e2e8f0');
+    });
+    el.querySelectorAll('[stroke="rgb(0,0,0)"]').forEach(node => {
+        node.setAttribute('stroke', '#e2e8f0');
+    });
+});
+```
+
+### JSON pre-processing
+
+Replace color values in the Lottie JSON before loading:
+
+```javascript
+const response = await fetch('https://cdn.meteocons.com/latest/lottie/monochrome/rain.json');
+const data = await response.json();
+
+// Replace black [0,0,0,1] with a custom color
+const json = JSON.stringify(data);
+const colored = json.replaceAll(
+    '"c":{"a":0,"k":[0,0,0,1]}',
+    '"c":{"a":0,"k":[0.886,0.910,0.941,1]}'  // #e2e8f0
+);
+
+lottie.loadAnimation({
+    container: el,
+    animationData: JSON.parse(colored),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true
+});
+```
 
 ## Lottie on mobile
 

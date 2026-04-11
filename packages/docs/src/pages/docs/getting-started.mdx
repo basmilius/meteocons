@@ -198,7 +198,7 @@ Meteocons comes in four distinct styles. Every icon is available in all four.
 | **Line** | Outline only, thin strokes | Minimal interfaces, small sizes |
 | **Monochrome** | Single color, uses `currentColor` | Adaptive UIs, dark mode, theming |
 
-The **monochrome** style is special — it uses `currentColor`, so the icons automatically match your text color. This makes it ideal for dark mode or themed interfaces:
+The **monochrome** style is special — it uses `currentColor`, so the icons automatically match your text color. This makes it ideal for dark mode or themed interfaces. Use inline SVG or CSS `mask-image` for color inheritance — `<img>` tags render SVGs in an isolated context where `currentColor` doesn't apply. See [Usage — Dark mode with monochrome](/docs/usage#dark-mode-with-monochrome) for detailed examples.
 
 ```css
 /* Icons follow the text color */

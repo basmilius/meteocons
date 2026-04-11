@@ -66,6 +66,10 @@ body {
     overflow-x: hidden;
 }
 
+p {
+    text-wrap: pretty;
+}
+
 ::selection {
     background: var(--amber);
     color: white;

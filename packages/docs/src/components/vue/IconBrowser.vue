@@ -32,6 +32,34 @@
     const activeCategory = ref('');
     const activeCategoryFilter = ref<string | null>(null);
 
+    // Mobile filter drawer
+    const mobileFilterOpen = ref(false);
+    const activeFilterCount = computed(() => {
+        let count = 0;
+        if (currentStyle.value !== 'fill') {
+            count++;
+        }
+        if (activeCategoryFilter.value !== null) {
+            count++;
+        }
+        return count;
+    });
+
+    function toggleMobileFilter(): void {
+        mobileFilterOpen.value = !mobileFilterOpen.value;
+    }
+
+    function selectCategoryMobile(slug: string | null): void {
+        activeCategoryFilter.value = slug;
+        mobileFilterOpen.value = false;
+        updateUrl();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    watch(mobileFilterOpen, (open) => {
+        document.body.style.overflow = open ? 'hidden' : '';
+    });
+
     // Detail popup
     const selectedIcon = ref<IconEntry | null>(null);
     const detailStyle = ref<Style>('fill');
@@ -353,16 +381,19 @@
                 />
             </div>
 
-            <div class="style-selector">
-                <button
-                    v-for="style in STYLES"
-                    :key="style"
-                    :class="['style-btn', {active: currentStyle === style}]"
-                    :aria-label="style"
-                    @click="currentStyle = style"
-                >
-                    <img :src="svgUrl('clear-day', style)" alt="" width="32" height="32"/>
-                </button>
+            <div>
+                <div class="nav-label">Style</div>
+                <div class="style-selector">
+                    <button
+                        v-for="style in STYLES"
+                        :key="style"
+                        :class="['style-btn', {active: currentStyle === style}]"
+                        @click="currentStyle = style"
+                    >
+                        <img :src="svgUrl('clear-day', style)" alt="" width="28" height="28"/>
+                        <span>{{ style }}</span>
+                    </button>
+                </div>
             </div>
 
             <nav class="category-nav">
@@ -385,6 +416,86 @@
                 </button>
             </nav>
         </aside>
+
+        <!-- Mobile filter bar -->
+        <div class="mobile-filter-bar">
+            <div class="mobile-search-wrap">
+                <svg class="mobile-search-icon" viewBox="0 0 20 20" width="14" height="14" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <circle cx="8.5" cy="8.5" r="5.5"/>
+                    <path d="M12.5 12.5L17 17"/>
+                </svg>
+                <input
+                    v-model="query"
+                    type="text"
+                    placeholder="Search..."
+                    class="mobile-search-input"
+                />
+            </div>
+            <button class="mobile-filter-btn" @click="toggleMobileFilter">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 4h16M5 10h10M8 16h4"/>
+                </svg>
+                <span v-if="activeFilterCount" class="mobile-filter-badge">{{ activeFilterCount }}</span>
+            </button>
+            <span class="mobile-filter-count">{{ totalCount }}</span>
+        </div>
+
+        <!-- Mobile filter drawer -->
+        <Transition name="drawer">
+            <div v-if="mobileFilterOpen" class="mobile-drawer-backdrop" @click.self="mobileFilterOpen = false">
+                <div class="mobile-drawer">
+                    <div class="mobile-drawer-header">
+                        <h3>Filters</h3>
+                        <button class="mobile-drawer-close" @click="mobileFilterOpen = false" aria-label="Close">
+                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round">
+                                <path d="M5 5l10 10M15 5L5 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mobile-drawer-body">
+                        <div class="mobile-drawer-section">
+                            <div class="mobile-drawer-label">Style</div>
+                            <div class="mobile-drawer-styles">
+                                <button
+                                    v-for="style in STYLES"
+                                    :key="style"
+                                    :class="['mobile-style-btn', { active: currentStyle === style }]"
+                                    @click="currentStyle = style"
+                                >
+                                    <img :src="svgUrl('clear-day', style)" alt="" width="28" height="28"/>
+                                    <span>{{ style }}</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mobile-drawer-divider"/>
+                        <div class="mobile-drawer-section">
+                            <div class="mobile-drawer-label">Category</div>
+                            <div class="mobile-drawer-list">
+                                <button
+                                    :class="['mobile-drawer-item', { active: activeCategoryFilter === null }]"
+                                    @click="selectCategoryMobile(null)"
+                                >
+                                    <span>All</span>
+                                    <span class="mobile-drawer-count">{{ totalIconCount }}</span>
+                                </button>
+                                <button
+                                    v-for="cat in sortedCategories"
+                                    :key="cat.slug"
+                                    :class="['mobile-drawer-item', { active: activeCategoryFilter === cat.slug }]"
+                                    @click="selectCategoryMobile(cat.slug)"
+                                >
+                                    <span>{{ cat.name }}</span>
+                                    <span class="mobile-drawer-count">{{ cat.icons.filter(Boolean).length }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Transition>
 
         <!-- Main grid -->
         <main class="main">
@@ -590,7 +701,7 @@
 <style scoped>
     .browser {
         display: grid;
-        grid-template-columns: 240px 1fr;
+        grid-template-columns: 300px 1fr;
         min-height: 500px;
     }
 
@@ -600,7 +711,7 @@
         top: var(--nav-height, 64px);
         height: calc(100vh - var(--nav-height, 64px));
         overflow-y: auto;
-        padding: 32px 24px 32px 0;
+        padding: 32px 24px 32px 28px;
         border-right: 1px solid var(--border, rgba(0, 0, 0, 0.06));
         display: flex;
         flex-direction: column;
@@ -669,44 +780,44 @@
     }
 
     .style-selector {
-        display: flex;
-        gap: 4px;
-        background: var(--bg, #ffffff);
-        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
-        border-radius: var(--radius-md, 14px);
-        padding: 4px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 
     .style-btn {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 6px 10px;
-        border: none;
-        background: transparent;
-        border-radius: 10px;
+        gap: 6px;
+        padding: 12px 4px 10px;
+        border: 1.5px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: var(--radius-md, 14px);
+        background: var(--bg-soft, #f8f9fb);
+        font-family: inherit;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted, #9ca3af);
         cursor: pointer;
+        text-transform: capitalize;
         transition: all 0.15s;
     }
 
     .style-btn img {
         pointer-events: none;
-        opacity: 0.35;
-        transition: opacity 0.15s;
+        transition: all 0.15s;
     }
 
-    .style-btn:hover img {
-        opacity: 0.7;
+    .style-btn:hover {
+        border-color: var(--border-light, rgba(0, 0, 0, 0.1));
+        color: var(--text-secondary, #4b5563);
+        background: var(--bg-surface, #f1f3f6);
     }
 
     .style-btn.active {
-        background: var(--amber, #e5850a);
-        box-shadow: 0 2px 8px rgba(229, 133, 10, 0.3);
-    }
-
-    .style-btn.active img {
-        opacity: 1;
-        filter: brightness(0) invert(1);
+        border-color: var(--amber, #e5850a);
+        background: rgba(229, 133, 10, 0.08);
+        color: var(--amber, #e5850a);
     }
 
     .category-nav {
@@ -762,7 +873,7 @@
 
     /* Main */
     .main {
-        padding: 32px 0 32px 32px;
+        padding: 32px 28px 32px 32px;
     }
 
     .state {
@@ -800,7 +911,8 @@
         font-weight: 700;
         letter-spacing: -0.01em;
         color: var(--text, #111827);
-        margin-bottom: 0;
+        margin: 0 -28px 0 -32px;
+        padding: 0 28px 0 32px;
         position: sticky;
         top: var(--nav-height, 64px);
         background: var(--bg, #ffffff);
@@ -1131,6 +1243,38 @@
         background: rgba(229, 133, 10, 0.06);
     }
 
+    /* Mobile filter bar - hidden on desktop */
+    .mobile-filter-bar {
+        display: none;
+    }
+
+    /* Drawer transitions */
+    .drawer-enter-active {
+        transition: opacity 0.2s ease-out;
+    }
+
+    .drawer-enter-active .mobile-drawer {
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-leave-active {
+        transition: opacity 0.15s ease-in;
+    }
+
+    .drawer-leave-active .mobile-drawer {
+        transition: transform 0.2s ease-in;
+    }
+
+    .drawer-enter-from,
+    .drawer-leave-to {
+        opacity: 0;
+    }
+
+    .drawer-enter-from .mobile-drawer,
+    .drawer-leave-to .mobile-drawer {
+        transform: translateY(100%);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .browser {
@@ -1138,24 +1282,296 @@
         }
 
         .sidebar {
-            position: static;
-            height: auto;
-            border-right: none;
-            border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.06));
-            padding: 20px;
-        }
-
-        .category-nav {
             display: none;
         }
 
         .main {
-            padding: 20px 16px;
+            padding: 16px 20px;
+        }
+
+        .category-title {
+            top: calc(var(--nav-height, 64px) + 60px);
+            margin: 0 -20px;
+            padding: 0 20px;
+        }
+
+        .icon-grid {
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 2px;
+        }
+
+        .icon-cell {
+            padding: 12px 4px 10px;
+        }
+
+        .icon-cell img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .icon-label {
+            font-size: 9px;
         }
 
         .detail {
             max-width: 100%;
             border-radius: 20px;
+        }
+
+        /* Mobile filter bar */
+        .mobile-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--bg, #ffffff);
+            border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+            position: sticky;
+            top: var(--nav-height, 64px);
+            z-index: 20;
+        }
+
+        .mobile-search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mobile-search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted, #9ca3af);
+            pointer-events: none;
+        }
+
+        .mobile-search-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px 0 32px;
+            border: 1.5px solid var(--border, rgba(0, 0, 0, 0.06));
+            border-radius: var(--radius-sm, 10px);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            background: var(--bg-soft, #f8f9fb);
+            color: var(--text, #111827);
+            transition: all 0.2s;
+        }
+
+        .mobile-search-input::placeholder {
+            color: var(--text-faint, #d1d5db);
+        }
+
+        .mobile-search-input:focus {
+            border-color: var(--amber, #e5850a);
+            box-shadow: 0 0 0 3px rgba(229, 133, 10, 0.1);
+            background: var(--bg, #ffffff);
+        }
+
+        .mobile-filter-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--border, rgba(0, 0, 0, 0.06));
+            border-radius: var(--radius-sm, 10px);
+            background: var(--bg-soft, #f8f9fb);
+            color: var(--text-secondary, #4b5563);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-filter-btn:active {
+            transform: scale(0.93);
+        }
+
+        .mobile-filter-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border-radius: 100px;
+            background: var(--amber, #e5850a);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .mobile-filter-count {
+            flex-shrink: 0;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--amber, #e5850a);
+            background: rgba(229, 133, 10, 0.1);
+            padding: 3px 11px;
+            border-radius: 100px;
+        }
+
+        /* Mobile drawer */
+        .mobile-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .mobile-drawer {
+            width: 100%;
+            max-height: 70vh;
+            background: var(--bg, #ffffff);
+            border-radius: var(--radius-xl, 28px) var(--radius-xl, 28px) 0 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px 12px;
+            flex-shrink: 0;
+        }
+
+        .mobile-drawer-header h3 {
+            font-family: var(--font-display, system-ui);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text, #111827);
+        }
+
+        .mobile-drawer-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            background: var(--bg-surface, #f1f3f6);
+            color: var(--text-muted, #9ca3af);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .mobile-drawer-close:hover {
+            background: var(--bg-raised, #e8ebf0);
+            color: var(--text, #111827);
+        }
+
+        .mobile-drawer-body {
+            overflow-y: auto;
+            padding: 0 20px 24px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-drawer-section {
+            padding-top: 4px;
+        }
+
+        .mobile-drawer-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted, #9ca3af);
+            padding: 0 4px;
+            margin-bottom: 10px;
+        }
+
+        .mobile-drawer-styles {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .mobile-style-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 4px 10px;
+            border: 1.5px solid var(--border, rgba(0, 0, 0, 0.06));
+            border-radius: var(--radius-md, 14px);
+            background: var(--bg-soft, #f8f9fb);
+            font-family: inherit;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted, #9ca3af);
+            cursor: pointer;
+            text-transform: capitalize;
+            transition: all 0.15s;
+        }
+
+        .mobile-style-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-style-btn.active {
+            border-color: var(--amber, #e5850a);
+            background: rgba(229, 133, 10, 0.08);
+            color: var(--amber, #e5850a);
+        }
+
+        .mobile-drawer-divider {
+            height: 1px;
+            background: var(--border, rgba(0, 0, 0, 0.06));
+            margin: 16px 0;
+        }
+
+        .mobile-drawer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .mobile-drawer-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border: none;
+            border-radius: var(--radius-sm, 10px);
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary, #4b5563);
+            cursor: pointer;
+            transition: all 0.15s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .mobile-drawer-item:active {
+            background: var(--bg-surface, #f1f3f6);
+        }
+
+        .mobile-drawer-item.active {
+            color: var(--amber, #e5850a);
+            font-weight: 600;
+            background: rgba(229, 133, 10, 0.06);
+        }
+
+        .mobile-drawer-count {
+            font-size: 0.78rem;
+            color: var(--text-muted, #9ca3af);
+            font-variant-numeric: tabular-nums;
         }
     }
 </style>

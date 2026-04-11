@@ -713,12 +713,8 @@ const weatherCards = [
         margin-top: 40px;
     }
 
-    /* Responsive */
-    @media (max-width: 640px) {
-        .hero {
-            padding-top: 64px;
-        }
-
+    /* Responsive — tablet */
+    @media (max-width: 960px) {
         .feature-list {
             grid-template-columns: repeat(2, 1fr);
             gap: 40px 0;
@@ -727,6 +723,27 @@ const weatherCards = [
         .feature-item:nth-child(3) {
             border-left: none;
             padding-left: 0;
+        }
+    }
+
+    /* Responsive — mobile */
+    @media (max-width: 640px) {
+        .hero {
+            padding-top: 64px;
+        }
+
+        .section-title {
+            margin-bottom: 48px;
+        }
+
+        .feature-list {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        .feature-item {
+            padding: 0;
+            border-left: none;
         }
 
         .weather-cards {
@@ -739,6 +756,10 @@ const weatherCards = [
 
         .weather-temp {
             font-size: 2.8rem;
+        }
+
+        .install-section {
+            overflow-x: hidden;
         }
 
         .install-cards {

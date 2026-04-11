@@ -36,14 +36,15 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
                     <img src={iconSvgUrl('fill', 'clear-day')} alt="" width="42" height="42"/>
                     <span>Meteocons</span>
                 </a>
-                <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links');const open=nav.classList.toggle('open');this.setAttribute('aria-expanded',open)">
-                    <svg class="icon-menu" viewBox="0 0 20 20" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <path d="M3 6h14M3 10h14M3 14h14"/>
+                <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links');const bd=document.querySelector('.nav-backdrop');const open=nav.classList.toggle('open');bd.classList.toggle('open',open);this.setAttribute('aria-expanded',open)">
+                    <svg class="icon-menu" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M4 8h16M4 16h16"/>
                     </svg>
-                    <svg class="icon-close" viewBox="0 0 20 20" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <path d="M5 5l10 10M15 5L5 15"/>
+                    <svg class="icon-close" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M6 6l12 12M18 6L6 18"/>
                     </svg>
                 </button>
+                <div class="nav-backdrop" onclick="const nav=document.querySelector('.nav-links');const btn=document.querySelector('.nav-toggle');nav.classList.remove('open');this.classList.remove('open');btn.setAttribute('aria-expanded','false')"></div>
                 <div class="nav-links">
                     <a href="/" class:list={[{active: currentPath === '/'}]}>Home</a>
                     <a href="/icons" class:list={[{active: currentPath.startsWith('/icons')}]}>Icons</a>
@@ -117,6 +118,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
 
     .nav-brand {
         display: flex;
+        margin-left: -3px;
         align-items: center;
         gap: 10px;
         color: var(--text);
@@ -173,6 +175,10 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         background: var(--bg-soft);
     }
 
+    .nav-backdrop {
+        display: none;
+    }
+
     .nav-toggle {
         display: none;
         align-items: center;
@@ -203,40 +209,85 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
     }
 
     @media (max-width: 640px) {
+        .nav-brand {
+            margin-left: -12px;
+        }
+
+        .nav-inner {
+            padding: 0 20px;
+            justify-content: center;
+        }
+
         .nav-toggle {
             display: flex;
+            position: absolute;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+        }
+
+        .nav-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            top: var(--nav-height);
+            z-index: 49;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.2s ease-out;
+        }
+
+        .nav-backdrop.open {
+            display: block;
+            opacity: 1;
         }
 
         .nav-links {
-            display: none;
             position: absolute;
             top: var(--nav-height);
             left: 0;
             right: 0;
+            z-index: 50;
             background: var(--bg);
             border-bottom: 1px solid var(--border);
-            padding: 8px 20px 16px;
+            padding: 12px 20px 20px;
             flex-direction: column;
             gap: 2px;
-            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
         }
 
         .nav-links.open {
-            display: flex;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
 
         .nav-links > a {
-            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            padding: 13px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .nav-links > a.active {
+            background: rgba(229, 133, 10, 0.06);
         }
 
         .nav-links > .nav-icon {
-            width: fit-content;
+            padding: 13px 16px !important;
         }
 
         .nav-divider {
             width: 100%;
             height: 1px;
-            margin: 6px 0;
+            margin: 8px 0;
         }
     }
 

@@ -25,6 +25,9 @@
         "preview:deploy": "bun --filter @meteocons/preview deploy",
         "docs:dev": "bun --filter @meteocons/docs dev",
         "docs:build": "bun --filter @meteocons/docs build",
+        "watch": "bun packages/exporter/src/watch.ts",
+        "watch:docs": "bun packages/exporter/src/watch.ts --docs",
+        "dev": "bun watch:docs & bun docs:dev",
         "animate": "bun export && bun publish-icons && bun --filter @meteocons/docs prepare-icons"
     }
 }

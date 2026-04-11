@@ -5,111 +5,141 @@ import { findConfig, resolveConfig } from './config-loader';
 import { processSvg } from './svg/processor';
 import { generateLottie } from './lottie/generator';
 
-const args = parseArgs(process.argv.slice(2));
-const outputDir = args['out'] ?? join(import.meta.dir, '..', 'output');
-const pageFilter = args['page'];
-const frameFilter = args['frame'];
-
-const manifest = readManifest();
-
-const age = Math.round((Date.now() - new Date(manifest.fetchedAt).getTime()) / 60000);
-console.log(`Cache van ${manifest.fetchedAt.slice(0, 16).replace('T', ' ')} (${age} minuten geleden)`);
-console.log(`${manifest.frames.length} frames in cache\n`);
-
-let frames = manifest.frames;
-
-if (pageFilter) {
-    frames = frames.filter(f => f.pageName === pageFilter);
-    if (frames.length === 0) {
-        console.error(`Error: geen frames gevonden voor page "${pageFilter}".`);
-        process.exit(1);
-    }
+export interface ExportOptions {
+    outputDir?: string;
+    pageFilter?: string;
+    frameFilter?: string;
+    silent?: boolean;
 }
 
-if (frameFilter) {
-    frames = frames.filter(f => f.frameName === frameFilter);
-    if (frames.length === 0) {
-        console.error(`Error: frame "${frameFilter}" niet gevonden in cache.`);
-        process.exit(1);
-    }
+export interface ExportResult {
+    exported: number;
+    skipped: number;
+    noConfig: string[];
 }
 
-const bySubfolder = Map.groupBy(frames, f => f.subfolder);
+export function exportIcons(options: ExportOptions = {}): ExportResult {
+    const outputDir = options.outputDir ?? join(import.meta.dir, '..', 'output');
+    const log = options.silent ? (() => {}) : console.log.bind(console);
+    const warn = options.silent ? (() => {}) : console.warn.bind(console);
 
-let totalExported = 0;
-let totalSkipped = 0;
-const noConfig: string[] = [];
+    const manifest = readManifest();
 
-for (const [subfolder, subFrames] of bySubfolder) {
-    const pages = [...new Set(subFrames.map(f => f.pageName))];
-    console.log(`[${pages.join(', ')}]  →  ${subfolder}/  (${subFrames.length} frames)`);
+    const age = Math.round((Date.now() - new Date(manifest.fetchedAt).getTime()) / 60000);
+    log(`Cache van ${manifest.fetchedAt.slice(0, 16).replace('T', ' ')} (${age} minuten geleden)`);
+    log(`${manifest.frames.length} frames in cache\n`);
 
-    const svgDir = join(outputDir, subfolder, 'svg');
-    const lottieDir = join(outputDir, subfolder, 'lottie');
-    mkdirSync(svgDir, {recursive: true});
-    mkdirSync(lottieDir, {recursive: true});
+    let frames = manifest.frames;
 
-    let exported = 0;
-    let skipped = 0;
-
-    for (const frame of subFrames) {
-        const svgContent = readSvg(frame.nodeId);
-
-        if (!svgContent) {
-            console.warn(`  ⚠  ${frame.frameName} — niet in cache (voer fetch opnieuw uit)`);
-            skipped++;
-            continue;
+    if (options.pageFilter) {
+        frames = frames.filter(f => f.pageName === options.pageFilter);
+        if (frames.length === 0) {
+            throw new Error(`Geen frames gevonden voor page "${options.pageFilter}".`);
         }
+    }
 
-        // Load animation config from JSON
-        const config = findConfig(frame.frameName);
+    if (options.frameFilter) {
+        frames = frames.filter(f => f.frameName === options.frameFilter);
+        if (frames.length === 0) {
+            throw new Error(`Frame "${options.frameFilter}" niet gevonden in cache.`);
+        }
+    }
 
-        if (!config) {
-            // No config found — track and export static
-            if (!noConfig.includes(frame.frameName)) {
-                noConfig.push(frame.frameName);
+    const bySubfolder = Map.groupBy(frames, f => f.subfolder);
+
+    let totalExported = 0;
+    let totalSkipped = 0;
+    const noConfig: string[] = [];
+
+    for (const [subfolder, subFrames] of bySubfolder) {
+        const pages = [...new Set(subFrames.map(f => f.pageName))];
+        log(`[${pages.join(', ')}]  →  ${subfolder}/  (${subFrames.length} frames)`);
+
+        const svgDir = join(outputDir, subfolder, 'svg');
+        const lottieDir = join(outputDir, subfolder, 'lottie');
+        mkdirSync(svgDir, {recursive: true});
+        mkdirSync(lottieDir, {recursive: true});
+
+        let exported = 0;
+        let skipped = 0;
+
+        for (const frame of subFrames) {
+            const svgContent = readSvg(frame.nodeId);
+
+            if (!svgContent) {
+                warn(`  ⚠  ${frame.frameName} — niet in cache (voer fetch opnieuw uit)`);
+                skipped++;
+                continue;
             }
+
+            // Load animation config from JSON
+            const config = findConfig(frame.frameName);
+
+            if (!config) {
+                // No config found — track and export static
+                if (!noConfig.includes(frame.frameName)) {
+                    noConfig.push(frame.frameName);
+                }
+                const slug = toSlug(frame.frameName);
+                const staticConfig = {static: true, layers: {}};
+                writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
+                writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
+                skipped++;
+                continue;
+            }
+
+            const resolved = resolveConfig(config, subfolder, frame.frameName);
+
+            if (resolved.static || Object.keys(resolved.layers).length === 0) {
+                const slug = toSlug(frame.frameName);
+                const staticConfig = {static: true, layers: {}};
+                writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
+                writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
+                warn(`  ⚠  ${frame.frameName} — static`);
+                skipped++;
+                continue;
+            }
+
             const slug = toSlug(frame.frameName);
-            const staticConfig = {static: true, layers: {}};
-            writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
-            writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
-            skipped++;
-            continue;
+
+            writeFileSync(join(svgDir, `${slug}.animated.svg`), processSvg(svgContent, resolved), 'utf-8');
+            writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, resolved)), 'utf-8');
+
+            const summary = Object.keys(resolved.layers).join(', ');
+            log(`  ✓  ${frame.frameName}  [${summary}]`);
+            exported++;
         }
 
-        const resolved = resolveConfig(config, subfolder, frame.frameName);
-
-        if (resolved.static || Object.keys(resolved.layers).length === 0) {
-            const slug = toSlug(frame.frameName);
-            const staticConfig = {static: true, layers: {}};
-            writeFileSync(join(svgDir, `${slug}.static.svg`), toViewBox(svgContent), 'utf-8');
-            writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
-            console.warn(`  ⚠  ${frame.frameName} — static`);
-            skipped++;
-            continue;
-        }
-
-        const slug = toSlug(frame.frameName);
-
-        writeFileSync(join(svgDir, `${slug}.animated.svg`), processSvg(svgContent, resolved), 'utf-8');
-        writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, resolved)), 'utf-8');
-
-        const summary = Object.keys(resolved.layers).join(', ');
-        console.log(`  ✓  ${frame.frameName}  [${summary}]`);
-        exported++;
+        log(`  ${exported} exported, ${skipped} skipped\n`);
+        totalExported += exported;
+        totalSkipped += skipped;
     }
 
-    console.log(`  ${exported} exported, ${skipped} skipped\n`);
-    totalExported += exported;
-    totalSkipped += skipped;
+    log(`Klaar — ${totalExported} exported, ${totalSkipped} skipped → ${outputDir}/`);
+
+    if (noConfig.length > 0) {
+        log(`\n── Geen config gevonden (${noConfig.length} icons) ─────────────────────────`);
+        log(`   Voeg toe aan animations/configs/\n`);
+        log(`  ${noConfig.sort().join('\n  ')}\n`);
+    }
+
+    return {exported: totalExported, skipped: totalSkipped, noConfig};
 }
 
-console.log(`Klaar — ${totalExported} exported, ${totalSkipped} skipped → ${outputDir}/`);
+// --- CLI entry point ---
+if (import.meta.main) {
+    const args = parseArgs(process.argv.slice(2));
 
-if (noConfig.length > 0) {
-    console.log(`\n── Geen config gevonden (${noConfig.length} icons) ─────────────────────────`);
-    console.log(`   Voeg toe aan animations/configs/\n`);
-    console.log(`  ${noConfig.sort().join('\n  ')}\n`);
+    try {
+        exportIcons({
+            outputDir: args['out'],
+            pageFilter: args['page'],
+            frameFilter: args['frame'],
+        });
+    } catch (error) {
+        console.error(`Error: ${(error as Error).message}`);
+        process.exit(1);
+    }
 }
 
 function toSlug(name: string): string {

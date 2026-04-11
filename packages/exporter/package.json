@@ -8,7 +8,8 @@
         "export": "bun src/export.ts",
         "list": "bun --env-file=../../.env src/fetch.ts --list",
         "validate": "bun src/validate.ts",
-        "publish-icons": "bun src/publish-icons.ts"
+        "publish-icons": "bun src/publish-icons.ts",
+        "watch": "bun src/watch.ts"
     },
     "dependencies": {
         "@xmldom/xmldom": "^0.9.8",

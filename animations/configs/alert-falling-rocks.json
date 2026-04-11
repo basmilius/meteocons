@@ -4,19 +4,6 @@
         "alert-falling-rocks"
     ],
     "layers": {
-        "Danger Zone": {
-            "transform": "scale",
-            "values": [
-                1,
-                1,
-                1.1,
-                1.1,
-                1,
-                1
-            ],
-            "duration": "3s",
-            "easing": "ease-in-out"
-        },
         "Exclamation": {
             "transform": "scale",
             "values": [
@@ -39,17 +26,6 @@
         "Debris 1": {
             "animations": [
                 {
-                    "transform": "translate",
-                    "values": [
-                        0,
-                        0,
-                        8,
-                        -4
-                    ],
-                    "duration": "3s",
-                    "delay": 0
-                },
-                {
                     "property": "opacity",
                     "values": [
                         0,
@@ -71,17 +47,6 @@
         "Debris 2": {
             "animations": [
                 {
-                    "transform": "translate",
-                    "values": [
-                        0,
-                        0,
-                        8,
-                        -4
-                    ],
-                    "duration": "3s",
-                    "delay": 0.3
-                },
-                {
                     "property": "opacity",
                     "values": [
                         0,
@@ -102,17 +67,6 @@
         },
         "Debris 3": {
             "animations": [
-                {
-                    "transform": "translate",
-                    "values": [
-                        0,
-                        0,
-                        8,
-                        -4
-                    ],
-                    "duration": "3s",
-                    "delay": 0.6
-                },
                 {
                     "property": "opacity",
                     "values": [

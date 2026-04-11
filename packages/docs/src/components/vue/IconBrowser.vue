@@ -1,8 +1,10 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts">
     import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-    import lottie from 'lottie-web';
     import type { AnimationItem } from 'lottie-web';
-    import { iconSvgUrl, iconLottieUrl, CDN_BASE, cdnVersion } from '../../lib/icons';
+    import lottie from 'lottie-web';
+    import { CDN_BASE, cdnVersion, iconLottieUrl, iconSvgUrl } from '../../lib/icons';
 
     type Style = 'fill' | 'flat' | 'line' | 'monochrome';
 
@@ -53,7 +55,7 @@
         activeCategoryFilter.value = slug;
         mobileFilterOpen.value = false;
         updateUrl();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     watch(mobileFilterOpen, (open) => {
@@ -102,7 +104,7 @@
     }
 
     /**
-     * Splits an icons array into groups on null separators.
+     * Splits an icon array into groups on null separators.
      */
     function splitGroups(icons: (IconEntry | null)[]): IconEntry[][] {
         const groups: IconEntry[][] = [];
@@ -224,7 +226,7 @@
         if (iconParam && manifest.value) {
             const icon = manifest.value.categories
                 .flatMap(c => c.icons)
-                .find(i => i.slug === iconParam);
+                .find(i => i!.slug === iconParam);
 
             if (icon) {
                 selectedIcon.value = icon;
@@ -276,7 +278,7 @@
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,
-                path: url,
+                path: url
             });
         } catch {
             // Lottie file might not exist for static icons
@@ -337,7 +339,7 @@
             if (iconParam && manifest.value) {
                 const icon = manifest.value.categories
                     .flatMap(c => c.icons)
-                    .find(i => i.slug === iconParam);
+                    .find(i => i!.slug === iconParam);
 
                 if (icon) {
                     selectedIcon.value = icon;
@@ -368,17 +370,25 @@
             </div>
 
             <div class="search-wrap">
-                <svg class="search-icon" viewBox="0 0 20 20" width="15" height="15" fill="none"
-                     stroke="currentColor" stroke-width="2">
-                    <circle cx="8.5" cy="8.5" r="5.5"/>
+                <svg
+                    class="search-icon"
+                    viewBox="0 0 20 20"
+                    width="15"
+                    height="15"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
+                    <circle
+                        cx="8.5"
+                        cy="8.5"
+                        r="5.5"/>
                     <path d="M12.5 12.5L17 17"/>
                 </svg>
                 <input
                     v-model="query"
                     type="text"
                     placeholder="Search icons..."
-                    class="search-input"
-                />
+                    class="search-input"/>
             </div>
 
             <div>
@@ -388,9 +398,12 @@
                         v-for="style in STYLES"
                         :key="style"
                         :class="['style-btn', {active: currentStyle === style}]"
-                        @click="currentStyle = style"
-                    >
-                        <img :src="svgUrl('clear-day', style)" alt="" width="28" height="28"/>
+                        @click="currentStyle = style">
+                        <img
+                            :src="svgUrl('clear-day', style)"
+                            alt=""
+                            width="28"
+                            height="28"/>
                         <span>{{ style }}</span>
                     </button>
                 </div>
@@ -400,8 +413,7 @@
                 <div class="nav-label">Categories</div>
                 <button
                     :class="['nav-item', {active: activeCategoryFilter === null}]"
-                    @click="selectCategory(null)"
-                >
+                    @click="selectCategory(null)">
                     <span>All</span>
                     <span class="nav-count">{{ totalIconCount }}</span>
                 </button>
@@ -409,8 +421,7 @@
                     v-for="cat in sortedCategories"
                     :key="cat.slug"
                     :class="['nav-item', {active: activeCategoryFilter === cat.slug}]"
-                    @click="selectCategory(cat.slug)"
-                >
+                    @click="selectCategory(cat.slug)">
                     <span>{{ cat.name }}</span>
                     <span class="nav-count">{{ cat.icons.filter(Boolean).length }}</span>
                 </button>
@@ -420,37 +431,68 @@
         <!-- Mobile filter bar -->
         <div class="mobile-filter-bar">
             <div class="mobile-search-wrap">
-                <svg class="mobile-search-icon" viewBox="0 0 20 20" width="14" height="14" fill="none"
-                     stroke="currentColor" stroke-width="2">
-                    <circle cx="8.5" cy="8.5" r="5.5"/>
+                <svg
+                    class="mobile-search-icon"
+                    viewBox="0 0 20 20"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
+                    <circle
+                        cx="8.5"
+                        cy="8.5"
+                        r="5.5"/>
                     <path d="M12.5 12.5L17 17"/>
                 </svg>
                 <input
                     v-model="query"
                     type="text"
                     placeholder="Search..."
-                    class="mobile-search-input"
-                />
+                    class="mobile-search-input"/>
             </div>
-            <button class="mobile-filter-btn" @click="toggleMobileFilter">
-                <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
+            <button
+                class="mobile-filter-btn"
+                @click="toggleMobileFilter">
+                <svg
+                    viewBox="0 0 20 20"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
                     <path d="M2 4h16M5 10h10M8 16h4"/>
                 </svg>
-                <span v-if="activeFilterCount" class="mobile-filter-badge">{{ activeFilterCount }}</span>
+                <span
+                    v-if="activeFilterCount"
+                    class="mobile-filter-badge">{{ activeFilterCount }}</span>
             </button>
             <span class="mobile-filter-count">{{ totalCount }}</span>
         </div>
 
         <!-- Mobile filter drawer -->
         <Transition name="drawer">
-            <div v-if="mobileFilterOpen" class="mobile-drawer-backdrop" @click.self="mobileFilterOpen = false">
+            <div
+                v-if="mobileFilterOpen"
+                class="mobile-drawer-backdrop"
+                @click.self="mobileFilterOpen = false">
                 <div class="mobile-drawer">
                     <div class="mobile-drawer-header">
                         <h3>Filters</h3>
-                        <button class="mobile-drawer-close" @click="mobileFilterOpen = false" aria-label="Close">
-                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor"
-                                 stroke-width="2" stroke-linecap="round">
+                        <button
+                            class="mobile-drawer-close"
+                            @click="mobileFilterOpen = false"
+                            aria-label="Close">
+                            <svg
+                                viewBox="0 0 20 20"
+                                width="18"
+                                height="18"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round">
                                 <path d="M5 5l10 10M15 5L5 15"/>
                             </svg>
                         </button>
@@ -463,9 +505,12 @@
                                     v-for="style in STYLES"
                                     :key="style"
                                     :class="['mobile-style-btn', { active: currentStyle === style }]"
-                                    @click="currentStyle = style"
-                                >
-                                    <img :src="svgUrl('clear-day', style)" alt="" width="28" height="28"/>
+                                    @click="currentStyle = style">
+                                    <img
+                                        :src="svgUrl('clear-day', style)"
+                                        alt=""
+                                        width="28"
+                                        height="28"/>
                                     <span>{{ style }}</span>
                                 </button>
                             </div>
@@ -476,8 +521,7 @@
                             <div class="mobile-drawer-list">
                                 <button
                                     :class="['mobile-drawer-item', { active: activeCategoryFilter === null }]"
-                                    @click="selectCategoryMobile(null)"
-                                >
+                                    @click="selectCategoryMobile(null)">
                                     <span>All</span>
                                     <span class="mobile-drawer-count">{{ totalIconCount }}</span>
                                 </button>
@@ -485,8 +529,7 @@
                                     v-for="cat in sortedCategories"
                                     :key="cat.slug"
                                     :class="['mobile-drawer-item', { active: activeCategoryFilter === cat.slug }]"
-                                    @click="selectCategoryMobile(cat.slug)"
-                                >
+                                    @click="selectCategoryMobile(cat.slug)">
                                     <span>{{ cat.name }}</span>
                                     <span class="mobile-drawer-count">{{ cat.icons.filter(Boolean).length }}</span>
                                 </button>
@@ -499,10 +542,14 @@
 
         <!-- Main grid -->
         <main class="main">
-            <div v-if="loading" class="state">
+            <div
+                v-if="loading"
+                class="state">
                 <div class="spinner"/>
             </div>
-            <div v-else-if="filteredCategories.length === 0" class="state">
+            <div
+                v-else-if="filteredCategories.length === 0"
+                class="state">
                 No icons match "{{ query }}"
             </div>
 
@@ -511,28 +558,24 @@
                     v-for="category in filteredCategories"
                     :key="category.slug"
                     :id="`cat-${category.slug}`"
-                    class="category"
-                >
+                    class="category">
                     <h2 class="category-title">{{ category.name }}</h2>
                     <div
                         v-for="(group, gi) in splitGroups(category.icons)"
                         :key="gi"
                         class="icon-grid"
-                        :class="{ 'icon-grid--spaced': gi > 0 }"
-                    >
+                        :class="{ 'icon-grid--spaced': gi > 0 }">
                         <button
                             v-for="icon in group"
                             :key="icon.slug"
                             class="icon-cell"
-                            @click="openDetail(icon)"
-                        >
+                            @click="openDetail(icon)">
                             <img
                                 :src="svgUrl(icon.slug)"
                                 :alt="icon.name"
                                 width="96"
                                 height="96"
-                                loading="lazy"
-                            />
+                                loading="lazy"/>
                             <span class="icon-label">{{ formatName(icon.slug) }}</span>
                         </button>
                     </div>
@@ -542,12 +585,28 @@
 
         <!-- Detail popup -->
         <Transition name="overlay">
-            <div v-if="selectedIcon" class="overlay" @click.self="closeDetail">
-                <Transition name="panel" appear>
-                    <div class="detail" v-if="selectedIcon">
-                        <button class="detail-close" @click="closeDetail" aria-label="Close">
-                            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor"
-                                 stroke-width="2" stroke-linecap="round">
+            <div
+                v-if="selectedIcon"
+                class="overlay"
+                @click.self="closeDetail">
+                <Transition
+                    name="panel"
+                    appear>
+                    <div
+                        class="detail"
+                        v-if="selectedIcon">
+                        <button
+                            class="detail-close"
+                            @click="closeDetail"
+                            aria-label="Close">
+                            <svg
+                                viewBox="0 0 20 20"
+                                width="20"
+                                height="20"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round">
                                 <path d="M5 5l10 10M15 5L5 15"/>
                             </svg>
                         </button>
@@ -556,14 +615,12 @@
                             <div class="preview-toggle">
                                 <button
                                     :class="['toggle-btn', { active: previewMode === 'svg' }]"
-                                    @click="previewMode = 'svg'"
-                                >
+                                    @click="previewMode = 'svg'">
                                     SVG
                                 </button>
                                 <button
                                     :class="['toggle-btn', { active: previewMode === 'lottie' }]"
-                                    @click="previewMode = 'lottie'"
-                                >
+                                    @click="previewMode = 'lottie'">
                                     Lottie
                                 </button>
                             </div>
@@ -574,14 +631,12 @@
                                 :alt="selectedIcon.name"
                                 width="256"
                                 height="256"
-                                :key="`${selectedIcon.slug}-${detailStyle}`"
-                            />
+                                :key="`${selectedIcon.slug}-${detailStyle}`"/>
                             <div
                                 v-else
                                 ref="lottieContainer"
                                 class="lottie-player"
-                                :key="`lottie-${selectedIcon.slug}-${detailStyle}`"
-                            />
+                                :key="`lottie-${selectedIcon.slug}-${detailStyle}`"/>
                         </div>
 
                         <div class="detail-info">
@@ -592,55 +647,111 @@
                                     v-for="style in STYLES"
                                     :key="style"
                                     :class="['detail-style-btn', {active: detailStyle === style}]"
-                                    @click="detailStyle = style"
-                                >
-                                    <img :src="svgUrl(selectedIcon.slug, style)" alt="" width="36" height="36"/>
+                                    @click="detailStyle = style">
+                                    <img
+                                        :src="svgUrl(selectedIcon.slug, style)"
+                                        alt=""
+                                        width="48"
+                                        height="48"/>
                                     <span>{{ style }}</span>
                                 </button>
                             </div>
 
                             <div class="detail-actions">
-                                <button class="action-btn" @click="copySvgCode">
-                                    <svg v-if="copiedAction !== 'svg'" viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                <button
+                                    class="action-btn"
+                                    @click="copySvgCode">
+                                    <svg
+                                        v-if="copiedAction !== 'svg'"
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M7 8l-4 4 4 4M13 8l4 4-4 4"/>
                                     </svg>
-                                    <svg v-else viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                    <svg
+                                        v-else
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M4 10l4 4 8-8"/>
                                     </svg>
                                     {{ copiedAction === 'svg' ? 'Copied!' : 'Copy SVG' }}
                                 </button>
-                                <button class="action-btn" @click="copyText(selectedIcon.slug, 'name')">
-                                    <svg v-if="copiedAction !== 'name'" viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                <button
+                                    class="action-btn"
+                                    @click="copyText(selectedIcon.slug, 'name')">
+                                    <svg
+                                        v-if="copiedAction !== 'name'"
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect
+                                            x="6"
+                                            y="6"
+                                            width="11"
+                                            height="11"
+                                            rx="2"/>
                                         <path d="M3 14V4a1 1 0 011-1h10"/>
                                     </svg>
-                                    <svg v-else viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                    <svg
+                                        v-else
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M4 10l4 4 8-8"/>
                                     </svg>
                                     {{ copiedAction === 'name' ? 'Copied!' : 'Copy name' }}
                                 </button>
                             </div>
                             <div class="detail-actions">
-                                <button class="action-btn" @click="downloadFile(svgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.svg`)">
-                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                <button
+                                    class="action-btn"
+                                    @click="downloadFile(svgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.svg`)">
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M10 3v10M6 9l4 4 4-4M3 17h14"/>
                                     </svg>
                                     Download SVG
                                 </button>
-                                <button class="action-btn" @click="downloadFile(lottieUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.json`)">
-                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                <button
+                                    class="action-btn"
+                                    @click="downloadFile(lottieUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.json`)">
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
                                         <path d="M10 3v10M6 9l4 4 4-4M3 17h14"/>
                                     </svg>
                                     Download Lottie
@@ -654,17 +765,35 @@
                                     <button
                                         class="cdn-copy-btn"
                                         @click="copyText(cdnSvgUrl(selectedIcon.slug, detailStyle), 'cdn-svg')"
-                                        :aria-label="copiedAction === 'cdn-svg' ? 'Copied' : 'Copy SVG URL'"
-                                    >
-                                        <svg v-if="copiedAction !== 'cdn-svg'" viewBox="0 0 20 20" width="14" height="14" fill="none"
-                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                             stroke-linejoin="round">
-                                            <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                        :aria-label="copiedAction === 'cdn-svg' ? 'Copied' : 'Copy SVG URL'">
+                                        <svg
+                                            v-if="copiedAction !== 'cdn-svg'"
+                                            viewBox="0 0 20 20"
+                                            width="14"
+                                            height="14"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect
+                                                x="6"
+                                                y="6"
+                                                width="11"
+                                                height="11"
+                                                rx="2"/>
                                             <path d="M3 14V4a1 1 0 011-1h10"/>
                                         </svg>
-                                        <svg v-else viewBox="0 0 20 20" width="14" height="14" fill="none"
-                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                             stroke-linejoin="round">
+                                        <svg
+                                            v-else
+                                            viewBox="0 0 20 20"
+                                            width="14"
+                                            height="14"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path d="M4 10l4 4 8-8"/>
                                         </svg>
                                     </button>
@@ -674,17 +803,35 @@
                                     <button
                                         class="cdn-copy-btn"
                                         @click="copyText(cdnLottieUrl(selectedIcon.slug, detailStyle), 'cdn-lottie')"
-                                        :aria-label="copiedAction === 'cdn-lottie' ? 'Copied' : 'Copy Lottie URL'"
-                                    >
-                                        <svg v-if="copiedAction !== 'cdn-lottie'" viewBox="0 0 20 20" width="14" height="14" fill="none"
-                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                             stroke-linejoin="round">
-                                            <rect x="6" y="6" width="11" height="11" rx="2"/>
+                                        :aria-label="copiedAction === 'cdn-lottie' ? 'Copied' : 'Copy Lottie URL'">
+                                        <svg
+                                            v-if="copiedAction !== 'cdn-lottie'"
+                                            viewBox="0 0 20 20"
+                                            width="14"
+                                            height="14"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect
+                                                x="6"
+                                                y="6"
+                                                width="11"
+                                                height="11"
+                                                rx="2"/>
                                             <path d="M3 14V4a1 1 0 011-1h10"/>
                                         </svg>
-                                        <svg v-else viewBox="0 0 20 20" width="14" height="14" fill="none"
-                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                             stroke-linejoin="round">
+                                        <svg
+                                            v-else
+                                            viewBox="0 0 20 20"
+                                            width="14"
+                                            height="14"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round">
                                             <path d="M4 10l4 4 8-8"/>
                                         </svg>
                                     </button>
@@ -894,7 +1041,9 @@
     }
 
     @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     .category {
@@ -1131,11 +1280,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
-        padding: 12px 8px 10px;
-        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        padding: 3px 6px 9px;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
         border-radius: 14px;
-        background: var(--bg-surface, #f1f3f6);
+        background: white;
         font-family: inherit;
         font-size: 0.75rem;
         font-weight: 600;
@@ -1168,12 +1316,12 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        padding: 11px 14px;
-        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        padding: 12px 15px;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
         border-radius: 12px;
-        background: var(--bg-surface, #f1f3f6);
+        background: white;
         font-family: inherit;
-        font-size: 0.825rem;
+        font-size: 1rem;
         font-weight: 600;
         color: var(--text-secondary, #4b5563);
         cursor: pointer;
@@ -1190,9 +1338,9 @@
     .detail-cdn {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        padding-top: 16px;
-        border-top: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+        gap: 9px;
+        padding-top: 15px;
+        border-top: 2px solid var(--border, rgba(0, 0, 0, 0.06));
     }
 
     .cdn-label {
@@ -1206,16 +1354,16 @@
     .cdn-url-row {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 9px;
     }
 
     .cdn-url {
         flex: 1;
         font-size: 0.75rem;
-        padding: 8px 12px;
-        background: var(--bg-surface, #f1f3f6);
-        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
-        border-radius: 8px;
+        padding: 9px 12px;
+        background: white;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 12px;
         color: var(--text-secondary, #4b5563);
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1227,11 +1375,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
-        border-radius: 8px;
-        background: var(--bg-surface, #f1f3f6);
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--border, rgba(0, 0, 0, 0.06));
+        border-radius: 12px;
+        background: white;
         color: var(--text-muted, #9ca3af);
         cursor: pointer;
         transition: all 0.15s;

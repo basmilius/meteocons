@@ -98,9 +98,13 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                 const phase = computePhase(delay, cycle);
                 const numSegs = anim.values.length - 1;
                 const kfs: LottieKeyframe[] = [];
+                // Cumulative offset per cycle for continuous rotation
+                // (e.g. values [0, -360] → 0, -360, -720, -1080, ...)
+                const cycleRange = anim.values[anim.values.length - 1] - anim.values[0];
 
                 if (phase === 0) {
                     let t = 0;
+                    let cumOffset = 0;
                     while (t < COMP_FRAMES) {
                         for (let i = 0; i < numSegs; i++) {
                             const segT = anim.keyTimes
@@ -109,16 +113,19 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                             if (segT >= COMP_FRAMES) {
                                 break;
                             }
-                            kfs.push(kf(segT, [anim.values[i]], easing));
+                            kfs.push(kf(segT, [anim.values[i] + cumOffset], easing));
                         }
+                        cumOffset += cycleRange;
                         t += cycle;
                     }
-                    kfs.push(kfEnd(COMP_FRAMES, [anim.values[0]], easing));
+                    kfs.push(kfEnd(COMP_FRAMES, [anim.values[0] + cumOffset], easing));
                 } else {
                     const phaseRatio = phase / cycle;
                     const startVal = lerpValues(anim.values, phaseRatio, anim.keyTimes);
                     kfs.push(kf(0, [startVal], easing));
 
+                    // First partial cycle: remaining segments after phase offset
+                    let cumOffset = 0;
                     const segTimes = anim.keyTimes ?? anim.values.map((_: number, i: number) => i / numSegs);
                     for (let i = 0; i < numSegs; i++) {
                         if (segTimes[i] <= phaseRatio) {
@@ -126,10 +133,11 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                         }
                         const segT = Math.round(segTimes[i] * cycle - phase);
                         if (segT > 0 && segT < COMP_FRAMES) {
-                            kfs.push(kf(segT, [anim.values[i]], easing));
+                            kfs.push(kf(segT, [anim.values[i] + cumOffset], easing));
                         }
                     }
 
+                    cumOffset += cycleRange;
                     let t = Math.round(cycle - phase);
                     while (t < COMP_FRAMES) {
                         for (let i = 0; i < numSegs; i++) {
@@ -139,11 +147,12 @@ function applyTransformAnim(base: LottieTransform, anim: AnimationDef, element: 
                             if (segT >= COMP_FRAMES) {
                                 break;
                             }
-                            kfs.push(kf(segT, [anim.values[i]], easing));
+                            kfs.push(kf(segT, [anim.values[i] + cumOffset], easing));
                         }
+                        cumOffset += cycleRange;
                         t += cycle;
                     }
-                    kfs.push(kfEnd(COMP_FRAMES, [startVal], easing));
+                    kfs.push(kfEnd(COMP_FRAMES, [startVal + cumOffset], easing));
                 }
                 base.r = animatedValue(kfs);
             }
@@ -641,7 +650,7 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
      * Example: "Clouds" [0,-3,0] distributes through "Mask group_2" to
      * "Secondary Cloud" [-3,0,-3]. Merged: [-3,-3,-3] = static at Y=-3.
      */
-    function distributeToChildren(group: any, parentCfg: LayerConfig): void {
+    function distributeToChildren(group: any, parentCfg: LayerConfig, parentTransform: LottieTransform): void {
         for (const child of Array.from(group.childNodes as any[])) {
             if (child.nodeType !== 1) {
                 continue;
@@ -658,9 +667,9 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                 const relativeMask = computeRelativeMaskConfig(parentCfg, merged);
                 addLayer(child, buildTransformFromConfig(merged, child), parentCfg, relativeMask);
             } else if (childTag === 'g' && collectIds(child).some(id => animatedIds.has(id))) {
-                distributeToChildren(child, parentCfg);
+                distributeToChildren(child, parentCfg, parentTransform);
             } else {
-                addLayer(child, buildTransformFromConfig(parentCfg, child), parentCfg);
+                addLayer(child, structuredClone(parentTransform), parentCfg);
             }
         }
     }
@@ -684,6 +693,17 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                 if (hasAnimatedChild) {
                     const groupTransform = buildTransformFromConfig(config.layers[elementId], element);
                     const parentCfg = config.layers[elementId];
+                    // For scale/rotation, buildTransformFromConfig bakes the anchor into
+                    // the position. addLayer's mask branch then ADDS the element center on
+                    // top → doubled offset. Strip position/anchor so addLayer can compute
+                    // per-element positioning. For translate, position IS the animation —
+                    // keep it as-is.
+                    const distTransform = structuredClone(groupTransform);
+                    const anchor = distTransform.a.k as number[];
+                    if (anchor[0] !== 0 || anchor[1] !== 0) {
+                        distTransform.p = staticValue([0, 0, 0]);
+                        distTransform.a = staticValue([0, 0, 0]);
+                    }
                     for (const child of Array.from(element.childNodes as any[])) {
                         if (child.nodeType !== 1) {
                             continue;
@@ -693,9 +713,9 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                             processElement(child);
                         } else if (child.tagName?.toLowerCase() === 'g'
                             && collectIds(child).some(id => animatedIds.has(id))) {
-                            distributeToChildren(child, parentCfg);
+                            distributeToChildren(child, parentCfg, distTransform);
                         } else {
-                            addLayer(child, structuredClone(groupTransform), parentCfg);
+                            addLayer(child, structuredClone(distTransform), parentCfg);
                         }
                     }
                     return;

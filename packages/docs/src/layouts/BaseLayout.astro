@@ -30,7 +30,7 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         <meta name="twitter:image" content="/og.png"/>
     </head>
     <body>
-        <nav class="nav">
+        <nav class:list={['nav', {transparent: currentPath === '/'}]}>
             <div class="nav-inner">
                 <a href="/" class="nav-brand">
                     <img src={iconSvgUrl('fill', 'clear-day')} alt="" width="42" height="42"/>
@@ -69,6 +69,19 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
             </div>
         </nav>
 
+        <script is:inline>
+            (function() {
+                var nav = document.querySelector('.nav.transparent');
+                if (nav) {
+                    var update = function() {
+                        nav.classList.toggle('scrolled', window.scrollY > 24);
+                    };
+                    window.addEventListener('scroll', update, { passive: true });
+                    update();
+                }
+            })();
+        </script>
+
         <slot/>
 
         {!fullWidth && (
@@ -104,6 +117,17 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
         height: var(--nav-height);
         background: white;
         border-bottom: 2px solid var(--border);
+        transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+    }
+
+    .nav.transparent {
+        background: transparent;
+        border-bottom-color: transparent;
+    }
+
+    .nav.transparent.scrolled {
+        background: white;
+        border-bottom-color: var(--border);
     }
 
     .nav-inner {
@@ -155,8 +179,8 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
     }
 
     .nav-links > a:hover {
-        color: var(--text);
-        background: var(--bg-soft);
+        color: var(--amber);
+        background: var(--amber-bg);
     }
 
     .nav-links > a.active {
@@ -171,8 +195,8 @@ const displayVersion = version === '0.0.0' ? 'Dev' : `v${version}`;
     }
 
     .nav-icon:hover {
-        color: var(--text-secondary) !important;
-        background: var(--bg-soft);
+        color: var(--amber) !important;
+        background: var(--amber-bg);
     }
 
     .nav-backdrop {

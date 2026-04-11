@@ -141,9 +141,10 @@
         color: var(--text-faint, #d1d5db);
     }
 
-    .search-input:focus {
+    .search-input:focus-visible {
         border-color: var(--amber, #f59e0b);
         box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        outline: none;
     }
 
     .style-selector {
@@ -178,6 +179,11 @@
         border-color: var(--border-light, #d1d5db);
         color: var(--text-secondary, #4b5563);
         background: var(--bg-soft, #f3f4f6);
+    }
+
+    .style-btn:focus-visible {
+        border-color: var(--amber, #f59e0b);
+        outline: none;
     }
 
     .style-btn.active {
@@ -222,9 +228,11 @@
         text-align: left;
     }
 
-    .nav-item:hover {
+    .nav-item:hover,
+    .nav-item:focus-visible {
         background: var(--bg-surface, #f3f4f6);
         color: var(--text, #111827);
+        outline: none;
     }
 
     .nav-item.active {

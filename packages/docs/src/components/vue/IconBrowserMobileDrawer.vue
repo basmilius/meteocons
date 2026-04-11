@@ -159,9 +159,11 @@
         transition: all 0.15s;
     }
 
-    .mobile-drawer-close:hover {
+    .mobile-drawer-close:hover,
+    .mobile-drawer-close:focus-visible {
         background: var(--bg-raised, #e5e7eb);
         color: var(--text, #111827);
+        outline: none;
     }
 
     .mobile-drawer-body {
@@ -212,6 +214,11 @@
         transform: scale(0.95);
     }
 
+    .mobile-style-btn:focus-visible {
+        border-color: var(--amber, #f59e0b);
+        outline: none;
+    }
+
     .mobile-style-btn.active {
         border-color: var(--amber, #f59e0b);
         background: rgba(245, 158, 11, 0.08);
@@ -248,8 +255,10 @@
         text-align: left;
     }
 
-    .mobile-drawer-item:active {
+    .mobile-drawer-item:active,
+    .mobile-drawer-item:focus-visible {
         background: var(--bg-surface, #f3f4f6);
+        outline: none;
     }
 
     .mobile-drawer-item.active {

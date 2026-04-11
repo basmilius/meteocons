@@ -138,9 +138,11 @@
         color: inherit;
     }
 
-    .icon-cell:hover {
+    .icon-cell:hover,
+    .icon-cell:focus-visible {
         background: var(--bg-soft, #f9fafb);
         border-color: var(--border, #e5e7eb);
+        outline: none;
     }
 
     .icon-cell:hover img {

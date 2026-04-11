@@ -99,10 +99,11 @@
             color: var(--text-faint, #d1d5db);
         }
 
-        .mobile-search-input:focus {
+        .mobile-search-input:focus-visible {
             border-color: var(--amber, #f59e0b);
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
             background: var(--bg, #ffffff);
+            outline: none;
         }
 
         .mobile-filter-btn {
@@ -123,6 +124,11 @@
 
         .mobile-filter-btn:active {
             transform: scale(0.93);
+        }
+
+        .mobile-filter-btn:focus-visible {
+            border-color: var(--amber, #f59e0b);
+            outline: none;
         }
 
         .mobile-filter-badge {

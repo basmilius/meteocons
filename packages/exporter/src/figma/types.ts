@@ -9,6 +9,8 @@ export interface FigmaNode {
 
 export interface FigmaFileResponse {
     name: string;
+    lastModified: string;
+    version: string;
     document: FigmaNode;
 }
 

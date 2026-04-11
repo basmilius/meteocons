@@ -83,7 +83,7 @@ for (const [, layer] of layerMap) {
     if (/^\d+$/.test(normalizedId)) {
         issues.push({
             severity: 'error',
-            message: `Numeriek ID "${normalizedId}" — hernoem in Figma naar bijv. "Segment ${normalizedId}"`,
+            message: `Numeric ID "${normalizedId}" — rename in Figma to e.g. "Segment ${normalizedId}"`,
             layers: [normalizedId],
             count: foundIn.length
         });
@@ -92,7 +92,7 @@ for (const [, layer] of layerMap) {
     if (/^Vector(_\d+)?$/.test(normalizedId)) {
         issues.push({
             severity: 'warn',
-            message: `Generieke naam "${normalizedId}" in ${parentComponent ?? 'root'} — geef een semantische naam`,
+            message: `Generic name "${normalizedId}" in ${parentComponent ?? 'root'} — give it a semantic name`,
             layers: [normalizedId],
             count: foundIn.length
         });
@@ -101,7 +101,7 @@ for (const [, layer] of layerMap) {
     if (/_\d+$/.test(normalizedId) && !/^Vector/.test(normalizedId)) {
         issues.push({
             severity: 'warn',
-            message: `Figma duplicaat-suffix "${normalizedId}" — hernoem naar "${normalizedId.replace(/_(\d+)$/, ' $1')}"`,
+            message: `Figma duplicate suffix "${normalizedId}" — rename to "${normalizedId.replace(/_(\d+)$/, ' $1')}"`,
             layers: [normalizedId],
             count: foundIn.length
         });
@@ -235,13 +235,13 @@ if (potentialStaggers.length > 0) {
 // Frames without config
 const noConfigFrames = frameValidations.filter(fv => !fv.hasConfig);
 if (noConfigFrames.length > 0) {
-    console.log(`── Geen config (${noConfigFrames.length}) ──────────────────────────────\n`);
+    console.log(`── No config (${noConfigFrames.length}) ──────────────────────────────\n`);
     console.log(`  ${noConfigFrames.map(fv => fv.frameName).sort().join('\n  ')}\n`);
 }
 
-console.log(`── Samenvatting ───────────────────────────────────────\n`);
-console.log(`  Frames gevalideerd:  ${totalFrames}`);
-console.log(`  Unieke layer-namen:  ${layerMap.size}`);
+console.log(`── Summary ───────────────────────────────────────\n`);
+console.log(`  Frames validated:    ${totalFrames}`);
+console.log(`  Unique layer names:  ${layerMap.size}`);
 console.log(`  Naming issues:       ${framesWithIssues}`);
 console.log(`  Component types:     ${componentCoverage.size}`);
 const fullyCovered = [...componentCoverage.values()].filter(c => {
@@ -249,7 +249,7 @@ const fullyCovered = [...componentCoverage.values()].filter(c => {
     return c.unmatchedChildren.size === 0 && (hasSelf || c.matchedChildren.size > 0);
 }).length;
 console.log(`  Fully covered:       ${fullyCovered}/${componentCoverage.size}`);
-console.log(`  Frames met config:   ${frameValidations.filter(fv => fv.hasConfig).length}/${totalFrames}`);
+console.log(`  Frames with config:  ${frameValidations.filter(fv => fv.hasConfig).length}/${totalFrames}`);
 console.log('');
 
 function normalizeId(id: string): string {

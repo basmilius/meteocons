@@ -37,8 +37,14 @@ jobs:
             -   name: 📦️ Install dependencies
                 run: bun install --frozen-lockfile
 
+            -   name: 🗂️ Restore Figma cache
+                uses: actions/cache@v4
+                with:
+                    path: packages/exporter/.cache
+                    key: figma-cache-${{ secrets.FIGMA_FILE_KEY }}
+
             -   name: 🎨 Fetch SVGs from Figma
-                run: bun run fetch --force
+                run: bun run fetch
                 env:
                     FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
                     FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}

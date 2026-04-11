@@ -55,7 +55,7 @@
     );
 
     /**
-     * Verwijdert overbodige null-separators: geen leading, trailing of opeenvolgende nulls.
+     * Removes redundant null separators: no leading, trailing, or consecutive nulls.
      */
     function cleanSeparators(icons: (IconEntry | null)[]): (IconEntry | null)[] {
         const result: (IconEntry | null)[] = [];
@@ -78,7 +78,7 @@
     }
 
     /**
-     * Splitst een icons-array op null-separators in groepen.
+     * Splits an icons array into groups on null separators.
      */
     function splitGroups(icons: (IconEntry | null)[]): IconEntry[][] {
         const groups: IconEntry[][] = [];

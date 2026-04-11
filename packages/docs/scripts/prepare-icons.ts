@@ -1,6 +1,6 @@
 /**
- * Kopieert een selectie iconen vanuit @meteocons/svg naar public/icons/
- * voor gebruik in de documentatie website.
+ * Copies a selection of icons from @meteocons/svg to public/icons/
+ * for use on the documentation website.
  */
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
 import { createRequire } from 'module';
@@ -15,7 +15,7 @@ try {
     svgManifestPath = require.resolve('@meteocons/svg/manifest.json');
     lottieManifestPath = require.resolve('@meteocons/lottie/manifest.json');
 } catch {
-    console.log('⚠ Geen icon manifests gevonden, prepare-icons overgeslagen');
+    console.log('⚠ No icon manifests found, prepare-icons skipped');
     process.exit(0);
 }
 
@@ -58,4 +58,4 @@ const count = STYLES.reduce((sum, style) => {
     return sum + readdirSync(dir).length;
 }, 0);
 
-console.log(`✓ ${count} icons gekopieerd naar public/icons/`);
+console.log(`✓ ${count} icons copied to public/icons/`);

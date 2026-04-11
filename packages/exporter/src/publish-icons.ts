@@ -1,8 +1,8 @@
 /**
- * Kopieert geëxporteerde iconen naar de @meteocons/svg en @meteocons/lottie packages.
+ * Copies exported icons to the @meteocons/svg and @meteocons/lottie packages.
  *
- * Per icoon wordt de animated SVG gekozen als die bestaat, anders de statische.
- * Bestandsnamen worden vereenvoudigd: geen .animated/.static/.lottie suffix.
+ * Per icon the animated SVG is chosen if it exists, otherwise the static one.
+ * File names are simplified: no .animated/.static/.lottie suffix.
  */
 
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'fs';
@@ -52,7 +52,7 @@ export interface PublishResult {
 export function publishIcons(): PublishResult {
     const categoryMapping = loadCategoryMapping();
 
-    // --- 1. Opruimen vorige output ---
+    // --- 1. Clean previous output ---
 
     for (const style of STYLES) {
         const svgStyleDir = join(SVG_PKG, style);
@@ -66,7 +66,7 @@ export function publishIcons(): PublishResult {
         }
     }
 
-    // --- 2. Kopieer iconen ---
+    // --- 2. Copy icons ---
 
     const manifest = readManifest();
     const categoryMap = new Map<string, Map<string, ManifestIcon>>();
@@ -89,7 +89,7 @@ export function publishIcons(): PublishResult {
 
         const svgFiles = readdirSync(svgSourceDir).filter(f => f.endsWith('.svg'));
 
-        // Groepeer op slug: verzamel animated en static versies
+        // Group by slug: collect animated and static versions
         const slugMap = new Map<string, { animated?: string; static?: string }>();
         for (const file of svgFiles) {
             const slug = file.replace('.animated.svg', '').replace('.static.svg', '');
@@ -104,7 +104,7 @@ export function publishIcons(): PublishResult {
             }
         }
 
-        // Kopieer beste versie per slug
+        // Copy best version per slug
         for (const [slug, versions] of slugMap) {
             const bestSvg = versions.animated ?? versions.static;
             if (bestSvg) {
@@ -112,7 +112,7 @@ export function publishIcons(): PublishResult {
                 svgCount++;
             }
 
-            // Lottie: altijd {slug}.lottie.json in de source
+            // Lottie: always {slug}.lottie.json in the source
             const lottieSource = join(lottieSourceDir, `${slug}.lottie.json`);
             if (existsSync(lottieSource)) {
                 cpSync(lottieSource, join(lottieTargetDir, `${slug}.json`));
@@ -121,7 +121,7 @@ export function publishIcons(): PublishResult {
         }
     }
 
-    // --- 3. Genereer manifesten ---
+    // --- 3. Generate manifests ---
 
     for (const frame of manifest.frames) {
         const figmaCategory = frame.pageName.includes(' / ')
@@ -151,8 +151,8 @@ export function publishIcons(): PublishResult {
         }
     }
 
-    // Volgorde: eerst categorieën uit categories.json (in bestandsvolgorde),
-    // daarna eventuele categorieën die alleen vanuit Figma komen.
+    // Order: categories from categories.json first (in file order),
+    // then any categories that only come from Figma.
     const categoryOrder: string[] = [];
     const categoryDefinitions = new Map<string, (string | null)[]>();
 
@@ -173,15 +173,15 @@ export function publishIcons(): PublishResult {
     }
 
     /**
-     * Bouwt de icons-array voor een categorie, inclusief null-separators uit categories.json.
-     * Icons die in categoryMap staan maar niet in categories.json worden aan het einde toegevoegd.
+     * Builds the icons array for a category, including null separators from categories.json.
+     * Icons present in categoryMap but not in categories.json are appended at the end.
      */
     function buildCategoryIcons(categoryName: string): (ManifestIcon | null)[] {
         const available = categoryMap.get(categoryName)!;
         const definition = categoryDefinitions.get(categoryName);
 
         if (!definition) {
-            // Categorie niet in categories.json — sorteer alfabetisch
+            // Category not in categories.json — sort alphabetically
             return [...available.values()].sort((a, b) => a.slug.localeCompare(b.slug));
         }
 
@@ -197,7 +197,7 @@ export function publishIcons(): PublishResult {
             }
         }
 
-        // Eventuele icons die niet in categories.json staan, achteraan toevoegen
+        // Append any icons not listed in categories.json
         for (const [slug, icon] of available) {
             if (!placed.has(slug)) {
                 result.push(icon);
@@ -252,5 +252,5 @@ if (import.meta.main) {
 
     console.log(`✓ ${result.svgCount} SVGs → packages/svg/`);
     console.log(`✓ ${result.lottieCount} Lotties → packages/lottie/`);
-    console.log(`✓ Manifest gegenereerd in beide packages`);
+    console.log(`✓ Manifest generated in both packages`);
 }

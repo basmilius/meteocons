@@ -26,7 +26,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
     const manifest = readManifest();
 
     const age = Math.round((Date.now() - new Date(manifest.fetchedAt).getTime()) / 60000);
-    log(`Cache van ${manifest.fetchedAt.slice(0, 16).replace('T', ' ')} (${age} minuten geleden)`);
+    log(`Cache from ${manifest.fetchedAt.slice(0, 16).replace('T', ' ')} (${age} minutes ago)`);
     log(`${manifest.frames.length} frames in cache\n`);
 
     let frames = manifest.frames;
@@ -34,14 +34,14 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
     if (options.pageFilter) {
         frames = frames.filter(f => f.pageName === options.pageFilter);
         if (frames.length === 0) {
-            throw new Error(`Geen frames gevonden voor page "${options.pageFilter}".`);
+            throw new Error(`No frames found for page "${options.pageFilter}".`);
         }
     }
 
     if (options.frameFilter) {
         frames = frames.filter(f => f.frameName === options.frameFilter);
         if (frames.length === 0) {
-            throw new Error(`Frame "${options.frameFilter}" niet gevonden in cache.`);
+            throw new Error(`Frame "${options.frameFilter}" not found in cache.`);
         }
     }
 
@@ -67,7 +67,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
             const svgContent = readSvg(frame.nodeId);
 
             if (!svgContent) {
-                warn(`  ⚠  ${frame.frameName} — niet in cache (voer fetch opnieuw uit)`);
+                warn(`  ⚠  ${frame.frameName} — not in cache (re-run fetch)`);
                 skipped++;
                 continue;
             }
@@ -115,11 +115,11 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
         totalSkipped += skipped;
     }
 
-    log(`Klaar — ${totalExported} exported, ${totalSkipped} skipped → ${outputDir}/`);
+    log(`Done — ${totalExported} exported, ${totalSkipped} skipped → ${outputDir}/`);
 
     if (noConfig.length > 0) {
-        log(`\n── Geen config gevonden (${noConfig.length} icons) ─────────────────────────`);
-        log(`   Voeg toe aan animations/configs/\n`);
+        log(`\n── No config found (${noConfig.length} icons) ─────────────────────────`);
+        log(`   Add to animations/configs/\n`);
         log(`  ${noConfig.sort().join('\n  ')}\n`);
     }
 

@@ -92,6 +92,16 @@ export class FigmaClient {
     // ----- Public -----
 
     /**
+     * Returns file metadata with a minimal document tree (depth=1).
+     * Cheap call to check lastModified / version without fetching all frames.
+     */
+    async getFileMetadata(fileKey: string): Promise<Pick<FigmaFileResponse, 'name' | 'lastModified' | 'version'>> {
+        return this.request<Pick<FigmaFileResponse, 'name' | 'lastModified' | 'version'>>(
+            `/files/${fileKey}?depth=1`
+        );
+    }
+
+    /**
      * Returns the document tree up to 3 levels deep — enough to list
      * pages and the frames on each page.
      */

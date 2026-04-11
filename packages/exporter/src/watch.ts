@@ -1,13 +1,13 @@
 /**
- * File watcher voor live icon updates tijdens development.
+ * File watcher for live icon updates during development.
  *
- * Watched animations/configs/, animations/partials/ en optioneel .cache/svgs/.
- * Bij wijziging: export → publish → prepare-icons (docs/preview) → browser reload.
+ * Watches animations/configs/, animations/partials/ and optionally .cache/svgs/.
+ * On change: export → publish → prepare-icons (docs/preview) → browser reload.
  *
- * Gebruik:
+ * Usage:
  *   bun watch              — watch + export + publish
- *   bun watch --docs       — ook prepare-icons voor docs uitvoeren
- *   bun watch --frame X    — alleen frame X exporteren (sneller)
+ *   bun watch --docs       — also run prepare-icons for docs
+ *   bun watch --frame X    — only export frame X (faster)
  */
 
 import { watch, existsSync, writeFileSync } from 'fs';
@@ -40,22 +40,22 @@ function getArgValue(flag: string): string | undefined {
 }
 
 function timestamp(): string {
-    return new Date().toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+    return new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
 }
 
 async function runPipeline(changedFiles: string[]): Promise<void> {
     const start = performance.now();
 
-    console.log(`\n[${timestamp()}] Wijziging gedetecteerd:`);
+    console.log(`\n[${timestamp()}] Change detected:`);
     for (const file of changedFiles.slice(0, 5)) {
         console.log(`  → ${file}`);
     }
     if (changedFiles.length > 5) {
-        console.log(`  ... en ${changedFiles.length - 5} meer`);
+        console.log(`  ... and ${changedFiles.length - 5} more`);
     }
 
     try {
-        // 1. Clear config cache zodat nieuwe configs worden geladen
+        // 1. Clear config cache so new configs are loaded
         clearConfigCache();
 
         // 2. Export
@@ -65,11 +65,11 @@ async function runPipeline(changedFiles: string[]): Promise<void> {
         });
         console.log(`  Export: ${exportResult.exported} animated, ${exportResult.skipped} skipped`);
 
-        // 3. Publish naar packages
+        // 3. Publish to packages
         const publishResult = publishIcons();
         console.log(`  Publish: ${publishResult.svgCount} SVGs, ${publishResult.lottieCount} Lotties`);
 
-        // 4. Prepare icons voor docs (indien gevraagd)
+        // 4. Prepare icons for docs (if requested)
         if (withDocs) {
             const docsScript = join(DOCS_DIR, 'scripts', 'prepare-icons.ts');
             if (existsSync(docsScript)) {
@@ -79,11 +79,11 @@ async function runPipeline(changedFiles: string[]): Promise<void> {
                     stderr: 'pipe',
                 });
                 await proc.exited;
-                console.log(`  Docs: icons voorbereid`);
+                console.log(`  Docs: icons prepared`);
             }
         }
 
-        // 5. Touch preview manifest om Vite reload te triggeren
+        // 5. Touch preview manifest to trigger Vite reload
         const previewManifest = join(PREVIEW_DIR, 'public', 'icons', 'manifest.json');
         if (existsSync(previewManifest)) {
             const content = await Bun.file(previewManifest).text();
@@ -91,9 +91,9 @@ async function runPipeline(changedFiles: string[]): Promise<void> {
         }
 
         const elapsed = Math.round(performance.now() - start);
-        console.log(`[${timestamp()}] Klaar in ${elapsed}ms`);
+        console.log(`[${timestamp()}] Done in ${elapsed}ms`);
     } catch (error) {
-        console.error(`[${timestamp()}] Pipeline fout: ${(error as Error).message}`);
+        console.error(`[${timestamp()}] Pipeline error: ${(error as Error).message}`);
     }
 }
 
@@ -125,15 +125,15 @@ function onFileChange(filename: string): void {
 
 // --- Start watchers ---
 
-console.log(`Meteocons watcher gestart`);
+console.log(`Meteocons watcher started`);
 console.log(`  Watching: animations/configs/, animations/partials/`);
 if (frameFilter) {
     console.log(`  Frame filter: ${frameFilter}`);
 }
 if (withDocs) {
-    console.log(`  Docs prepare-icons: aan`);
+    console.log(`  Docs prepare-icons: enabled`);
 }
-console.log(`  Druk Ctrl+C om te stoppen\n`);
+console.log(`  Press Ctrl+C to stop\n`);
 
 if (existsSync(CONFIGS_DIR)) {
     watch(CONFIGS_DIR, {recursive: true}, (_event, filename) => {

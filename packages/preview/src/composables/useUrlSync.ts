@@ -20,6 +20,6 @@ export function setUrlParam(key: string, value: string | null): void {
         const url = query ? `${window.location.pathname}?${query}` : window.location.pathname;
         history.replaceState(null, '', url);
     } catch {
-        // SSR of geen window
+        // SSR or no window
     }
 }

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 export interface CacheFrame {
@@ -8,11 +8,17 @@ export interface CacheFrame {
     pageName: string;
     /** Output subfolder, e.g. "fill", "flat". */
     subfolder: string;
+    /** SHA-256 hex hash of the SVG content. */
+    sha256: string;
 }
 
 export interface CacheManifest {
     fetchedAt: string;
     fileKey: string;
+    /** Figma file version string from the API. */
+    figmaVersion: string;
+    /** ISO 8601 lastModified timestamp from the Figma API. */
+    figmaLastModified: string;
     frames: CacheFrame[];
 }
 
@@ -60,4 +66,28 @@ export function readSvg(nodeId: string): string | null {
 
 export function cacheExists(): boolean {
     return existsSync(MANIFEST_PATH);
+}
+
+/** SHA-256 hex hash of an SVG string. */
+export function hashSvg(content: string): string {
+    const hasher = new Bun.CryptoHasher('sha256');
+    hasher.update(content);
+    return hasher.digest('hex');
+}
+
+/** Remove a cached SVG file. */
+export function removeSvg(nodeId: string): void {
+    const path = svgPath(nodeId);
+    if (existsSync(path)) {
+        unlinkSync(path);
+    }
+}
+
+/** Build a Map<nodeId, CacheFrame> for quick lookups. */
+export function buildFrameMap(manifest: CacheManifest): Map<string, CacheFrame> {
+    const map = new Map<string, CacheFrame>();
+    for (const frame of manifest.frames) {
+        map.set(frame.nodeId, frame);
+    }
+    return map;
 }

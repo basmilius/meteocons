@@ -24,7 +24,7 @@ function fetchManifest(): Promise<void> {
             loading.value = false;
         })
         .catch((err) => {
-            error.value = `Kan manifest niet laden: ${err.message}`;
+            error.value = `Failed to load manifest: ${err.message}`;
             loading.value = false;
         });
 
@@ -37,7 +37,7 @@ export function useIcons(searchQuery: Ref<string>, displayMode: Ref<DisplayMode>
     const categories = computed(() => manifest.value?.categories ?? []);
 
     /**
-     * Verwijdert overbodige null-separators: geen leading, trailing of opeenvolgende nulls.
+     * Removes redundant null separators: no leading, trailing, or consecutive nulls.
      */
     function cleanSeparators(icons: (IconEntry | null)[]): (IconEntry | null)[] {
         const result: (IconEntry | null)[] = [];

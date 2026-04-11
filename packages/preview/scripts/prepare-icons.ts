@@ -1,8 +1,8 @@
 /**
- * Kopieert iconen vanuit @meteocons/svg en @meteocons/lottie naar public/icons/
- * en genereert een gecombineerd manifest.
+ * Copies icons from @meteocons/svg and @meteocons/lottie to public/icons/
+ * and generates a combined manifest.
  *
- * In dev-modus (--dev) worden symlinks gebruikt i.p.v. kopieën.
+ * In dev mode (--dev) symlinks are used instead of copies.
  */
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'fs';
 import { createRequire } from 'module';
@@ -49,7 +49,7 @@ interface PreviewManifest {
     }[];
 }
 
-// --- 1. Kopieer/symlink icon-bestanden ---
+// --- 1. Copy/symlink icon files ---
 
 if (existsSync(PUBLIC_ICONS)) {
     rmSync(PUBLIC_ICONS, {recursive: true});
@@ -82,7 +82,7 @@ for (const style of STYLES) {
     }
 }
 
-// --- 2. Genereer gecombineerd manifest ---
+// --- 2. Generate combined manifest ---
 
 const svgManifest: PackageManifest = JSON.parse(
     readFileSync(join(SVG_ROOT, 'manifest.json'), 'utf-8')
@@ -119,5 +119,5 @@ const animatedCount = previewManifest.categories.reduce(
     0
 );
 
-console.log(`✓ Icons ${isDev ? 'gelinkt' : 'gekopieerd'} naar public/icons/`);
-console.log(`✓ Manifest gegenereerd: ${totalIcons} iconen (${animatedCount} geanimeerd)`);
+console.log(`✓ Icons ${isDev ? 'linked' : 'copied'} to public/icons/`);
+console.log(`✓ Manifest generated: ${totalIcons} icons (${animatedCount} animated)`);

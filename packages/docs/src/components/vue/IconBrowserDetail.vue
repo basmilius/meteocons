@@ -322,8 +322,8 @@
     }
 
     .detail-action-icon.copied {
-        background: rgba(229, 133, 10, 0.12);
-        color: var(--amber, #e5850a);
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--amber, #f59e0b);
     }
 
     .detail-preview {
@@ -419,9 +419,9 @@
     }
 
     .detail-style-btn.active {
-        border-color: var(--amber, #e5850a);
-        background: rgba(229, 133, 10, 0.1);
-        color: var(--amber, #e5850a);
+        border-color: var(--amber, #f59e0b);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--amber, #f59e0b);
     }
 
     .detail-actions {
@@ -503,9 +503,9 @@
     }
 
     .cdn-copy-btn:hover {
-        border-color: var(--amber, #e5850a);
-        color: var(--amber, #e5850a);
-        background: rgba(229, 133, 10, 0.06);
+        border-color: var(--amber, #f59e0b);
+        color: var(--amber, #f59e0b);
+        background: rgba(245, 158, 11, 0.06);
     }
 
     @media (max-width: 768px) {

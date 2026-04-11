@@ -213,9 +213,9 @@
     }
 
     .mobile-style-btn.active {
-        border-color: var(--amber, #e5850a);
-        background: rgba(229, 133, 10, 0.08);
-        color: var(--amber, #e5850a);
+        border-color: var(--amber, #f59e0b);
+        background: rgba(245, 158, 11, 0.08);
+        color: var(--amber, #f59e0b);
     }
 
     .mobile-drawer-divider {
@@ -253,9 +253,9 @@
     }
 
     .mobile-drawer-item.active {
-        color: var(--amber, #e5850a);
+        color: var(--amber, #f59e0b);
         font-weight: 600;
-        background: rgba(229, 133, 10, 0.06);
+        background: rgba(245, 158, 11, 0.06);
     }
 
     .mobile-drawer-count {

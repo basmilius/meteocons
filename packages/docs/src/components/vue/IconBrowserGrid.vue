@@ -75,7 +75,7 @@
         width: 27px;
         height: 27px;
         border: 2px solid var(--border, #e5e7eb);
-        border-top-color: var(--amber, #e5850a);
+        border-top-color: var(--amber, #f59e0b);
         border-radius: 50%;
         animation: spin 0.7s linear infinite;
     }

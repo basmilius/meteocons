@@ -100,8 +100,8 @@
         }
 
         .mobile-search-input:focus {
-            border-color: var(--amber, #e5850a);
-            box-shadow: 0 0 0 3px rgba(229, 133, 10, 0.1);
+            border-color: var(--amber, #f59e0b);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
             background: var(--bg, #ffffff);
         }
 
@@ -136,7 +136,7 @@
             justify-content: center;
             padding: 0 6px;
             border-radius: 100px;
-            background: var(--amber, #e5850a);
+            background: var(--amber, #f59e0b);
             color: white;
             font-size: 10px;
             font-weight: 700;

@@ -400,6 +400,51 @@ function buildPositionKeyframes(
 }
 
 /**
+ * Merges two translation configs by adding their values element-wise.
+ * Both configs must be simple translateY/translateX with matching value
+ * counts and same duration. Falls back to the child config if merging
+ * isn't possible.
+ *
+ * This handles the SVG → Lottie flattening: in SVG, parent and child
+ * transforms stack (e.g. Clouds [0,-3,0] + Secondary Cloud [-3,0,-3] = static).
+ * In Lottie layers are flat, so we need to pre-merge the values.
+ */
+function mergeTranslateConfigs(parent: LayerConfig, child: LayerConfig): LayerConfig {
+    if (parent.transform && parent.transform === child.transform
+        && parent.values && child.values
+        && parent.values.length === child.values.length
+        && parent.duration === child.duration) {
+        return {
+            ...child,
+            values: child.values.map((v, i) => v + (parent.values![i] ?? 0))
+        };
+    }
+    return child;
+}
+
+/**
+ * Computes mask animation values relative to the layer's position offset.
+ * When a layer has a merged constant offset (e.g. [-3,-3,-3]), the mask
+ * animation must compensate: absolute [0,-3,0] - offset [-3,-3,-3] = [3,0,3].
+ * This ensures the mask tracks the primary cloud correctly in local coords.
+ */
+function computeRelativeMaskConfig(absoluteCfg: LayerConfig, layerCfg: LayerConfig): LayerConfig | undefined {
+    if (!absoluteCfg.transform || absoluteCfg.transform !== layerCfg.transform
+        || !absoluteCfg.values || !layerCfg.values
+        || absoluteCfg.values.length !== layerCfg.values.length) {
+        return undefined;
+    }
+    const transforms = new Set(['translateX', 'translateY', 'translate']);
+    if (!transforms.has(absoluteCfg.transform)) {
+        return undefined;
+    }
+    return {
+        ...absoluteCfg,
+        values: absoluteCfg.values.map((v, i) => v - (layerCfg.values![i] ?? 0))
+    };
+}
+
+/**
  * Generates a Lottie JSON from a static SVG and animation config.
  *
  * Traverses ALL visible elements in the SVG (not just animated ones).
@@ -421,7 +466,7 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
     const topElements = collectTopLevelElements(svg);
     const animatedIds = new Set(Object.keys(config.layers));
 
-    function addLayer(element: any, transform: LottieTransform): void {
+    function addLayer(element: any, transform: LottieTransform, transformConfig?: LayerConfig, maskOverrideConfig?: LayerConfig): void {
         const shapeGroup = buildShapeGroup(element, gradients);
         if (!shapeGroup) {
             return;
@@ -493,8 +538,8 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                 }
             }
 
-            const maskSourceConfig = findMaskSourceConfig(doc, element, config) ?? config.layers['Clouds'] ?? null;
-            if (maskSourceConfig) {
+            const maskSourceConfig = maskOverrideConfig ?? findMaskSourceConfig(doc, element, config) ?? config.layers['Clouds'] ?? null;
+            if (maskSourceConfig && maskSourceConfig !== transformConfig) {
                 for (const mask of rawMasks!) {
                     if (mask.pt.a !== 0) {
                         continue;
@@ -536,8 +581,8 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                 }
             }
 
-            const maskSourceConfig = findMaskSourceConfig(doc, element, config) ?? config.layers['Clouds'] ?? null;
-            if (maskSourceConfig) {
+            const maskSourceConfig = maskOverrideConfig ?? findMaskSourceConfig(doc, element, config) ?? config.layers['Clouds'] ?? null;
+            if (maskSourceConfig && maskSourceConfig !== transformConfig) {
                 for (const mask of rawMasks!) {
                     if (mask.pt.a !== 0) {
                         continue;
@@ -587,6 +632,39 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
         layers.push(layer);
     }
 
+    /**
+     * Recursively distributes a parent's animation config through intermediate
+     * non-animated groups to reach animated descendants. Animated descendants
+     * get a merged transform (parent + own config added element-wise) so the
+     * flat Lottie layer correctly represents the stacked SVG transforms.
+     *
+     * Example: "Clouds" [0,-3,0] distributes through "Mask group_2" to
+     * "Secondary Cloud" [-3,0,-3]. Merged: [-3,-3,-3] = static at Y=-3.
+     */
+    function distributeToChildren(group: any, parentCfg: LayerConfig): void {
+        for (const child of Array.from(group.childNodes as any[])) {
+            if (child.nodeType !== 1) {
+                continue;
+            }
+            const childTag = child.tagName?.toLowerCase();
+            if (!childTag || childTag === 'defs' || childTag === 'clippath' || childTag === 'mask') {
+                continue;
+            }
+
+            const childId = child.getAttribute?.('id') ?? '';
+
+            if (childId && animatedIds.has(childId)) {
+                const merged = mergeTranslateConfigs(parentCfg, config.layers[childId]);
+                const relativeMask = computeRelativeMaskConfig(parentCfg, merged);
+                addLayer(child, buildTransformFromConfig(merged, child), parentCfg, relativeMask);
+            } else if (childTag === 'g' && collectIds(child).some(id => animatedIds.has(id))) {
+                distributeToChildren(child, parentCfg);
+            } else {
+                addLayer(child, buildTransformFromConfig(parentCfg, child), parentCfg);
+            }
+        }
+    }
+
     function processElement(element: any): void {
         if (element.nodeType !== 1) {
             return;
@@ -605,6 +683,7 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
 
                 if (hasAnimatedChild) {
                     const groupTransform = buildTransformFromConfig(config.layers[elementId], element);
+                    const parentCfg = config.layers[elementId];
                     for (const child of Array.from(element.childNodes as any[])) {
                         if (child.nodeType !== 1) {
                             continue;
@@ -612,14 +691,17 @@ export function generateLottie(svgContent: string, config: ResolvedConfig): Lott
                         const childId = child.getAttribute?.('id') ?? '';
                         if (childId && animatedIds.has(childId)) {
                             processElement(child);
+                        } else if (child.tagName?.toLowerCase() === 'g'
+                            && collectIds(child).some(id => animatedIds.has(id))) {
+                            distributeToChildren(child, parentCfg);
                         } else {
-                            addLayer(child, structuredClone(groupTransform));
+                            addLayer(child, structuredClone(groupTransform), parentCfg);
                         }
                     }
                     return;
                 }
             }
-            addLayer(element, buildTransformFromConfig(config.layers[elementId], element));
+            addLayer(element, buildTransformFromConfig(config.layers[elementId], element), config.layers[elementId]);
             return;
         }
 

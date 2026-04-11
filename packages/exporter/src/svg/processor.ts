@@ -507,6 +507,14 @@ export function processSvg(svgContent: string, resolvedConfig: ResolvedConfig): 
                         && JSON.stringify(resolvedConfig.layers[childId]) !== JSON.stringify(layerConfig);
                     if (!childHasOwnConfig) {
                         applyLayerConfig(doc, child, layerConfig);
+                        // Track descendants to prevent double-animation by mask sync.
+                        // Without this, named mirror masks (e.g. "Cloud Mask_2") inside
+                        // child-distributed groups get re-animated by syncMasksForLayer.
+                        const descendantIds: string[] = [];
+                        collectIds(child, descendantIds);
+                        for (const id of descendantIds) {
+                            syncedMaskIds.add(id);
+                        }
                     }
                 }
                 syncMasksForLayer(doc, element, layerId, layerConfig, animatedIds, syncedMaskIds);

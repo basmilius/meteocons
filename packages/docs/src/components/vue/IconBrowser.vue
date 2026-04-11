@@ -572,8 +572,8 @@
                                 v-if="previewMode === 'svg'"
                                 :src="svgUrl(selectedIcon.slug, detailStyle)"
                                 :alt="selectedIcon.name"
-                                width="160"
-                                height="160"
+                                width="256"
+                                height="256"
                                 :key="`${selectedIcon.slug}-${detailStyle}`"
                             />
                             <div
@@ -1102,8 +1102,8 @@
     }
 
     .lottie-player {
-        width: 160px;
-        height: 160px;
+        width: 256px;
+        height: 256px;
     }
 
     .detail-info {

@@ -62,7 +62,7 @@ Once inlined, you can style every part of the SVG with CSS:
 
 ## Responsive sizing
 
-Icons are designed on a 512×512 canvas and scale cleanly. Use CSS to make them responsive:
+Icons are designed on a 128×128 canvas and scale cleanly. Use CSS to make them responsive:
 
 ```css
 /* Fixed size */
@@ -92,13 +92,14 @@ Lottie gives you full playback control — speed, direction, play/pause, and seg
 
 ```javascript
 import lottie from 'lottie-web';
+import rainAnimation from '@meteocons/lottie/fill/rain.json';
 
 const animation = lottie.loadAnimation({
     container: document.getElementById('weather-icon'),
     renderer: 'canvas',   // 'canvas' for performance, 'svg' for quality
     loop: true,
     autoplay: true,
-    path: 'https://cdn.meteocons.com/latest/lottie/fill/rain.json'
+    animationData: rainAnimation
 });
 
 // Playback control

@@ -113,10 +113,11 @@ Install `lottie-web` alongside the icon package:
 
 ```javascript
 import lottie from 'lottie-web';
+import clearDayAnimation from '@meteocons/lottie/fill/clear-day.json';
 
 const animation = lottie.loadAnimation({
     container: document.getElementById('weather-icon'),
-    path: 'https://cdn.meteocons.com/latest/lottie/fill/clear-day.json',
+    animationData: clearDayAnimation,
     renderer: 'svg',    // or 'canvas' for better performance
     loop: true,
     autoplay: true

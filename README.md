@@ -6,16 +6,20 @@ Animated weather icons for the modern web. 475+ hand-crafted icons in 4 styles, 
 
 ## Packages
 
-| Package                              | Description                    |
-|--------------------------------------|--------------------------------|
-| [@meteocons/svg](packages/svg)       | Animated SVG weather icons     |
-| [@meteocons/lottie](packages/lottie) | Lottie JSON weather animations |
+| Package                                        | Description                    |
+|------------------------------------------------|--------------------------------|
+| [@meteocons/svg](packages/svg)                 | Animated SVG weather icons     |
+| [@meteocons/svg-static](packages/svg-static)   | Static SVG weather icons       |
+| [@meteocons/lottie](packages/lottie)           | Lottie JSON weather animations |
 
 ## Installation
 
 ```bash
-# SVG icons
+# Animated SVG icons
 bun add @meteocons/svg
+
+# Static SVG icons (no SMIL animations)
+bun add @meteocons/svg-static
 
 # Lottie animations
 bun add @meteocons/lottie
@@ -58,6 +62,7 @@ All icons are also available via CDN at `cdn.meteocons.com`:
 
 ```
 https://cdn.meteocons.com/{version}/svg/{style}/{icon}.svg
+https://cdn.meteocons.com/{version}/svg-static/{style}/{icon}.svg
 https://cdn.meteocons.com/{version}/lottie/{style}/{icon}.json
 ```
 
@@ -90,7 +95,7 @@ bun run fetch --force      # Force re-download
 bun run export             # Export all icons (SVG + Lottie)
 bun run export --frame X   # Export a single icon
 bun run validate           # Validate layer names and coverage
-bun run publish-icons      # Copy output to @meteocons/svg and @meteocons/lottie
+bun run publish-icons      # Copy output to @meteocons/svg, @meteocons/svg-static and @meteocons/lottie
 bun run docs:dev           # Start documentation website
 ```
 

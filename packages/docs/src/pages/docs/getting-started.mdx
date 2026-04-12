@@ -5,20 +5,20 @@ description: Install and start using Meteocons animated weather icons.
 ---
 import PmTabs from '../../components/PmTabs.astro';
 
-Meteocons ships as two npm packages — **animated SVG** and **Lottie JSON**. Pick the format that fits your project, or install both.
+Meteocons ships as three npm packages — **animated SVG**, **static SVG**, and **Lottie JSON**. Pick the format that fits your project, or install multiple.
 
 ## Which format should I use?
 
-| | SVG | Lottie |
-|---|---|---|
-| **Best for** | Websites, web apps | Native apps, complex animations |
-| **How it works** | Native `<animate>` elements — no runtime needed | Requires a Lottie player (lottie-web, lottie-ios, etc.) |
-| **File size** | Very small (2–8 KB) | Larger (5–20 KB) |
-| **Rendering** | Crisp at any size, rendered by the browser | Canvas or SVG renderer via player |
-| **Customization** | CSS styling, `currentColor` in monochrome | Playback control (speed, direction, segments) |
-| **Platform** | Any browser or SVG viewer | Web, iOS, Android, React Native, Flutter |
+| | SVG | SVG Static | Lottie |
+|---|---|---|---|
+| **Best for** | Websites, web apps | Emails, static documents | Native apps, complex animations |
+| **How it works** | Native `<animate>` elements — no runtime needed | Plain SVG without SMIL animations | Requires a Lottie player (lottie-web, lottie-ios, etc.) |
+| **File size** | Very small (2–8 KB) | Very small (1–6 KB) | Larger (5–20 KB) |
+| **Rendering** | Crisp at any size, rendered by the browser | Crisp at any size, rendered by the browser | Canvas or SVG renderer via player |
+| **Customization** | CSS styling, `currentColor` in monochrome | CSS styling, `currentColor` in monochrome | Playback control (speed, direction, segments) |
+| **Platform** | Any browser or SVG viewer | Any SVG viewer, email clients | Web, iOS, Android, React Native, Flutter |
 
-**Recommendation:** use SVG for web projects and Lottie when you need playback control or are building a native app.
+**Recommendation:** use SVG for web projects, SVG Static when animations are not supported (e.g. emails), and Lottie when you need playback control or are building a native app.
 
 ## Installation
 
@@ -32,6 +32,16 @@ Meteocons ships as two npm packages — **animated SVG** and **Lottie JSON**. Pi
     pnpm="pnpm add @meteocons/svg"
 />
 
+### Static SVG icons
+
+<PmTabs
+    id="install-svg-static"
+    bun="bun add @meteocons/svg-static"
+    npm="npm install @meteocons/svg-static"
+    yarn="yarn add @meteocons/svg-static"
+    pnpm="pnpm add @meteocons/svg-static"
+/>
+
 ### Lottie icons
 
 <PmTabs
@@ -42,14 +52,14 @@ Meteocons ships as two npm packages — **animated SVG** and **Lottie JSON**. Pi
     pnpm="pnpm add @meteocons/lottie"
 />
 
-### Both packages
+### All packages
 
 <PmTabs
-    id="install-both"
-    bun="bun add @meteocons/svg @meteocons/lottie"
-    npm="npm install @meteocons/svg @meteocons/lottie"
-    yarn="yarn add @meteocons/svg @meteocons/lottie"
-    pnpm="pnpm add @meteocons/svg @meteocons/lottie"
+    id="install-all"
+    bun="bun add @meteocons/svg @meteocons/svg-static @meteocons/lottie"
+    npm="npm install @meteocons/svg @meteocons/svg-static @meteocons/lottie"
+    yarn="yarn add @meteocons/svg @meteocons/svg-static @meteocons/lottie"
+    pnpm="pnpm add @meteocons/svg @meteocons/svg-static @meteocons/lottie"
 />
 
 ## Quick start
@@ -164,7 +174,7 @@ See the [CDN documentation](/docs/cdn) for the full URL structure, Lottie exampl
 
 ## Package structure
 
-Both packages follow the same layout with four icon styles:
+All packages follow the same layout with four icon styles:
 
 ```
 @meteocons/svg/
@@ -185,7 +195,7 @@ fill/snow.svg
 fill/thunderstorms-day-rain.svg
 ```
 
-The `@meteocons/lottie` package has the same structure, but with `.json` files instead of `.svg`.
+The `@meteocons/svg-static` and `@meteocons/lottie` packages have the same structure. `@meteocons/svg-static` contains `.svg` files without SMIL animations, and `@meteocons/lottie` contains `.json` files.
 
 ## Styles
 

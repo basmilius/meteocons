@@ -5,16 +5,17 @@ description: Types, manifest structure, and naming conventions for Meteocons.
 ---
 import PmTabs from '../../components/PmTabs.astro';
 
-Reference for the `@meteocons/svg` and `@meteocons/lottie` packages.
+Reference for the `@meteocons/svg`, `@meteocons/svg-static`, and `@meteocons/lottie` packages.
 
 ## Packages
 
-| Package             | Contents               | Format  |
-|---------------------|------------------------|---------|
-| `@meteocons/svg`    | Animated SVG files     | `.svg`  |
-| `@meteocons/lottie` | Lottie JSON animations | `.json` |
+| Package                  | Contents                          | Format  |
+|--------------------------|-----------------------------------|---------|
+| `@meteocons/svg`         | Animated SVG files                | `.svg`  |
+| `@meteocons/svg-static`  | Static SVG files (no animations)  | `.svg`  |
+| `@meteocons/lottie`      | Lottie JSON animations            | `.json` |
 
-Both packages have identical directory structures, manifests, and TypeScript types.
+All packages have identical directory structures, manifests, and TypeScript types.
 
 ### Install
 
@@ -27,6 +28,14 @@ Both packages have identical directory structures, manifests, and TypeScript typ
 />
 
 <PmTabs
+    id="install-svg-static"
+    bun="bun add @meteocons/svg-static"
+    npm="npm install @meteocons/svg-static"
+    yarn="yarn add @meteocons/svg-static"
+    pnpm="pnpm add @meteocons/svg-static"
+/>
+
+<PmTabs
     id="install-lottie"
     bun="bun add @meteocons/lottie"
     npm="npm install @meteocons/lottie"
@@ -36,7 +45,7 @@ Both packages have identical directory structures, manifests, and TypeScript typ
 
 ## TypeScript types
 
-Both packages export the following types from `index.d.ts`:
+All packages export the following types from `index.d.ts`:
 
 ```typescript
 export interface IconEntry {
@@ -65,7 +74,7 @@ import type { IconManifest, IconCategory, IconEntry } from '@meteocons/svg';
 
 ## Manifest
 
-Both packages include a `manifest.json` with metadata about all icons. This is useful for building icon pickers, search interfaces, or generating documentation.
+All packages include a `manifest.json` with metadata about all icons. This is useful for building icon pickers, search interfaces, or generating documentation.
 
 ```typescript
 import type { IconManifest } from '@meteocons/svg';
@@ -179,7 +188,7 @@ All icons in Meteocons are animated. The `animated` field in each `IconEntry` is
 
 ## Exports map
 
-Both packages use Node.js subpath exports for direct file imports:
+All packages use Node.js subpath exports for direct file imports:
 
 ```json
 {
@@ -193,9 +202,12 @@ Both packages use Node.js subpath exports for direct file imports:
 This means you can import any file directly by path:
 
 ```typescript
-// SVG files
+// Animated SVG files
 import clearDay from '@meteocons/svg/fill/clear-day.svg';
 import rain from '@meteocons/svg/line/rain.svg';
+
+// Static SVG files (no SMIL animations)
+import clearDayStatic from '@meteocons/svg-static/fill/clear-day.svg';
 
 // Lottie JSON
 import clearDayLottie from '@meteocons/lottie/fill/clear-day.json';

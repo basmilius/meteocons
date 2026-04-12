@@ -1,7 +1,7 @@
 {
     "targets": [
-        "cloud-down",
-        "cloud-up"
+        "pressure-high",
+        "pressure-low"
     ],
     "includes": [
         "arrows"

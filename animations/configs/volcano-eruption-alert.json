@@ -1,0 +1,9 @@
+{
+    "targets": [
+        "volcano-eruption-alert"
+    ],
+    "includes": [
+        "volcano-eruption",
+        "alert"
+    ]
+}

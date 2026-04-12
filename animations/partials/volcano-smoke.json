@@ -1,0 +1,58 @@
+{
+    "layers": {
+        "Smoke 1": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -16],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 0
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.2, 0.5, 1],
+                    "duration": "3s",
+                    "delay": 0
+                }
+            ]
+        },
+        "Smoke 2": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -16],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 1
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.2, 0.5, 1],
+                    "duration": "3s",
+                    "delay": 1
+                }
+            ]
+        },
+        "Smoke 3": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -16],
+                    "duration": "3s",
+                    "easing": "ease-in-out",
+                    "delay": 2
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.2, 0.5, 1],
+                    "duration": "3s",
+                    "delay": 2
+                }
+            ]
+        }
+    }
+}

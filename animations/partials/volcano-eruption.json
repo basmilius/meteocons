@@ -1,0 +1,56 @@
+{
+    "layers": {
+        "Lava 1": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -28],
+                    "duration": "1.5s",
+                    "easing": "ease-in"
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.1, 0.7, 1],
+                    "duration": "1.5s"
+                }
+            ]
+        },
+        "Lava 2": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -32],
+                    "duration": "1.5s",
+                    "easing": "ease-in",
+                    "delay": 0.4
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.1, 0.7, 1],
+                    "duration": "1.5s",
+                    "delay": 0.4
+                }
+            ]
+        },
+        "Lava 3": {
+            "animations": [
+                {
+                    "transform": "translateY",
+                    "values": [0, -36],
+                    "duration": "1.5s",
+                    "easing": "ease-in",
+                    "delay": 0.8
+                },
+                {
+                    "property": "opacity",
+                    "values": [0, 1, 1, 0],
+                    "keyTimes": [0, 0.1, 0.7, 1],
+                    "duration": "1.5s",
+                    "delay": 0.8
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "targets": [
+        "volcano-alert"
+    ],
+    "includes": [
+        "volcano-smoke",
+        "alert"
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "targets": [
+        "waterspout-alert"
+    ],
+    "includes": [
+        "alert"
+    ],
+    "layers": {
+        "Line 5": {
+            "transform": "translateX",
+            "values": [-2, 2, -2],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        },
+        "Line 4": {
+            "transform": "translateX",
+            "values": [-4, 4, -4],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        },
+        "Line 3": {
+            "transform": "translateX",
+            "values": [-6, 6, -6],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        },
+        "Line 2": {
+            "transform": "translateX",
+            "values": [-8, 8, -8],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        },
+        "Line 1": {
+            "transform": "translateX",
+            "values": [-10, 10, -10],
+            "duration": "2s",
+            "easing": "ease-in-out"
+        }
+    }
+}

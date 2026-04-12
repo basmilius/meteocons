@@ -1,9 +1,9 @@
 {
     "targets": [
-        "weather-alarm-night"
+        "weather-alert-day"
     ],
     "includes": [
-        "moon",
+        "sun",
         "clouds",
         "alert"
     ]

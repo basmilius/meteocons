@@ -1,6 +1,6 @@
 {
     "targets": [
-        "thermometer-alarm"
+        "thermometer-alert"
     ],
     "includes": [
         "alert",

@@ -1,0 +1,28 @@
+{
+    "layers": {
+        "Arrow 1": {
+            "property": "opacity",
+            "values": [0.25, 1, 1, 0.25],
+            "keyTimes": [0, 0.3, 0.7, 1],
+            "duration": "2s",
+            "delay": 1.0,
+            "easing": "ease-in-out"
+        },
+        "Arrow 2": {
+            "property": "opacity",
+            "values": [0.25, 1, 1, 0.25],
+            "keyTimes": [0, 0.3, 0.7, 1],
+            "duration": "2s",
+            "delay": 0.5,
+            "easing": "ease-in-out"
+        },
+        "Arrow 3": {
+            "property": "opacity",
+            "values": [0.25, 1, 1, 0.25],
+            "keyTimes": [0, 0.3, 0.7, 1],
+            "duration": "2s",
+            "delay": 0,
+            "easing": "ease-in-out"
+        }
+    }
+}

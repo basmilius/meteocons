@@ -1,8 +1,9 @@
 {
     "targets": [
-        "thermometer-glass-alarm"
+        "weather-alert"
     ],
     "includes": [
+        "clouds",
         "alert"
     ]
 }

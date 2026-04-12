@@ -1,7 +1,7 @@
 {
     "targets": [
-        "alert-avalanche-danger",
-        "alert-falling-rocks"
+        "avalanche-danger-alert",
+        "falling-rocks-alert"
     ],
     "layers": {
         "Exclamation": {

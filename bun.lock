@@ -26,6 +26,7 @@
       "dependencies": {
         "@xmldom/xmldom": "^0.9.8",
         "svg-pathdata": "^8.0.0",
+        "svgo": "^4.0.1",
       },
       "devDependencies": {
         "@types/node": "^25.5.2",

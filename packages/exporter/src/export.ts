@@ -3,6 +3,7 @@ import { join } from 'path';
 import { readManifest, readSvg } from './cache';
 import { findConfig, resolveConfig } from './config-loader';
 import { processSvg, applyStaticTransforms, applyMonochromeColors } from './svg/processor';
+import { optimizeSvg } from './svg/optimize';
 import { generateLottie } from './lottie/generator';
 
 export interface ExportOptions {
@@ -86,7 +87,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
                 if (subfolder === 'monochrome') {
                     staticSvg = applyMonochromeColors(staticSvg);
                 }
-                writeFileSync(join(svgDir, `${slug}.static.svg`), staticSvg, 'utf-8');
+                writeFileSync(join(svgDir, `${slug}.static.svg`), optimizeSvg(staticSvg, slug), 'utf-8');
                 writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
                 skipped++;
                 continue;
@@ -101,7 +102,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
                 if (subfolder === 'monochrome') {
                     staticSvg = applyMonochromeColors(staticSvg);
                 }
-                writeFileSync(join(svgDir, `${slug}.static.svg`), staticSvg, 'utf-8');
+                writeFileSync(join(svgDir, `${slug}.static.svg`), optimizeSvg(staticSvg, slug), 'utf-8');
                 writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, staticConfig)), 'utf-8');
                 warn(`  ⚠  ${frame.frameName} — static`);
                 skipped++;
@@ -114,7 +115,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
             if (subfolder === 'monochrome') {
                 animatedSvg = applyMonochromeColors(animatedSvg);
             }
-            writeFileSync(join(svgDir, `${slug}.animated.svg`), animatedSvg, 'utf-8');
+            writeFileSync(join(svgDir, `${slug}.animated.svg`), optimizeSvg(animatedSvg, slug), 'utf-8');
             writeFileSync(join(lottieDir, `${slug}.lottie.json`), JSON.stringify(generateLottie(svgContent, resolved)), 'utf-8');
 
             // Also write a static SVG with snapshot transforms (no SMIL animations)
@@ -123,7 +124,7 @@ export function exportIcons(options: ExportOptions = {}): ExportResult {
             if (subfolder === 'monochrome') {
                 staticSvg = applyMonochromeColors(staticSvg);
             }
-            writeFileSync(join(svgDir, `${slug}.static.svg`), staticSvg, 'utf-8');
+            writeFileSync(join(svgDir, `${slug}.static.svg`), optimizeSvg(staticSvg, slug), 'utf-8');
 
             const summary = Object.keys(resolved.layers).join(', ');
             log(`  ✓  ${frame.frameName}  [${summary}]`);

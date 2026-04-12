@@ -12,6 +12,7 @@ import { readManifest } from './cache';
 const PACKAGES_DIR = join(import.meta.dir, '..', '..');
 const OUTPUT_DIR = join(import.meta.dir, '..', 'output');
 const SVG_PKG = join(PACKAGES_DIR, 'svg');
+const SVG_STATIC_PKG = join(PACKAGES_DIR, 'svg-static');
 const LOTTIE_PKG = join(PACKAGES_DIR, 'lottie');
 
 const STYLES = ['fill', 'flat', 'line', 'monochrome'] as const;
@@ -46,6 +47,7 @@ const CATEGORIES_FILE = join(import.meta.dir, '..', 'categories.json');
 
 export interface PublishResult {
     svgCount: number;
+    svgStaticCount: number;
     lottieCount: number;
 }
 
@@ -56,10 +58,14 @@ export function publishIcons(): PublishResult {
 
     for (const style of STYLES) {
         const svgStyleDir = join(SVG_PKG, style);
+        const svgStaticStyleDir = join(SVG_STATIC_PKG, style);
         const lottieStyleDir = join(LOTTIE_PKG, style);
 
         if (existsSync(svgStyleDir)) {
             rmSync(svgStyleDir, {recursive: true});
+        }
+        if (existsSync(svgStaticStyleDir)) {
+            rmSync(svgStaticStyleDir, {recursive: true});
         }
         if (existsSync(lottieStyleDir)) {
             rmSync(lottieStyleDir, {recursive: true});
@@ -72,6 +78,7 @@ export function publishIcons(): PublishResult {
     const categoryMap = new Map<string, Map<string, ManifestIcon>>();
 
     let svgCount = 0;
+    let svgStaticCount = 0;
     let lottieCount = 0;
 
     for (const style of STYLES) {
@@ -84,7 +91,10 @@ export function publishIcons(): PublishResult {
             continue;
         }
 
+        const svgStaticTargetDir = join(SVG_STATIC_PKG, style);
+
         mkdirSync(svgTargetDir, {recursive: true});
+        mkdirSync(svgStaticTargetDir, {recursive: true});
         mkdirSync(lottieTargetDir, {recursive: true});
 
         const svgFiles = readdirSync(svgSourceDir).filter(f => f.endsWith('.svg'));
@@ -110,6 +120,13 @@ export function publishIcons(): PublishResult {
             if (bestSvg) {
                 cpSync(join(svgSourceDir, bestSvg), join(svgTargetDir, `${slug}.svg`));
                 svgCount++;
+            }
+
+            // Static SVG: always prefer .static.svg
+            const staticSvg = versions.static ?? versions.animated;
+            if (staticSvg) {
+                cpSync(join(svgSourceDir, staticSvg), join(svgStaticTargetDir, `${slug}.svg`));
+                svgStaticCount++;
             }
 
             // Lottie: always {slug}.lottie.json in the source
@@ -222,7 +239,17 @@ export function publishIcons(): PublishResult {
     writeFileSync(join(SVG_PKG, 'manifest.json'), manifestJson, 'utf-8');
     writeFileSync(join(LOTTIE_PKG, 'manifest.json'), manifestJson, 'utf-8');
 
-    return {svgCount, lottieCount};
+    // Static manifest: identical structure but all icons marked as non-animated
+    const staticManifest: PackageManifest = {
+        styles: STYLES,
+        categories: packageManifest.categories.map(cat => ({
+            ...cat,
+            icons: cat.icons.map(icon => icon === null ? null : {...icon, animated: false})
+        }))
+    };
+    writeFileSync(join(SVG_STATIC_PKG, 'manifest.json'), JSON.stringify(staticManifest, null, 2), 'utf-8');
+
+    return {svgCount, svgStaticCount, lottieCount};
 }
 
 function loadCategoryMapping(): Map<string, string> {
@@ -251,6 +278,7 @@ if (import.meta.main) {
     const result = publishIcons();
 
     console.log(`✓ ${result.svgCount} SVGs → packages/svg/`);
+    console.log(`✓ ${result.svgStaticCount} static SVGs → packages/svg-static/`);
     console.log(`✓ ${result.lottieCount} Lotties → packages/lottie/`);
-    console.log(`✓ Manifest generated in both packages`);
+    console.log(`✓ Manifests generated in all packages`);
 }

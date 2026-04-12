@@ -7,7 +7,8 @@ Monorepo voor Meteocons: animated weather icons. Bevat de export pipeline, publi
 ```
 packages/
 ├── exporter/     # @meteocons/exporter  — Figma → SVG/Lottie export pipeline
-├── svg/          # @meteocons/svg       — Publishable SVG icon package
+├── svg/          # @meteocons/svg       — Publishable animated SVG icon package
+├── svg-static/   # @meteocons/svg-static — Publishable static SVG icon package (no SMIL animations)
 ├── lottie/       # @meteocons/lottie    — Publishable Lottie icon package
 └── docs/         # @meteocons/docs      — Astro docs + marketing website
 ```
@@ -20,7 +21,7 @@ bun run fetch --force      # Forceer opnieuw downloaden
 bun run export             # Exporteer alle iconen (SVG + Lottie)
 bun run export --frame X   # Exporteer één icoon
 bun run validate           # Valideer layer-namen en coverage
-bun run publish-icons      # Kopieer output naar @meteocons/svg en @meteocons/lottie
+bun run publish-icons      # Kopieer output naar @meteocons/svg, @meteocons/svg-static en @meteocons/lottie
 bun run docs:dev           # Start docs website dev server
 ```
 
@@ -40,7 +41,8 @@ lottie/generator.ts → Lottie JSON                 (volledige SVG traversal + k
 packages/exporter/output/{style}/svg/*.svg
 packages/exporter/output/{style}/lottie/*.json
                     ↓
-publish-icons.ts → packages/svg/{style}/*.svg     (animated als beschikbaar, anders static)
+publish-icons.ts → packages/svg/{style}/*.svg          (animated als beschikbaar, anders static)
+                 → packages/svg-static/{style}/*.svg   (altijd static, met snapshot transforms)
                  → packages/lottie/{style}/*.json
 ```
 
@@ -89,6 +91,7 @@ Animaties worden gedefinieerd in `animations/configs/*.json`. Elke config heeft 
 - `dashArray: 50` — zet `stroke-dasharray` (voor wind dashflow)
 - `keyTimes: [0, 0.15, 0.85, 1]` — niet-uniforme keyframe verdeling
 - `delay: 0.4` — vertraging in seconden (voor stagger)
+- `staticValue: 12` — override voor de statische SVG snapshot positie (alleen transforms, niet opacity)
 - Wildcards in targets: `"code-*"` matcht code-green, code-yellow, etc.
 
 ## Exporter bestandsstructuur
@@ -154,6 +157,7 @@ Traverseert het **volledige SVG DOM**, niet alleen geanimeerde layers. Elk top-l
 ## Icon packages
 
 - `@meteocons/svg` — SVG bestanden per stijl: `{style}/{slug}.svg` (animated versie als beschikbaar, anders static)
+- `@meteocons/svg-static` — Statische SVG bestanden per stijl: `{style}/{slug}.svg` (geen SMIL animaties, met snapshot transforms voor correcte positionering)
 - `@meteocons/lottie` — Lottie JSON per stijl: `{style}/{slug}.json`
-- Beide packages bevatten een `manifest.json` met metadata per icoon
+- Alle packages bevatten een `manifest.json` met metadata per icoon
 - Assets worden gegenereerd via `bun run publish-icons`, niet handmatig beheerd

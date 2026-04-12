@@ -9,10 +9,12 @@ import { join } from 'path';
 const require = createRequire(import.meta.url);
 
 let svgManifestPath: string;
+let svgStaticManifestPath: string;
 let lottieManifestPath: string;
 
 try {
     svgManifestPath = require.resolve('@meteocons/svg/manifest.json');
+    svgStaticManifestPath = require.resolve('@meteocons/svg-static/manifest.json');
     lottieManifestPath = require.resolve('@meteocons/lottie/manifest.json');
 } catch {
     console.log('⚠ No icon manifests found, prepare-icons skipped');
@@ -20,6 +22,7 @@ try {
 }
 
 const SVG_ROOT = join(svgManifestPath, '..');
+const SVG_STATIC_ROOT = join(svgStaticManifestPath, '..');
 const LOTTIE_ROOT = join(lottieManifestPath, '..');
 const PUBLIC_ICONS = join(import.meta.dirname, '..', 'public', 'icons');
 
@@ -31,11 +34,17 @@ if (existsSync(PUBLIC_ICONS)) {
 
 for (const style of STYLES) {
     const svgSource = join(SVG_ROOT, style);
+    const svgStaticSource = join(SVG_STATIC_ROOT, style);
     const lottieSource = join(LOTTIE_ROOT, style);
     const target = join(PUBLIC_ICONS, style);
+    const staticTarget = join(PUBLIC_ICONS, 'static', style);
 
     if (existsSync(svgSource)) {
         cpSync(svgSource, target, {recursive: true});
+    }
+
+    if (existsSync(svgStaticSource)) {
+        cpSync(svgStaticSource, staticTarget, {recursive: true});
     }
 
     if (existsSync(lottieSource)) {

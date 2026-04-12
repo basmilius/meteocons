@@ -12,6 +12,13 @@ packages/svg/line/
 packages/svg/monochrome/
 packages/svg/manifest.json
 
+# SVG Static package (gegenereerd door publish-icons)
+packages/svg-static/fill/
+packages/svg-static/flat/
+packages/svg-static/line/
+packages/svg-static/monochrome/
+packages/svg-static/manifest.json
+
 # Lottie package (gegenereerd door publish-icons)
 packages/lottie/fill/
 packages/lottie/flat/

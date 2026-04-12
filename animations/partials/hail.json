@@ -10,7 +10,8 @@
                     ],
                     "duration": "1s",
                     "easing": "ease-in",
-                    "delay": 0
+                    "delay": 0,
+                    "staticValue": 8
                 },
                 {
                     "property": "opacity",
@@ -41,7 +42,8 @@
                     ],
                     "duration": "1s",
                     "easing": "ease-in",
-                    "delay": 0.3
+                    "delay": 0.3,
+                    "staticValue": 0
                 },
                 {
                     "property": "opacity",
@@ -72,7 +74,8 @@
                     ],
                     "duration": "1s",
                     "easing": "ease-in",
-                    "delay": 0.6
+                    "delay": 0.6,
+                    "staticValue": 8
                 },
                 {
                     "property": "opacity",

@@ -22,6 +22,8 @@ export interface AnimationDef {
     easing?: string;
     delay?: number;
     dashArray?: number;
+    /** Override for the static SVG snapshot value. Only used for transform animations. */
+    staticValue?: number;
 }
 
 export interface LayerConfig {
@@ -37,6 +39,8 @@ export interface LayerConfig {
     easing?: string;
     delay?: number;
     dashArray?: number;
+    /** Override for the static SVG snapshot value. Only used for transform animations. */
+    staticValue?: number;
     // Compound: multiple animations
     animations?: AnimationDef[];
     // Special flags

@@ -1,0 +1,31 @@
+{
+    "name": "@meteocons/svg-static",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": {
+        "email": "bas@mili.us",
+        "name": "Bas Milius",
+        "url": "https://bas.dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/basmilius/meteocons.git",
+        "directory": "packages/svg-static"
+    },
+    "type": "module",
+    "exports": {
+        "./*": "./*",
+        "./manifest.json": "./manifest.json"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": [
+        "fill",
+        "flat",
+        "line",
+        "monochrome",
+        "manifest.json",
+        "index.d.ts"
+    ]
+}

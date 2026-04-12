@@ -63,10 +63,12 @@ jobs:
                     AWS_ENDPOINT_URL: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
                 run: |
                     mkdir -p cdn-staging/${{ env.RELEASE_VERSION }}/svg
+                    mkdir -p cdn-staging/${{ env.RELEASE_VERSION }}/svg-static
                     mkdir -p cdn-staging/${{ env.RELEASE_VERSION }}/lottie
 
                     for style in fill flat line monochrome; do
                         cp -r packages/svg/$style cdn-staging/${{ env.RELEASE_VERSION }}/svg/
+                        cp -r packages/svg-static/$style cdn-staging/${{ env.RELEASE_VERSION }}/svg-static/
                         cp -r packages/lottie/$style cdn-staging/${{ env.RELEASE_VERSION }}/lottie/
                     done
 
@@ -81,6 +83,7 @@ jobs:
                 if: ${{ github.event.release.prerelease }}
                 run: |
                     (cd packages/svg && npm publish --access public --tag next)
+                    (cd packages/svg-static && npm publish --access public --tag next)
                     (cd packages/lottie && npm publish --access public --tag next)
                     (cd packages/meteocons && npm publish --access public --tag next)
 
@@ -88,6 +91,7 @@ jobs:
                 if: ${{ !github.event.release.prerelease }}
                 run: |
                     (cd packages/svg && npm publish --access public)
+                    (cd packages/svg-static && npm publish --access public)
                     (cd packages/lottie && npm publish --access public)
                     (cd packages/meteocons && npm publish --access public)
 

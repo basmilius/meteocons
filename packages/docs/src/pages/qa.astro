@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IconQa from '../components/vue/IconQa.vue';
+---
+
+<BaseLayout title="QA — Icon Preview">
+    <div class="qa-page">
+        <IconQa client:load/>
+    </div>
+</BaseLayout>
+
+<style>
+    .qa-page {
+        max-width: var(--content-width);
+        margin: 0 auto;
+    }
+</style>

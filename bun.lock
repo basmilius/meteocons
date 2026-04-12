@@ -14,6 +14,7 @@
         "@astrojs/vue": "^5.0.6",
         "@meteocons/lottie": "workspace:*",
         "@meteocons/svg": "workspace:*",
+        "@meteocons/svg-static": "workspace:*",
         "astro": "^6.1.5",
         "lottie-web": "^5.12.2",
         "vue": "^3.5.13",
@@ -45,6 +46,10 @@
     },
     "packages/svg": {
       "name": "@meteocons/svg",
+      "version": "0.0.0",
+    },
+    "packages/svg-static": {
+      "name": "@meteocons/svg-static",
       "version": "0.0.0",
     },
   },
@@ -256,6 +261,8 @@
     "@meteocons/lottie": ["@meteocons/lottie@workspace:packages/lottie"],
 
     "@meteocons/svg": ["@meteocons/svg@workspace:packages/svg"],
+
+    "@meteocons/svg-static": ["@meteocons/svg-static@workspace:packages/svg-static"],
 
     "@oslojs/encoding": ["@oslojs/encoding@1.1.0", "", {}, "sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ=="],
 

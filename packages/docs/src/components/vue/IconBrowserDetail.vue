@@ -14,10 +14,13 @@
         STYLES,
         formatName,
         svgUrl,
+        staticSvgUrl,
         lottieUrl,
         cdnSvgUrl,
+        cdnStaticSvgUrl,
         cdnLottieUrl,
         copySvgCode,
+        copyStaticSvgCode,
         copyText,
         copyDeepLink,
         downloadFile,
@@ -158,6 +161,11 @@
                                 SVG
                             </button>
                             <button
+                                :class="['toggle-btn', { active: previewMode === 'static' }]"
+                                @click="previewMode = 'static'">
+                                Static
+                            </button>
+                            <button
                                 :class="['toggle-btn', { active: previewMode === 'lottie' }]"
                                 @click="previewMode = 'lottie'">
                                 Lottie
@@ -171,6 +179,13 @@
                             width="256"
                             height="256"
                             :key="`${selectedIcon.slug}-${detailStyle}`"/>
+                        <img
+                            v-else-if="previewMode === 'static'"
+                            :src="staticSvgUrl(selectedIcon.slug, detailStyle)"
+                            :alt="selectedIcon.name"
+                            width="256"
+                            height="256"
+                            :key="`static-${selectedIcon.slug}-${detailStyle}`"/>
                         <div
                             v-else
                             ref="lottieContainer"
@@ -210,6 +225,33 @@
                             </button>
                             <button
                                 class="action-btn"
+                                @click="downloadFile(svgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.svg`)">
+                                <svg viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                    <path d="M488 576C501.3 576 512 565.3 512 552C512 538.7 501.3 528 488 528L152 528C138.7 528 128 538.7 128 552C128 565.3 138.7 576 152 576L488 576zM303 441C312.4 450.4 327.6 450.4 336.9 441L473 305C482.4 295.6 482.4 280.4 473 271.1C463.6 261.8 448.4 261.7 439.1 271.1L344.1 366.1L344.1 88C344.1 74.7 333.4 64 320.1 64C306.8 64 296.1 74.7 296.1 88L296.1 366.1L201.1 271.1C191.7 261.7 176.5 261.7 167.2 271.1C157.9 280.5 157.8 295.7 167.2 305L303 441z"/>
+                                </svg>
+                                Download SVG
+                            </button>
+                            <button
+                                class="action-btn"
+                                @click="copyStaticSvgCode">
+                                <svg v-if="copiedAction !== 'static-svg'" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                    <path d="M369.1 80.9C373 68.2 386.5 61.2 399.1 65.1C411.7 69 418.8 82.5 414.9 95.1L270.9 559.1C267 571.8 253.5 578.8 240.9 574.9C228.3 571 221.2 557.5 225.1 544.9L369.1 80.9zM177 199C186.4 208.4 186.4 223.6 177 232.9L90 319.9L177 406.9C186.4 416.3 186.4 431.5 177 440.8C167.6 450.1 152.4 450.2 143.1 440.8L39 337C29.6 327.6 29.6 312.4 39 303.1L143 199C152.4 189.6 167.6 189.6 176.9 199zM463 199C472.4 189.6 487.6 189.6 496.9 199L601 303C610.4 312.4 610.4 327.6 601 336.9L497 441C487.6 450.4 472.4 450.4 463.1 441C453.8 431.6 453.7 416.4 463.1 407.1L550.1 320.1L463.1 233.1C453.7 223.7 453.7 208.5 463.1 199.2z"/>
+                                </svg>
+                                <svg v-else viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                    <path d="M534 132.5C544.8 140.2 547.2 155.2 539.5 166L275.5 534C271.4 539.7 265 543.4 258 543.9C251 544.4 244 542 239 537L103 401C93.6 391.6 93.6 376.4 103 367.1C112.4 357.8 127.6 357.7 136.9 367.1L253 483L500.5 138C508.2 127.2 523.2 124.8 534 132.5z"/>
+                                </svg>
+                                {{ copiedAction === 'static-svg' ? 'Copied!' : 'Copy Static SVG' }}
+                            </button>
+                            <button
+                                class="action-btn"
+                                @click="downloadFile(staticSvgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}-static.svg`)">
+                                <svg viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                    <path d="M488 576C501.3 576 512 565.3 512 552C512 538.7 501.3 528 488 528L152 528C138.7 528 128 538.7 128 552C128 565.3 138.7 576 152 576L488 576zM303 441C312.4 450.4 327.6 450.4 336.9 441L473 305C482.4 295.6 482.4 280.4 473 271.1C463.6 261.8 448.4 261.7 439.1 271.1L344.1 366.1L344.1 88C344.1 74.7 333.4 64 320.1 64C306.8 64 296.1 74.7 296.1 88L296.1 366.1L201.1 271.1C191.7 261.7 176.5 261.7 167.2 271.1C157.9 280.5 157.8 295.7 167.2 305L303 441z"/>
+                                </svg>
+                                Download Static SVG
+                            </button>
+                            <button
+                                class="action-btn"
                                 @click="copyText(selectedIcon.slug, 'name')">
                                 <svg v-if="copiedAction !== 'name'" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
                                     <path d="M352 528L128 528C119.2 528 112 520.8 112 512L112 288C112 279.2 119.2 272 128 272L176 272L176 224L128 224C92.7 224 64 252.7 64 288L64 512C64 547.3 92.7 576 128 576L352 576C387.3 576 416 547.3 416 512L416 464L368 464L368 512C368 520.8 360.8 528 352 528zM288 368C279.2 368 272 360.8 272 352L272 128C272 119.2 279.2 112 288 112L512 112C520.8 112 528 119.2 528 128L528 352C528 360.8 520.8 368 512 368L288 368zM224 352C224 387.3 252.7 416 288 416L512 416C547.3 416 576 387.3 576 352L576 128C576 92.7 547.3 64 512 64L288 64C252.7 64 224 92.7 224 128L224 352z"/>
@@ -218,16 +260,6 @@
                                     <path d="M534 132.5C544.8 140.2 547.2 155.2 539.5 166L275.5 534C271.4 539.7 265 543.4 258 543.9C251 544.4 244 542 239 537L103 401C93.6 391.6 93.6 376.4 103 367.1C112.4 357.8 127.6 357.7 136.9 367.1L253 483L500.5 138C508.2 127.2 523.2 124.8 534 132.5z"/>
                                 </svg>
                                 {{ copiedAction === 'name' ? 'Copied!' : 'Copy name' }}
-                            </button>
-                        </div>
-                        <div class="detail-actions">
-                            <button
-                                class="action-btn"
-                                @click="downloadFile(svgUrl(selectedIcon.slug, detailStyle), `${selectedIcon.slug}.svg`)">
-                                <svg viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
-                                    <path d="M488 576C501.3 576 512 565.3 512 552C512 538.7 501.3 528 488 528L152 528C138.7 528 128 538.7 128 552C128 565.3 138.7 576 152 576L488 576zM303 441C312.4 450.4 327.6 450.4 336.9 441L473 305C482.4 295.6 482.4 280.4 473 271.1C463.6 261.8 448.4 261.7 439.1 271.1L344.1 366.1L344.1 88C344.1 74.7 333.4 64 320.1 64C306.8 64 296.1 74.7 296.1 88L296.1 366.1L201.1 271.1C191.7 261.7 176.5 261.7 167.2 271.1C157.9 280.5 157.8 295.7 167.2 305L303 441z"/>
-                                </svg>
-                                Download SVG
                             </button>
                             <button
                                 class="action-btn"
@@ -248,6 +280,20 @@
                                     @click="copyText(cdnSvgUrl(selectedIcon.slug, detailStyle), 'cdn-svg')"
                                     :aria-label="copiedAction === 'cdn-svg' ? 'Copied' : 'Copy SVG URL'">
                                     <svg v-if="copiedAction !== 'cdn-svg'" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                        <path d="M352 528L128 528C119.2 528 112 520.8 112 512L112 288C112 279.2 119.2 272 128 272L176 272L176 224L128 224C92.7 224 64 252.7 64 288L64 512C64 547.3 92.7 576 128 576L352 576C387.3 576 416 547.3 416 512L416 464L368 464L368 512C368 520.8 360.8 528 352 528zM288 368C279.2 368 272 360.8 272 352L272 128C272 119.2 279.2 112 288 112L512 112C520.8 112 528 119.2 528 128L528 352C528 360.8 520.8 368 512 368L288 368zM224 352C224 387.3 252.7 416 288 416L512 416C547.3 416 576 387.3 576 352L576 128C576 92.7 547.3 64 512 64L288 64C252.7 64 224 92.7 224 128L224 352z"/>
+                                    </svg>
+                                    <svg v-else viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                        <path d="M534 132.5C544.8 140.2 547.2 155.2 539.5 166L275.5 534C271.4 539.7 265 543.4 258 543.9C251 544.4 244 542 239 537L103 401C93.6 391.6 93.6 376.4 103 367.1C112.4 357.8 127.6 357.7 136.9 367.1L253 483L500.5 138C508.2 127.2 523.2 124.8 534 132.5z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="cdn-url-row">
+                                <code class="cdn-url">{{ cdnStaticSvgUrl(selectedIcon.slug, detailStyle) }}</code>
+                                <button
+                                    class="cdn-copy-btn"
+                                    @click="copyText(cdnStaticSvgUrl(selectedIcon.slug, detailStyle), 'cdn-static-svg')"
+                                    :aria-label="copiedAction === 'cdn-static-svg' ? 'Copied' : 'Copy Static SVG URL'">
+                                    <svg v-if="copiedAction !== 'cdn-static-svg'" viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
                                         <path d="M352 528L128 528C119.2 528 112 520.8 112 512L112 288C112 279.2 119.2 272 128 272L176 272L176 224L128 224C92.7 224 64 252.7 64 288L64 512C64 547.3 92.7 576 128 576L352 576C387.3 576 416 547.3 416 512L416 464L368 464L368 512C368 520.8 360.8 528 352 528zM288 368C279.2 368 272 360.8 272 352L272 128C272 119.2 279.2 112 288 112L512 112C520.8 112 528 119.2 528 128L528 352C528 360.8 520.8 368 512 368L288 368zM224 352C224 387.3 252.7 416 288 416L512 416C547.3 416 576 387.3 576 352L576 128C576 92.7 547.3 64 512 64L288 64C252.7 64 224 92.7 224 128L224 352z"/>
                                     </svg>
                                     <svg v-else viewBox="0 0 640 640" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -289,6 +335,8 @@
         align-items: center;
         justify-content: center;
         padding: 24px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .overlay-enter-active {
@@ -317,8 +365,10 @@
         border-radius: var(--radius-xl, 28px);
         box-shadow: 0 33px 99px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.04);
         max-width: 480px;
+        max-height: calc(100vh - 48px);
         width: 100%;
-        overflow: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .panel-enter-active {
@@ -489,26 +539,27 @@
     }
 
     .detail-actions {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 9px;
     }
 
     .action-btn {
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
-        padding: 12px 15px;
+        padding: 12px 12px;
         border: 2px solid var(--border, #f3f4f6);
         border-radius: 12px;
         background: white;
         font-family: inherit;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 600;
         color: var(--text-secondary, #4b5563);
         cursor: pointer;
         transition: all 0.15s;
+        white-space: nowrap;
     }
 
     .action-btn:hover,
@@ -577,9 +628,43 @@
     }
 
     @media (max-width: 768px) {
+        .overlay {
+            align-items: flex-start;
+            padding: 12px;
+        }
+
         .detail {
             max-width: 100%;
+            max-height: none;
             border-radius: 21px;
+        }
+
+        .detail-preview {
+            padding: 45px 24px 24px;
+        }
+
+        .detail-preview img,
+        .lottie-player {
+            width: 192px;
+            height: 192px;
+        }
+
+        .detail-info {
+            padding: 18px 18px 21px;
+        }
+
+        .detail-styles {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .detail-style-btn img {
+            width: 36px;
+            height: 36px;
+        }
+
+        .action-btn {
+            font-size: 13px;
+            padding: 10px 9px;
         }
     }
 </style>

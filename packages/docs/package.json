@@ -15,6 +15,7 @@
         "@astrojs/vue": "^5.0.6",
         "@meteocons/lottie": "workspace:*",
         "@meteocons/svg": "workspace:*",
+        "@meteocons/svg-static": "workspace:*",
         "astro": "^6.1.5",
         "lottie-web": "^5.12.2",
         "vue": "^3.5.13"

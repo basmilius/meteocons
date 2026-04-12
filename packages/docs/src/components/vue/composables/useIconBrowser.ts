@@ -1,5 +1,5 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { CDN_BASE, cdnVersion, iconLottieUrl, iconSvgUrl } from '../../../lib/icons';
+import { CDN_BASE, cdnVersion, iconLottieUrl, iconStaticSvgUrl, iconSvgUrl } from '../../../lib/icons';
 
 export type Style = 'fill' | 'flat' | 'line' | 'monochrome';
 
@@ -35,7 +35,7 @@ const mobileFilterOpen = ref(false);
 const selectedIcon = ref<IconEntry | null>(null);
 const detailStyle = ref<Style>('fill');
 const copiedAction = ref('');
-const previewMode = ref<'svg' | 'lottie'>('svg');
+const previewMode = ref<'svg' | 'static' | 'lottie'>('svg');
 
 // --- Computed ---
 
@@ -146,12 +146,20 @@ function svgUrl(slug: string, style?: Style): string {
     return iconSvgUrl(style ?? currentStyle.value, slug);
 }
 
+function staticSvgUrl(slug: string, style?: Style): string {
+    return iconStaticSvgUrl(style ?? currentStyle.value, slug);
+}
+
 function lottieUrl(slug: string, style?: Style): string {
     return iconLottieUrl(style ?? currentStyle.value, slug);
 }
 
 function cdnSvgUrl(slug: string, style: Style): string {
     return `${CDN_BASE}/${cdnVersion()}/svg/${style}/${slug}.svg`;
+}
+
+function cdnStaticSvgUrl(slug: string, style: Style): string {
+    return `${CDN_BASE}/${cdnVersion()}/svg-static/${style}/${slug}.svg`;
 }
 
 function cdnLottieUrl(slug: string, style: Style): string {
@@ -230,6 +238,15 @@ async function copySvgCode(): Promise<void> {
     await copyText(text, 'svg');
 }
 
+async function copyStaticSvgCode(): Promise<void> {
+    if (!selectedIcon.value) {
+        return;
+    }
+    const res = await fetch(staticSvgUrl(selectedIcon.value.slug, detailStyle.value));
+    const text = await res.text();
+    await copyText(text, 'static-svg');
+}
+
 function copyDeepLink(): void {
     const url = window.location.origin + buildUrl();
     copyText(url, 'link');
@@ -304,14 +321,17 @@ export function useIconBrowser() {
         splitGroups,
         formatName,
         svgUrl,
+        staticSvgUrl,
         lottieUrl,
         cdnSvgUrl,
+        cdnStaticSvgUrl,
         cdnLottieUrl,
         buildUrl,
 
         // Actions
         copyText,
         copySvgCode,
+        copyStaticSvgCode,
         copyDeepLink,
         downloadFile,
         openDetail,

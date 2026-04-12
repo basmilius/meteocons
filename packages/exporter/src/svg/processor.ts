@@ -539,6 +539,91 @@ export function processSvg(svgContent: string, resolvedConfig: ResolvedConfig): 
 }
 
 /**
+ * Applies static transform snapshots to SVG elements based on animation configs.
+ * Only applies transforms when a `staticValue` is explicitly set on the animation definition.
+ * This allows manual fine-tuning of element positions in the static SVG variant.
+ */
+export function applyStaticTransforms(svgString: string, config: ResolvedConfig): string {
+    const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+
+    for (const [layerId, layerConfig] of Object.entries(config.layers)) {
+        const element = findById(doc, layerId);
+        if (!element) {
+            continue;
+        }
+
+        const allAnims: AnimationDef[] = layerConfig.animations
+            ? layerConfig.animations
+            : (layerConfig.transform || layerConfig.property) ? [layerConfig as AnimationDef] : [];
+
+        const transforms: string[] = [];
+
+        for (const anim of allAnims) {
+            const transform = computeStaticTransform(anim, element);
+            if (transform) {
+                transforms.push(transform);
+            }
+        }
+
+        if (transforms.length > 0) {
+            const existing = element.getAttribute('transform') ?? '';
+            const combined = [...transforms, existing].filter(Boolean).join(' ');
+            element.setAttribute('transform', combined);
+        }
+    }
+
+    return new XMLSerializer().serializeToString(doc);
+}
+
+/**
+ * Computes the static SVG transform string for a single animation definition.
+ * Returns null unless a `staticValue` is explicitly set.
+ */
+function computeStaticTransform(anim: AnimationDef, element: any): string | null {
+    if (!anim.transform || anim.staticValue === undefined) {
+        return null;
+    }
+
+    return buildStaticTransformString(anim.transform, anim.staticValue, anim, element);
+}
+
+/** Builds an SVG transform attribute string for a given transform type and computed value. */
+function buildStaticTransformString(type: string, value: number, anim: AnimationDef, element: any): string {
+    switch (type) {
+        case 'translateX':
+            return `translate(${value}, 0)`;
+        case 'translateY':
+            return `translate(0, ${value})`;
+        case 'translate':
+            return `translate(${value}, 0)`;
+        case 'rotate': {
+            const origin = anim.origin;
+            let cx = 64, cy = 64;
+            if (!origin || origin === 'center') {
+                const center = computeCenter(element);
+                if (center) {
+                    cx = center.cx;
+                    cy = center.cy;
+                }
+            } else {
+                const parts = origin.replace(/px/g, '').trim().split(/\s+/);
+                if (parts.length === 2) {
+                    cx = parseFloat(parts[0]);
+                    cy = parseFloat(parts[1]);
+                }
+            }
+            return `rotate(${value}, ${cx}, ${cy})`;
+        }
+        case 'scale':
+            return `scale(${value})`;
+        case 'scaleY':
+            return `scale(1, ${value})`;
+        default:
+            return '';
+    }
+}
+
+/**
  * Replaces hardcoded `black` fills/strokes with `currentColor` for monochrome icons.
  * Skips elements inside `<defs>`, `<mask>`, and `<clipPath>` to preserve SVG mask semantics.
  */

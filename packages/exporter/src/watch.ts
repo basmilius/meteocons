@@ -67,7 +67,7 @@ async function runPipeline(changedFiles: string[]): Promise<void> {
 
         // 3. Publish to packages
         const publishResult = publishIcons();
-        console.log(`  Publish: ${publishResult.svgCount} SVGs, ${publishResult.lottieCount} Lotties`);
+        console.log(`  Publish: ${publishResult.svgCount} SVGs, ${publishResult.svgStaticCount} static SVGs, ${publishResult.lottieCount} Lotties`);
 
         // 4. Prepare icons for docs (if requested)
         if (withDocs) {

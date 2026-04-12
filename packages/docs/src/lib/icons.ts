@@ -13,6 +13,13 @@ export function iconSvgUrl(style: string, slug: string): string {
     return `/icons/${style}/${slug}.svg`;
 }
 
+export function iconStaticSvgUrl(style: string, slug: string): string {
+    if (import.meta.env.PROD) {
+        return `${CDN_BASE}/${cdnVersion()}/svg-static/${style}/${slug}.svg`;
+    }
+    return `/icons/static/${style}/${slug}.svg`;
+}
+
 export function iconLottieUrl(style: string, slug: string): string {
     if (import.meta.env.PROD) {
         return `${CDN_BASE}/${cdnVersion()}/lottie/${style}/${slug}.json`;

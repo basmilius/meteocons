@@ -49,7 +49,7 @@ jobs:
                     FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
 
             -   name: 🗂️ Restore Figma cache
-                uses: actions/cache/restore@v4
+                uses: actions/cache/restore@v5
                 with:
                     path: packages/exporter/.cache
                     key: figma-cache-${{ steps.figma.outputs.last-modified }}

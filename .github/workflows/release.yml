@@ -37,11 +37,22 @@ jobs:
             -   name: 📦️ Install dependencies
                 run: bun install --frozen-lockfile
 
+            -   name: 🔍 Get Figma last modified
+                id: figma
+                run: |
+                    LAST_MODIFIED=$(curl -sf -H "X-Figma-Token: $FIGMA_TOKEN" \
+                        "https://api.figma.com/v1/files/$FIGMA_FILE_KEY?depth=1" \
+                        | jq -r '.lastModified')
+                    echo "last-modified=$LAST_MODIFIED" >> "$GITHUB_OUTPUT"
+                env:
+                    FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+                    FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+
             -   name: 🗂️ Restore Figma cache
                 uses: actions/cache/restore@v4
                 with:
                     path: packages/exporter/.cache
-                    key: figma-cache-${{ secrets.FIGMA_FILE_KEY }}
+                    key: figma-cache-${{ steps.figma.outputs.last-modified }}
 
             -   name: 🎨 Fetch SVGs from Figma
                 run: bun run fetch

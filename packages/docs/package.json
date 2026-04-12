@@ -6,7 +6,7 @@
     "scripts": {
         "prepare-icons": "bun scripts/prepare-icons.ts",
         "dev": "bun scripts/prepare-icons.ts && astro dev",
-        "build": "bun scripts/prepare-icons.ts && astro build",
+        "build": "bun scripts/prepare-icons.ts --manifest-only && astro build",
         "preview": "astro preview"
     },
     "dependencies": {

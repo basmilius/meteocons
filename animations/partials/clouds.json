@@ -1,6 +1,6 @@
 {
     "layers": {
-        "Clouds": {
+        "Cloud": {
             "transform": "translateY",
             "values": [
                 0,

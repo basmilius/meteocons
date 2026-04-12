@@ -406,14 +406,14 @@
         justify-content: center;
         border: none;
         border-radius: 50%;
-        background: rgba(0, 0, 0, 0.06);
+        background: var(--bg-surface, #f3f4f6);
         color: var(--text-muted, #9ca3af);
         cursor: pointer;
         transition: all 0.15s;
     }
 
     .detail-action-icon:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: var(--bg-raised, #e5e7eb);
         color: var(--text, #111827);
     }
 

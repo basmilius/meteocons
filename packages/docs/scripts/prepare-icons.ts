@@ -1,12 +1,17 @@
 /**
- * Copies a selection of icons from @meteocons/svg to public/icons/
- * for use on the documentation website.
+ * Copies icons from @meteocons/svg, @meteocons/svg-static and @meteocons/lottie
+ * to public/icons/ for use on the documentation website.
+ *
+ * Usage:
+ *   bun scripts/prepare-icons.ts                 # Copy all icons + manifest (development)
+ *   bun scripts/prepare-icons.ts --manifest-only # Copy only manifest.json (production)
  */
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'fs';
 import { createRequire } from 'module';
 import { join } from 'path';
 
 const require = createRequire(import.meta.url);
+const manifestOnly = process.argv.includes('--manifest-only');
 
 let svgManifestPath: string;
 let svgStaticManifestPath: string;
@@ -32,39 +37,42 @@ if (existsSync(PUBLIC_ICONS)) {
     rmSync(PUBLIC_ICONS, {recursive: true});
 }
 
-for (const style of STYLES) {
-    const svgSource = join(SVG_ROOT, style);
-    const svgStaticSource = join(SVG_STATIC_ROOT, style);
-    const lottieSource = join(LOTTIE_ROOT, style);
-    const target = join(PUBLIC_ICONS, style);
-    const staticTarget = join(PUBLIC_ICONS, 'static', style);
+if (!manifestOnly) {
+    for (const style of STYLES) {
+        const svgSource = join(SVG_ROOT, style);
+        const svgStaticSource = join(SVG_STATIC_ROOT, style);
+        const lottieSource = join(LOTTIE_ROOT, style);
+        const target = join(PUBLIC_ICONS, style);
+        const staticTarget = join(PUBLIC_ICONS, 'static', style);
 
-    if (existsSync(svgSource)) {
-        cpSync(svgSource, target, {recursive: true});
-    }
+        if (existsSync(svgSource)) {
+            cpSync(svgSource, target, {recursive: true});
+        }
 
-    if (existsSync(svgStaticSource)) {
-        cpSync(svgStaticSource, staticTarget, {recursive: true});
-    }
+        if (existsSync(svgStaticSource)) {
+            cpSync(svgStaticSource, staticTarget, {recursive: true});
+        }
 
-    if (existsSync(lottieSource)) {
-        cpSync(lottieSource, target, {recursive: true});
+        if (existsSync(lottieSource)) {
+            cpSync(lottieSource, target, {recursive: true});
+        }
     }
 }
 
 const manifest = JSON.parse(readFileSync(join(SVG_ROOT, 'manifest.json'), 'utf-8'));
 mkdirSync(PUBLIC_ICONS, {recursive: true});
-
-import { writeFileSync } from 'fs';
 writeFileSync(join(PUBLIC_ICONS, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
 
-const count = STYLES.reduce((sum, style) => {
-    const dir = join(PUBLIC_ICONS, style);
-    if (!existsSync(dir)) {
-        return sum;
-    }
-    const { readdirSync } = require('fs');
-    return sum + readdirSync(dir).length;
-}, 0);
+if (manifestOnly) {
+    console.log('✓ manifest.json copied to public/icons/');
+} else {
+    const count = STYLES.reduce((sum, style) => {
+        const dir = join(PUBLIC_ICONS, style);
+        if (!existsSync(dir)) {
+            return sum;
+        }
+        return sum + readdirSync(dir).length;
+    }, 0);
 
-console.log(`✓ ${count} icons copied to public/icons/`);
+    console.log(`✓ ${count} icons copied to public/icons/`);
+}

@@ -38,7 +38,7 @@ jobs:
                 run: bun install --frozen-lockfile
 
             -   name: 🗂️ Restore Figma cache
-                uses: actions/cache@v4
+                uses: actions/cache/restore@v4
                 with:
                     path: packages/exporter/.cache
                     key: figma-cache-${{ secrets.FIGMA_FILE_KEY }}

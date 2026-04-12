@@ -1,11 +1,11 @@
 {
     "targets": [
-        "extreme-thunderstorms",
-        "extreme-thunderstorms-mostly-clear"
+        "extreme",
+        "overcast"
     ],
     "includes": [
         "clouds",
-        "lightning"
+        "clouds-alt"
     ],
     "variants": {
         "day": ["sun"],

@@ -1,0 +1,11 @@
+{
+    "targets": [
+        "clear-day",
+        "horizon",
+        "rainbow-clear",
+        "sun-hot"
+    ],
+    "includes": [
+        "sun"
+    ]
+}

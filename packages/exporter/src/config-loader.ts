@@ -52,6 +52,13 @@ export interface ConfigFile {
     overrides?: Record<string, { static?: boolean; layers?: Record<string, LayerConfig> }>;
     /** Per-target duration override — replaces duration on ALL layers for that target. */
     durationByTarget?: Record<string, string>;
+    /**
+     * Variant suffixes → additional includes.
+     * Each key is a single-word suffix (e.g. "rain", "day").
+     * Compound suffixes like "day-rain" are resolved by splitting on '-'
+     * and merging each variant's includes with the base includes.
+     */
+    variants?: Record<string, string[]>;
 }
 
 export interface ResolvedConfig {
@@ -61,6 +68,7 @@ export interface ResolvedConfig {
 
 let partialCache: Map<string, ConfigFile> | null = null;
 let configLookup: Map<string, ConfigFile> | null = null;
+let variantConfigs: ConfigFile[] = [];
 
 function loadPartials(): Map<string, ConfigFile> {
     if (partialCache) {
@@ -87,6 +95,7 @@ function loadConfigs(): Map<string, ConfigFile> {
         return configLookup;
     }
     configLookup = new Map();
+    variantConfigs = [];
     try {
         for (const file of readdirSync(CONFIGS_DIR)) {
             if (!file.endsWith('.json')) {
@@ -97,6 +106,9 @@ function loadConfigs(): Map<string, ConfigFile> {
             for (const target of config.targets ?? []) {
                 configLookup.set(target, config);
             }
+            if (config.variants) {
+                variantConfigs.push(config);
+            }
         }
     } catch {
         // No configs directory
@@ -104,13 +116,42 @@ function loadConfigs(): Map<string, ConfigFile> {
     return configLookup;
 }
 
-/** Finds the config for a given frameName, supporting wildcards. */
+/** Finds the config for a given frameName, supporting variants and wildcards. */
 export function findConfig(frameName: string): ConfigFile | null {
     const configs = loadConfigs();
 
     // Exact match first
     if (configs.has(frameName)) {
         return configs.get(frameName)!;
+    }
+
+    // Variant match: split suffix into known variant keys and merge their includes
+    for (const config of variantConfigs) {
+        for (const baseTarget of config.targets ?? []) {
+            if (!frameName.startsWith(baseTarget + '-')) {
+                continue;
+            }
+            const suffix = frameName.slice(baseTarget.length + 1);
+            const parts = suffix.split('-');
+            const extraIncludes: string[] = [];
+            let allMatch = true;
+            for (const part of parts) {
+                const variantIncludes = config.variants![part];
+                if (variantIncludes) {
+                    extraIncludes.push(...variantIncludes);
+                } else {
+                    allMatch = false;
+                    break;
+                }
+            }
+            if (allMatch) {
+                return {
+                    ...config,
+                    includes: [...(config.includes ?? []), ...extraIncludes],
+                    variants: undefined,
+                };
+            }
+        }
     }
 
     // Wildcard match: check all targets with *
@@ -183,4 +224,5 @@ export function resolveConfig(config: ConfigFile, style?: string, frameName?: st
 export function clearConfigCache(): void {
     partialCache = null;
     configLookup = null;
+    variantConfigs = [];
 }

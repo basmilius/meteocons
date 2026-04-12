@@ -1,0 +1,14 @@
+{
+    "targets": [
+        "sunrise",
+        "sunset",
+        "time-afternoon",
+        "time-evening",
+        "time-late-afternoon",
+        "time-late-morning",
+        "time-morning"
+    ],
+    "includes": [
+        "sun"
+    ]
+}

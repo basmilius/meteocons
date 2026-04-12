@@ -6,7 +6,7 @@ const BASE = 'https://api.figma.com/v1';
 const BATCH_DELAY_MS = 500;
 
 /** Maximum number of concurrent S3 downloads per batch. */
-const CONCURRENCY = 10;
+const CONCURRENCY = 25;
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 

@@ -1,14 +1,11 @@
 {
     "targets": [
-        "compass",
-        "compass-e",
-        "compass-n",
-        "compass-ne",
-        "compass-nw",
-        "compass-s",
-        "compass-se",
-        "compass-sw",
-        "compass-w"
+        "barometer",
+        "barometer-extreme",
+        "barometer-high",
+        "barometer-low",
+        "barometer-moderate",
+        "barometer-very-high"
     ],
     "layers": {
         "Pointer": {
